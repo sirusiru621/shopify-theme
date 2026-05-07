@@ -1,0 +1,454 @@
+{% comment %}
+  Renders a Japanese-inspired mobile hamburger menu
+  
+  Usage:
+  {% render 'japanese-hamburger-menu' %}
+{% endcomment %}
+
+{%- style -%}
+  /* Japanese-inspired hamburger menu styles */
+  .japanese-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(
+      135deg,
+      rgba(248, 246, 243, 0.98) 0%,
+      rgba(255, 253, 250, 0.95) 100%
+    );
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+  }
+
+  .japanese-menu-overlay.active {
+    transform: translateX(0);
+  }
+
+  .japanese-menu-container {
+    padding: 2rem 1.5rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Header section */
+  .japanese-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .japanese-menu-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: {{ section.settings.text_color }};
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .japanese-menu-close:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transform: rotate(90deg);
+  }
+
+  /* Menu items */
+  .japanese-menu-items {
+    flex: 1;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .japanese-menu-item {
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideInLeft 0.6s ease forwards;
+  }
+
+  .japanese-menu-item:nth-child(1) { animation-delay: 0.1s; }
+  .japanese-menu-item:nth-child(2) { animation-delay: 0.2s; }
+  .japanese-menu-item:nth-child(3) { animation-delay: 0.3s; }
+  .japanese-menu-item:nth-child(4) { animation-delay: 0.4s; }
+  .japanese-menu-item:nth-child(5) { animation-delay: 0.5s; }
+  .japanese-menu-item:nth-child(6) { animation-delay: 0.6s; }
+  .japanese-menu-item:nth-child(7) { animation-delay: 0.7s; }
+
+  .japanese-menu-link {
+    display: block;
+    padding: 1rem 0;
+    font-family: {{ section.settings.body_font.family }}, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1.125rem;
+    font-weight: 400;
+    color: {{ section.settings.text_color }};
+    text-decoration: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .japanese-menu-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 183, 197, 0.1),
+      transparent
+    );
+    transition: left 0.5s ease;
+  }
+
+  .japanese-menu-link:hover::before {
+    left: 100%;
+  }
+
+  .japanese-menu-link:hover {
+    color: {{ section.settings.accent_color }};
+    padding-left: 1rem;
+  }
+
+  .japanese-menu-link.has-submenu::after {
+    content: '+';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: {{ section.settings.accent_color }};
+    transition: transform 0.3s ease;
+  }
+
+  .japanese-menu-link.has-submenu.active::after {
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  /* Expandable menu items */
+  .japanese-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    padding-left: 1rem;
+  }
+
+  .japanese-submenu.active {
+    max-height: 500px;
+  }
+
+  .japanese-submenu-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  }
+
+  .japanese-submenu-link {
+    font-size: 1rem;
+    color: rgba({{ section.settings.text_color | color_extract: 'red' }}, {{ section.settings.text_color | color_extract: 'green' }}, {{ section.settings.text_color | color_extract: 'blue' }}, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .japanese-submenu-link:hover {
+    color: {{ section.settings.accent_color }};
+  }
+
+  /* Footer section */
+  .japanese-menu-footer {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .japanese-menu-auth {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .japanese-auth-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: {{ section.settings.button_bg_color }};
+    color: {{ section.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .japanese-auth-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+  }
+
+  .japanese-auth-button:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  .japanese-auth-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Floating sakura animation */
+  .sakura-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .sakura {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: radial-gradient(circle, {{ section.settings.accent_color }} 0%, transparent 70%);
+    border-radius: 50% 0 50% 0;
+    opacity: 0.6;
+    animation: sakuraFall 8s linear infinite;
+  }
+
+  .sakura:nth-child(odd) {
+    animation-duration: 10s;
+    animation-delay: -2s;
+  }
+
+  .sakura:nth-child(even) {
+    animation-duration: 12s;
+    animation-delay: -4s;
+  }
+
+  /* Animations */
+  @keyframes slideInLeft {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes sakuraFall {
+    0% {
+      transform: translateY(-100px) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.6;
+    }
+    90% {
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .japanese-menu-container {
+      padding: 1.5rem 1rem;
+    }
+    
+    .japanese-menu-link {
+      font-size: 1rem;
+    }
+  }
+{%- endstyle -%}
+
+<!-- Japanese Menu Overlay -->
+<div class="japanese-menu-overlay" id="japanese-menu-overlay">
+  <!-- Floating Sakura Animation -->
+  <div class="sakura-container">
+    <div class="sakura" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="sakura" style="left: 20%; animation-delay: -1s;"></div>
+    <div class="sakura" style="left: 30%; animation-delay: -2s;"></div>
+    <div class="sakura" style="left: 40%; animation-delay: -3s;"></div>
+    <div class="sakura" style="left: 50%; animation-delay: -4s;"></div>
+    <div class="sakura" style="left: 60%; animation-delay: -5s;"></div>
+    <div class="sakura" style="left: 70%; animation-delay: -6s;"></div>
+    <div class="sakura" style="left: 80%; animation-delay: -7s;"></div>
+    <div class="sakura" style="left: 90%; animation-delay: -8s;"></div>
+  </div>
+
+  <div class="japanese-menu-container">
+    <!-- Header -->
+    <div class="japanese-menu-header">
+      <div class="japanese-menu-logo">
+        {{ section.settings.menu_title | default: shop.name }}
+      </div>
+      <button class="japanese-menu-close" id="japanese-menu-close" aria-label="Close menu">
+        ×
+      </button>
+    </div>
+
+    <!-- Menu Items -->
+    <ul class="japanese-menu-items">
+      {%- for link in linklists[section.settings.menu].links -%}
+        <li class="japanese-menu-item">
+          {%- if link.links != blank -%}
+            <a href="{{ link.url }}" 
+               class="japanese-menu-link has-submenu" 
+               data-submenu="submenu-{{ forloop.index }}">
+              {{ link.title | escape }}
+            </a>
+            <ul class="japanese-submenu" id="submenu-{{ forloop.index }}">
+              {%- for childlink in link.links -%}
+                <li class="japanese-submenu-item">
+                  <a href="{{ childlink.url }}" class="japanese-submenu-link">
+                    {{ childlink.title | escape }}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- else -%}
+            <a href="{{ link.url }}" class="japanese-menu-link">
+              {{ link.title | escape }}
+            </a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    <!-- Footer -->
+    <div class="japanese-menu-footer">
+      <div class="japanese-menu-auth">
+        {%- if shop.customer_accounts_enabled -%}
+          {%- if customer -%}
+            <a href="{{ routes.account_url }}" class="japanese-auth-button">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 8C10.2091 8 12 6.20914 12 4C12 1.79086 10.2091 0 8 0C5.79086 0 4 1.79086 4 4C4 6.20914 5.79086 8 8 8Z" fill="currentColor"/>
+                <path d="M8 10C3.58172 10 0 13.5817 0 18H16C16 13.5817 12.4183 10 8 10Z" fill="currentColor"/>
+              </svg>
+              {{ section.settings.account_text | default: 'マイアカウント' }}
+            </a>
+          {%- else -%}
+            <a href="{{ routes.account_login_url }}" class="japanese-auth-button">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 0L6.59 1.41L12.17 7H0V9H12.17L6.59 14.59L8 16L16 8L8 0Z" fill="currentColor"/>
+              </svg>
+              {{ section.settings.login_text | default: 'ログイン' }}
+            </a>
+            {%- if section.settings.show_register_button -%}
+              <a href="{{ routes.account_register_url }}" class="japanese-auth-button">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z" fill="currentColor"/>
+                  <path d="M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.3431 2 12V15H14V12Z" fill="currentColor"/>
+                  <path d="M12.5 3.5H15.5V4.5H12.5V7.5H11.5V4.5H8.5V3.5H11.5V0.5H12.5V3.5Z" fill="currentColor"/>
+                </svg>
+                {{ section.settings.register_text | default: '新規会員登録' }}
+              </a>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript for menu functionality -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const menuOverlay = document.getElementById('japanese-menu-overlay');
+    const menuClose = document.getElementById('japanese-menu-close');
+    const hamburgerButton = document.querySelector('.header__icon--menu');
+    const submenuLinks = document.querySelectorAll('.has-submenu');
+
+    // Open menu
+    if (hamburgerButton) {
+      hamburgerButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        menuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    }
+
+    // Close menu
+    function closeMenu() {
+      menuOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+      
+      // Reset all submenus
+      submenuLinks.forEach(link => {
+        link.classList.remove('active');
+        const submenuId = link.getAttribute('data-submenu');
+        if (submenuId) {
+          const submenu = document.getElementById(submenuId);
+          if (submenu) {
+            submenu.classList.remove('active');
+          }
+        }
+      });
+    }
+
+    if (menuClose) {
+      menuClose.addEventListener('click', closeMenu);
+    }
+
+    // Close menu when clicking outside
+    menuOverlay.addEventListener('click', function(e) {
+      if (e.target === menuOverlay) {
+        closeMenu();
+      }
+    });
+
+    // Handle submenu toggles
+    submenuLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const submenuId = this.getAttribute('data-submenu');
+        const submenu = document.getElementById(submenuId);
+        
+        if (submenu) {
+          this.classList.toggle('active');
+          submenu.classList.toggle('active');
+        }
+      });
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && menuOverlay.classList.contains('active')) {
+        closeMenu();
+      }
+    });
+  });
+</script>
+{% schema %}
+  {
+    "name": "sisiri-hambergermenu",
+    "settings": []
+  }
+{% endschema %}

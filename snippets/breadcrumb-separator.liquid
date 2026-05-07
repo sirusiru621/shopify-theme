@@ -1,0 +1,38 @@
+<!-- ファイル名: breadcrumb-separator.liquid -->
+<!-- ⚠️ 注意: このファイルは不要になりました -->
+<!-- 修正により、セパレーターは直接Liquidテンプレート内で出力されます -->
+
+{%- comment -%}
+  このスニペットファイルは使用されなくなりました。
+  最終項目の右矢印崩れ問題の修正により、
+  セパレーターは各ページタイプの処理内で直接出力される仕様に変更されています。
+  
+  削除または無視しても問題ありません。
+{%- endcomment -%}
+
+<!-- 以下は旧コード（参考用） -->
+{%- liquid
+  assign style = separator_style | default: 'arrow'
+  
+  # 最後の項目の場合は表示しない
+  if is_last == true
+    break
+  endif
+-%}
+
+<span class="breadcrumb-separator-wrapper" aria-hidden="true">
+  {%- case style -%}
+    {%- when 'arrow' -%}
+      <svg class="breadcrumb-separator" width="8" height="12" viewBox="0 0 8 12" fill="none" aria-hidden="true">
+        <path d="M1 1L6 6L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    {%- when 'slash' -%}
+      <span class="breadcrumb-separator">/</span>
+    {%- when 'dot' -%}
+      <span class="breadcrumb-separator">•</span>
+    {%- when 'greater' -%}
+      <span class="breadcrumb-separator">></span>
+    {%- else -%}
+      <span class="breadcrumb-separator">></span>
+  {%- endcase -%}
+</span>

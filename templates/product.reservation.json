@@ -1,0 +1,334 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumb_CCRJW8": {
+      "type": "breadcrumb",
+      "name": "パンくずリスト",
+      "settings": {
+        "home_text": "TOP",
+        "show_home_icon": false,
+        "separator_style": "arrow",
+        "enable_animations": true,
+        "background_color": "#e7eaf0",
+        "text_color": "#595757",
+        "link_color": "#333333",
+        "current_page_color": "#999999",
+        "font_size_desktop": 12,
+        "font_size_mobile": 12,
+        "padding_top": 4,
+        "padding_bottom": 4,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "<p>{{ product.vendor }}</p>",
+            "text_style": "body"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "weekend_reservation_GYCLAH": {
+          "type": "weekend_reservation",
+          "settings": {
+            "show_heading": false,
+            "heading": "予約日時を選択",
+            "description": "",
+            "time_slots": "10:30,12:30",
+            "capacity_10_30": 6,
+            "capacity_12_30": 6,
+            "capacity_14_30": 6,
+            "capacity_16_00": 6,
+            "sold_out_label": "完売",
+            "biweekly_parity": "odd",
+            "stop_message": "土曜日10:00より受付再開予定",
+            "primary_color": "#595757",
+            "success_color": "#121212",
+            "warning_color": "#595757",
+            "danger_color": "#dc3545",
+            "text_color": "#212529",
+            "background_color": "#ffffff",
+            "border_color": "#dee2e6",
+            "heading_font_size_desktop": 18,
+            "heading_font_size_mobile": 16,
+            "body_font_size_desktop": 14,
+            "body_font_size_mobile": 14,
+            "small_font_size_desktop": 14,
+            "small_font_size_mobile": 12,
+            "border_radius": 0,
+            "margin_top": 20,
+            "margin_bottom": 20
+          }
+        },
+        "31044696-b263-4ab1-972b-7ae2970a7d69": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "<p>※毎週木曜日24時を過ぎたご注文は翌々週のご対応となります。</p>",
+            "text_style": "uppercase"
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "disabled": true,
+          "settings": {
+            "picker_type": "dropdown"
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": false
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "share": {
+          "type": "share",
+          "settings": {
+            "share_label": "Share"
+          }
+        },
+        "493daddf-2c1f-4694-a099-5a29fd5c023c": {
+          "type": "text",
+          "settings": {
+            "text": "<p>-----------------------------------------------------------------------</p>",
+            "text_style": "uppercase"
+          }
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "price",
+        "quantity_selector",
+        "weekend_reservation_GYCLAH",
+        "31044696-b263-4ab1-972b-7ae2970a7d69",
+        "variant_picker",
+        "buy_buttons",
+        "description",
+        "share",
+        "493daddf-2c1f-4694-a099-5a29fd5c023c"
+      ],
+      "custom_css": [
+        ".product-form__submit {border: 1px solid;}"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "media_size": "medium",
+        "constrain_to_viewport": false,
+        "media_fit": "contain",
+        "gallery_layout": "thumbnail_slider",
+        "media_position": "left",
+        "image_zoom": "lightbox",
+        "mobile_thumbnails": "show",
+        "hide_variants": true,
+        "enable_video_looping": false,
+        "padding_top": 16,
+        "padding_bottom": 72
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "おすすめ商品",
+        "heading_size": "h2",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "color_scheme": "background-2",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    },
+    "featured_collection_DhzKJX": {
+      "type": "featured-collection",
+      "custom_css": [
+        ".title.inline-richtext {text-align: center;}"
+      ],
+      "name": "t:sections.featured-collection.presets.name",
+      "settings": {
+        "title": "その他のお買い物",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "全ての商品",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": true,
+        "color_scheme": "background-2",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "enable_quick_add": false,
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "76fca9f5-e4b3-42c9-bc43-24f71ab40f7c": {
+      "type": "rich-text",
+      "blocks": {
+        "392c3b29-5bcb-4eae-8d2b-a2b5f7efa8b5": {
+          "type": "caption",
+          "disabled": true,
+          "settings": {
+            "caption": "--------------------------------------------------------------------------　　　　",
+            "text_style": "caption-with-letter-spacing",
+            "text_size": "small"
+          }
+        },
+        "template--19650935193883__76fca9f5-e4b3-42c9-bc43-24f71ab40f7c-text-1": {
+          "type": "text",
+          "settings": {
+            "text": "<h5>紙袋と熨斗は商品と一緒にご購入をお願いいたします。 　　　　　　</h5>"
+          }
+        },
+        "cbebd1f6-baac-4dac-bed1-c79a92b2dc1e": {
+          "type": "text",
+          "settings": {
+            "text": "<h5><a href=\"/collections/紙袋\" title=\"紙袋\">紙袋のご購入はこちら</a>　　　　　　　　　　　　　　　　　　　　　</h5>"
+          }
+        },
+        "06460611-d13f-4695-9cf7-26df37ab5efd": {
+          "type": "text",
+          "settings": {
+            "text": "<h5><a href=\"/collections/熨斗\" title=\"熨斗\">熨斗のご購入はこちら</a>　　　　　　　　　　　　　　　　　　　　　</h5>"
+          }
+        }
+      },
+      "block_order": [
+        "392c3b29-5bcb-4eae-8d2b-a2b5f7efa8b5",
+        "template--19650935193883__76fca9f5-e4b3-42c9-bc43-24f71ab40f7c-text-1",
+        "cbebd1f6-baac-4dac-bed1-c79a92b2dc1e",
+        "06460611-d13f-4695-9cf7-26df37ab5efd"
+      ],
+      "disabled": true,
+      "settings": {
+        "desktop_content_position": "right",
+        "content_alignment": "right",
+        "color_scheme": "accent-1",
+        "full_width": true,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "product_reservation_UiApcF": {
+      "type": "product-reservation",
+      "disabled": true,
+      "name": "商品予約機能",
+      "settings": {
+        "show_heading": true,
+        "section_heading": "予約日時を選択",
+        "section_description": "",
+        "add_to_cart_text": "カートに追加",
+        "date_format": "YYYY-MM-DD",
+        "time_format": "HH:mm",
+        "min_days_advance": 1,
+        "max_days_advance": 90,
+        "show_weekends": true,
+        "default_time_slots": "[\"09:00\", \"10:00\", \"11:00\", \"14:00\", \"15:00\", \"16:00\"]",
+        "show_reservation_notes": true,
+        "notes_title": "ご予約について",
+        "reservation_notes": "<p>・予約の変更・キャンセルは前日までにご連絡ください</p><p>・当日のキャンセルはキャンセル料が発生する場合があります</p>",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "cross_sell_popup_6EmzgD": {
+      "type": "cross-sell-popup",
+      "disabled": true,
+      "name": "クロスセル ポップアップ",
+      "settings": {
+        "enable_popup": true,
+        "cross_sell_collection": "紙袋",
+        "max_products": 3,
+        "popup_delay": 100,
+        "auto_close_delay": 0,
+        "show_on_mobile": true,
+        "show_variants": true,
+        "cart_subtitle": "Cart subtotal:",
+        "item_text": "Item",
+        "items_text": "Items",
+        "checkout_text": "﻿購入画面に進む",
+        "view_cart_text": "カートを見る",
+        "add_to_cart_text": "カートに追加する",
+        "sold_out_text": "Sold out",
+        "cross_sell_title": "こちらもいかがですか？",
+        "added_message": "カートに追加しました。",
+        "error_message": "Sorry, something went wrong.",
+        "overlay_color": "#00000099",
+        "popup_background": "#ffffff",
+        "primary_button_color": "#1f2937",
+        "secondary_button_color": "#4f46e5",
+        "popup_size": "medium",
+        "border_radius": 8,
+        "enable_blur_effect": true,
+        "enable_animations": true,
+        "close_on_overlay_click": true,
+        "prevent_body_scroll": true,
+        "enable_focus_management": true,
+        "enable_escape_key": true,
+        "announce_cart_updates": true,
+        "enable_analytics": false,
+        "analytics_event_name": "cross_sell_popup_interaction",
+        "enable_ab_testing": false,
+        "ab_test_percentage": 50,
+        "lazy_load_images": true,
+        "image_quality": 80,
+        "preload_popup_resources": false,
+        "enable_debug_mode": false,
+        "custom_css_class": "",
+        "custom_javascript": ""
+      }
+    }
+  },
+  "order": [
+    "breadcrumb_CCRJW8",
+    "main",
+    "related-products",
+    "featured_collection_DhzKJX",
+    "76fca9f5-e4b3-42c9-bc43-24f71ab40f7c",
+    "product_reservation_UiApcF",
+    "cross_sell_popup_6EmzgD"
+  ]
+}

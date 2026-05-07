@@ -1,0 +1,1925 @@
+{% comment %}
+  Japanese Premium Order Form Section
+  和風高品質UI/UX対応の注文確認フォームセクション
+  Shopify Online Store 2.0対応 - 和菓子ブランド仕様
+  ファイル名: sections/premium-order-form.liquid
+{% endcomment %}
+
+{% comment %} CSS読み込み {% endcomment %}
+{% if section.settings.load_external_css %}
+  {{ 'premium-order-form.css' | asset_url | stylesheet_tag }}
+{% else %}
+  <style>
+    /* 和風フォント設定 */
+    .order-form-section {
+      background: linear-gradient(135deg, {{ section.settings.background_gradient_start }} 0%, {{ section.settings.background_gradient_end }} 100%);
+      padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+      font-family: "Yu Gothic", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+    }
+
+    /* 和紙テクスチャ風背景 */
+    .order-form-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(0, 0, 0, 0.05) 0%, transparent 50%);
+      background-size: 60px 60px, 80px 80px;
+      background-position: 0 0, 40px 40px;
+      pointer-events: none;
+    }
+
+    .order-form-container {
+      max-width: {{ section.settings.container_width }}px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .order-form-card {
+      background: {{ section.settings.form_background_color }};
+      border-radius: {{ section.settings.border_radius }}px;
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(200, 180, 160, 0.3);
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    {% if section.settings.enable_animations %}
+    .order-form-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 
+        0 16px 48px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    {% endif %}
+
+    .order-form-header {
+      text-align: center;
+      padding: 60px 40px 50px;
+      background: linear-gradient(145deg, {{ section.settings.header_bg_start }} 0%, {{ section.settings.header_bg_end }} 100%);
+      position: relative;
+      border-bottom: 2px solid rgba(180, 160, 140, 0.2);
+    }
+
+    /* 和風装飾線 */
+    .order-form-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 3px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        {{ section.settings.accent_color }} 20%, 
+        {{ section.settings.primary_color }} 50%, 
+        {{ section.settings.accent_color }} 80%, 
+        transparent 100%);
+      border-radius: 2px;
+    }
+
+    .order-form-title {
+      font-size: {{ section.settings.title_font_size_desktop }}px;
+      font-weight: 500;
+      color: {{ section.settings.title_color }};
+      margin: 0 0 30px;
+      line-height: 1.4;
+      letter-spacing: 0.1em;
+      font-feature-settings: "palt";
+      position: relative;
+    }
+
+    /* タイトル装飾 */
+    .order-form-title::before,
+    .order-form-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, {{ section.settings.accent_color }}, transparent);
+    }
+
+    .order-form-title::before {
+      left: -60px;
+    }
+
+    .order-form-title::after {
+      right: -60px;
+    }
+
+    .order-form-description {
+      font-size: {{ section.settings.description_font_size_desktop }}px;
+      color: {{ section.settings.text_color }};
+      line-height: 1.8;
+      margin: 0 0 30px;
+      opacity: 0.9;
+      letter-spacing: 0.02em;
+    }
+
+    .delivery-notice {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(220, 200, 180, 0.1);
+      color: #8B4513;
+      padding: 16px 24px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 500;
+      margin: 24px 0;
+      border: 1px solid rgba(220, 200, 180, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .delivery-notice::before {
+      content: '🌸';
+      margin-right: 8px;
+      font-size: 16px;
+    }
+
+    /* 和風プロセスタイムライン */
+    .process-timeline {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 50px 0 30px;
+      position: relative;
+      background: rgba(250, 245, 240, 0.6);
+      padding: 40px 30px;
+      border-radius: 24px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(220, 200, 180, 0.2);
+    }
+
+    .process-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      flex: 1;
+      max-width: 160px;
+    }
+
+    .process-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 30px;
+      right: -50%;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        {{ section.settings.accent_color }} 0%, 
+        rgba(180, 160, 140, 0.3) 50%, 
+        rgba(180, 160, 140, 0.1) 100%);
+      z-index: 1;
+    }
+
+    .process-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, {{ section.settings.accent_color }} 0%, {{ section.settings.accent_gradient_end }} 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      font-size: 13px;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 16px;
+      box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      letter-spacing: 0.05em;
+    }
+
+    .process-step.active .process-circle {
+      background: linear-gradient(135deg, {{ section.settings.primary_color }} 0%, {{ section.settings.primary_gradient_end }} 100%);
+      box-shadow: 
+        0 0 0 4px rgba(139, 69, 19, 0.2),
+        0 8px 24px rgba(139, 69, 19, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      transform: scale(1.05);
+      {% if section.settings.enable_animations %}
+      animation: gentlePulse 3s infinite;
+      {% endif %}
+    }
+
+    {% if section.settings.enable_animations %}
+    @keyframes gentlePulse {
+      0%, 100% { transform: scale(1.05); }
+      50% { transform: scale(1.08); }
+    }
+    {% endif %}
+
+    .process-label {
+      font-size: 14px;
+      color: {{ section.settings.text_color }};
+      text-align: center;
+      font-weight: 500;
+      margin-bottom: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    .process-sublabel {
+      font-size: 12px;
+      color: {{ section.settings.text_color }};
+      opacity: 0.7;
+      text-align: center;
+    }
+
+    .order-form {
+      padding: 60px 50px 70px;
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.9) 0%, 
+        rgba(250, 245, 240, 0.8) 100%);
+    }
+
+    .form-section {
+      margin-bottom: 50px;
+      position: relative;
+    }
+
+    .form-section-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: {{ section.settings.section_title_color }};
+      margin-bottom: 30px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid transparent;
+      background: linear-gradient(white, white) padding-box,
+                  linear-gradient(90deg, {{ section.settings.accent_color }}, {{ section.settings.primary_color }}) border-box;
+      border-bottom: 2px solid transparent;
+      position: relative;
+      letter-spacing: 0.05em;
+    }
+
+    .form-section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 60px;
+      height: 2px;
+      background: {{ section.settings.primary_color }};
+      border-radius: 1px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      margin-bottom: 28px;
+    }
+
+    .form-row.two-column {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .form-row.three-column {
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .form-label {
+      font-size: {{ section.settings.label_font_size }}px;
+      color: {{ section.settings.label_color }};
+      margin-bottom: 12px;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      letter-spacing: 0.02em;
+    }
+
+    .form-label.required::after {
+      content: ' *';
+      color: #D2691E;
+      font-weight: 600;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      padding: 18px 22px;
+      border: 2px solid rgba(180, 160, 140, 0.3);
+      border-radius: {{ section.settings.input_border_radius }}px;
+      font-size: {{ section.settings.input_font_size }}px;
+      color: {{ section.settings.text_color }};
+      background: rgba(255, 255, 255, 0.8);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      font-family: inherit;
+      position: relative;
+      backdrop-filter: blur(5px);
+      letter-spacing: 0.02em;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: {{ section.settings.primary_color }};
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 
+        0 0 0 4px rgba(139, 69, 19, 0.1),
+        0 4px 20px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .form-input:hover,
+    .form-textarea:hover,
+    .form-select:hover {
+      border-color: rgba(139, 69, 19, 0.5);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-textarea {
+      min-height: 150px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+
+    .form-select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 12px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 40px;
+    }
+
+    .form-input.error,
+    .form-textarea.error,
+    .form-select.error {
+      border-color: #D2691E;
+      background: rgba(210, 105, 30, 0.05);
+      box-shadow: 0 0 0 4px rgba(210, 105, 30, 0.1);
+    }
+
+    /* 商品選択エリア */
+    .product-rows {
+      margin-bottom: 40px;
+      background: linear-gradient(145deg, 
+        rgba(250, 245, 240, 0.8) 0%, 
+        rgba(245, 235, 225, 0.6) 100%);
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid rgba(220, 200, 180, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .product-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+      align-items: end;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 16px;
+      border: 1px solid rgba(220, 200, 180, 0.2);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      backdrop-filter: blur(5px);
+    }
+
+    {% if section.settings.enable_animations %}
+    .product-row:hover {
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+    {% endif %}
+
+    .product-row:last-child {
+      margin-bottom: 0;
+    }
+
+    /* コレクション選択スタイル */
+    .collection-selector {
+      position: relative;
+    }
+
+    .collection-products {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 2px solid rgba(180, 160, 140, 0.3);
+      border-top: none;
+      border-radius: 0 0 {{ section.settings.input_border_radius }}px {{ section.settings.input_border_radius }}px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 10;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .collection-products.show {
+      display: block;
+    }
+
+    .product-option {
+      padding: 12px 18px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      border-bottom: 1px solid rgba(220, 200, 180, 0.2);
+      font-size: 14px;
+    }
+
+    .product-option:hover {
+      background: rgba(250, 245, 240, 0.8);
+    }
+
+    .product-option:last-child {
+      border-bottom: none;
+    }
+
+    .additional-info {
+      margin-top: 50px;
+      padding: 40px;
+      background: linear-gradient(145deg, 
+        rgba(255, 255, 255, 0.9) 0%, 
+        rgba(250, 245, 240, 0.8) 100%);
+      border-radius: 20px;
+      border: 1px solid rgba(220, 200, 180, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .form-notice {
+      font-size: 13px;
+      color: {{ section.settings.notice_color }};
+      line-height: 1.7;
+      margin-top: 40px;
+      padding: 24px;
+      background: rgba(250, 245, 240, 0.6);
+      border-radius: 16px;
+      border-left: 4px solid {{ section.settings.accent_color }};
+      backdrop-filter: blur(5px);
+      letter-spacing: 0.02em;
+    }
+
+    .submit-section {
+      text-align: center;
+      margin-top: 50px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(220, 200, 180, 0.3);
+    }
+
+    .submit-button {
+      background: linear-gradient(135deg, {{ section.settings.button_background }} 0%, {{ section.settings.button_gradient_end }} 100%);
+      color: {{ section.settings.button_text_color }};
+      padding: 20px 60px;
+      border: none;
+      border-radius: {{ section.settings.button_border_radius }}px;
+      font-size: {{ section.settings.button_font_size }}px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      min-width: 280px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 6px 20px rgba(139, 69, 19, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      letter-spacing: 0.05em;
+    }
+
+    .submit-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.6s;
+    }
+
+    {% if section.settings.enable_animations %}
+    .submit-button:hover {
+      background: linear-gradient(135deg, {{ section.settings.button_hover_background }} 0%, {{ section.settings.button_hover_gradient_end }} 100%);
+      transform: translateY(-3px);
+      box-shadow: 
+        0 10px 30px rgba(139, 69, 19, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .submit-button:hover::before {
+      left: 100%;
+    }
+    {% endif %}
+
+    .submit-button:active {
+      transform: translateY(-1px);
+    }
+
+    .submit-button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* 成功・エラーメッセージスタイル */
+    .form-message {
+      padding: 20px 24px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      font-weight: 500;
+      display: none;
+      backdrop-filter: blur(10px);
+      letter-spacing: 0.02em;
+    }
+
+    .form-message.success {
+      background: rgba(34, 139, 34, 0.1);
+      color: #228B22;
+      border: 1px solid rgba(34, 139, 34, 0.2);
+    }
+
+    .form-message.error {
+      background: rgba(210, 105, 30, 0.1);
+      color: #D2691E;
+      border: 1px solid rgba(210, 105, 30, 0.2);
+    }
+
+    /* レスポンシブ対応 */
+    @media (max-width: 768px) {
+      .order-form-container {
+        margin: 0 15px;
+        padding: 0 10px;
+      }
+
+      .order-form-card {
+        border-radius: {{ section.settings.mobile_border_radius }}px;
+      }
+
+      .order-form-header {
+        padding: 50px 30px 40px;
+      }
+
+      .order-form-title {
+        font-size: {{ section.settings.title_font_size_mobile }}px;
+      }
+
+      .order-form-title::before,
+      .order-form-title::after {
+        display: none;
+      }
+
+      .order-form-description {
+        font-size: {{ section.settings.description_font_size_mobile }}px;
+      }
+
+      .order-form {
+        padding: 50px 30px 60px;
+      }
+
+      .form-row.two-column,
+      .form-row.three-column {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .product-row {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 24px 20px;
+      }
+
+      .product-rows {
+        padding: 30px 20px;
+      }
+
+      .process-timeline {
+        flex-direction: column;
+        gap: 30px;
+        padding: 30px 20px;
+      }
+
+      .process-step {
+        max-width: none;
+        width: 100%;
+      }
+
+      .process-step:not(:last-child)::after {
+        display: none;
+      }
+
+      .process-circle {
+        width: 55px;
+        height: 55px;
+        font-size: 12px;
+      }
+
+      .process-label {
+        font-size: 13px;
+      }
+
+      .submit-button {
+        width: 100%;
+        min-width: auto;
+        padding: 22px 20px;
+      }
+
+      .additional-info,
+      .product-rows {
+        padding: 30px 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .order-form-header {
+        padding: 40px 20px 30px;
+      }
+
+      .order-form {
+        padding: 40px 20px 50px;
+      }
+
+      .form-section-title {
+        font-size: 18px;
+      }
+
+      .process-timeline {
+        margin: 40px 0 20px;
+      }
+    }
+
+    /* アニメーション */
+    {% if section.settings.enable_animations %}
+    .order-form-section {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-group {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.2s; }
+    .form-group:nth-child(3) { animation-delay: 0.3s; }
+    .form-group:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes slideInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    {% endif %}
+
+    /* 高コントラストモード */
+    {% if section.settings.high_contrast_mode %}
+    .order-form-section {
+      filter: contrast(1.3) brightness(1.1);
+    }
+    
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      box-shadow: 0 0 0 {{ section.settings.focus_ring_size }}px #8B4513;
+    }
+    {% endif %}
+  </style>
+{% endif %}
+
+<section class="order-form-section" id="order-form-{{ section.id }}" data-section-id="{{ section.id }}" role="main" aria-label="{{ section.settings.title }}">
+  <div class="order-form-container">
+    <div class="order-form-card">
+      <!-- ヘッダー部分 -->
+      <header class="order-form-header">
+        {% if section.settings.title != blank %}
+          <h1 class="order-form-title">{{ section.settings.title }}</h1>
+        {% endif %}
+        
+        {% if section.settings.description != blank %}
+          <div class="order-form-description">{{ section.settings.description }}</div>
+        {% endif %}
+
+        {% if section.settings.delivery_notice != blank %}
+          <div class="delivery-notice" role="note">{{ section.settings.delivery_notice }}</div>
+        {% endif %}
+
+        <!-- プロセスタイムライン -->
+        <div class="process-timeline" role="progressbar" aria-label="注文プロセス">
+          <div class="process-step">
+            <div class="process-circle" aria-label="見積段階">お見積</div>
+            <div class="process-label">3日程度</div>
+            <div class="process-sublabel">{{ section.settings.estimate_period }}</div>
+          </div>
+          <div class="process-step">
+            <div class="process-circle" aria-label="見積確認段階">お見積</div>
+            <div class="process-label">{{ section.settings.quote_label }}</div>
+            <div class="process-sublabel"></div>
+          </div>
+          <div class="process-step active">
+            <div class="process-circle" aria-label="申込段階（現在）" aria-current="step">お申込</div>
+            <div class="process-label">{{ section.settings.application_label }}</div>
+          </div>
+          <div class="process-step">
+            <div class="process-circle" aria-label="発送段階">発送</div>
+            <div class="process-label">{{ section.settings.shipping_label }}</div>
+            <div class="process-sublabel">{{ section.settings.shipping_period }}</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- フォーム本体 -->
+      <form class="order-form" action="{{ section.settings.form_action | default: '/contact#contact_form' }}" method="POST" id="order-form" novalidate>
+        {% if section.settings.form_action contains 'shopify' or section.settings.form_action == blank %}
+          <input type="hidden" name="form_type" value="contact">
+          <input type="hidden" name="utf8" value="✓">
+        {% endif %}
+
+        <!-- CSRF保護 -->
+        {% if shop.metafields.security.csrf_token %}
+          <input type="hidden" name="authenticity_token" value="{{ shop.metafields.security.csrf_token }}">
+        {% endif %}
+
+        <!-- スパム対策（ハニーポット） -->
+        <div style="position: absolute; left: -9999px;" aria-hidden="true">
+          <input type="text" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <!-- メッセージ表示エリア -->
+        <div id="form-message" class="form-message" role="alert" aria-live="polite"></div>
+
+        <!-- 基本情報セクション -->
+        <section class="form-section">
+          <h2 class="form-section-title">{{ section.settings.basic_info_title | default: 'お客様情報' }}</h2>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required" for="customer_name">{{ section.settings.name_label | default: 'お名前' }}</label>
+              <input type="text" id="customer_name" name="contact[name]" class="form-input" required 
+                     placeholder="{{ section.settings.name_placeholder | default: '山田 太郎' }}"
+                     aria-describedby="name-error">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="company_name">{{ section.settings.company_label | default: '会社名' }}</label>
+              <input type="text" id="company_name" name="contact[company]" class="form-input" 
+                     placeholder="{{ section.settings.company_placeholder | default: '株式会社サンプル' }}">
+            </div>
+          </div>
+
+          <div class="form-row two-column">
+            <div class="form-group">
+              <label class="form-label required" for="email">{{ section.settings.email_label | default: 'メールアドレス' }}</label>
+              <input type="email" id="email" name="contact[email]" class="form-input" required 
+                     placeholder="{{ section.settings.email_placeholder | default: 'example@company.com' }}"
+                     aria-describedby="email-error">
+            </div>
+            <div class="form-group">
+              <label class="form-label required" for="phone">{{ section.settings.phone_label | default: '電話番号' }}</label>
+              <input type="tel" id="phone" name="contact[phone]" class="form-input" required 
+                     placeholder="{{ section.settings.phone_placeholder | default: '03-0000-0000' }}"
+                     aria-describedby="phone-error">
+            </div>
+          </div>
+        </section>
+
+        <!-- 商品情報セクション -->
+        <section class="form-section">
+          <h2 class="form-section-title">{{ section.settings.product_info_title | default: 'ご希望商品情報' }}</h2>
+          <div class="product-rows">
+            {% for i in (1..3) %}
+              <div class="product-row">
+                <div class="form-group">
+                  <label class="form-label{% if i == 1 %} required{% endif %}" for="product_{{ i }}">
+                    {{ section.settings.product_label }} {{ i }}
+                  </label>
+                  {% if section.settings.enable_collection_selector %}
+                    <div class="collection-selector">
+                      <select id="collection_{{ i }}" name="contact[collection_{{ i }}]" class="form-select collection-select" data-product-input="product_{{ i }}">
+                        <option value="">{{ section.settings.collection_placeholder }}</option>
+                        {% for collection in collections %}
+                          {% if collection.products.size > 0 %}
+                            <option value="{{ collection.handle }}" data-collection-id="{{ collection.id }}">{{ collection.title }}</option>
+                          {% endif %}
+                        {% endfor %}
+                      </select>
+                      <input type="hidden" id="product_{{ i }}" name="contact[product_{{ i }}]"{% if i == 1 %} required{% endif %}>
+                      <div class="collection-products" id="products_{{ i }}"></div>
+                    </div>
+                  {% elsif section.settings.enable_product_dropdown %}
+                    <select id="product_{{ i }}" name="contact[product_{{ i }}]" class="form-select"{% if i == 1 %} required{% endif %}>
+                      <option value="">{{ section.settings.product_placeholder }}</option>
+                      {% assign product_options = section.settings.product_options | split: ',' %}
+                      {% for option in product_options %}
+                        {% assign trimmed_option = option | strip %}
+                        {% if trimmed_option != blank %}
+                          <option value="{{ trimmed_option }}">{{ trimmed_option }}</option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                  {% else %}
+                    <input type="text" id="product_{{ i }}" name="contact[product_{{ i }}]" class="form-input"
+                           {% if i == 1 %} required{% endif %} 
+                           placeholder="{{ section.settings.product_placeholder | default: '商品名を入力してください' }}">
+                  {% endif %}
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="quantity_{{ i }}">{{ section.settings.quantity_label | default: '個数' }}</label>
+                  <input type="number" id="quantity_{{ i }}" name="contact[quantity_{{ i }}]" class="form-input" min="1" placeholder="1">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="unit_{{ i }}">{{ section.settings.unit_label | default: '単位' }}</label>
+                  <input type="text" id="unit_{{ i }}" name="contact[unit_{{ i }}]" class="form-input" 
+                         placeholder="{{ section.settings.unit_placeholder | default: '個・箱・セット等' }}">
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <!-- その他の要望セクション -->
+        <section class="form-section additional-info">
+          <h2 class="form-section-title">{{ section.settings.additional_info_title | default: 'その他のご要望' }}</h2>
+          <div class="form-group">
+            <label class="form-label" for="additional_info">{{ section.settings.additional_info_label | default: 'その他のご要望・ご質問' }}</label>
+            <textarea id="additional_info" name="contact[message]" class="form-textarea" 
+                      placeholder="{{ section.settings.additional_info_placeholder | default: 'ご質問、ご要望、配送に関するご希望などがございましたら、お気軽にお書きください。' }}"></textarea>
+          </div>
+        </section>
+
+        <!-- 注意事項 -->
+        {% if section.settings.form_notice != blank %}
+          <div class="form-notice" role="note">{{ section.settings.form_notice }}</div>
+        {% endif %}
+
+        <!-- 送信ボタン -->
+        <div class="submit-section">
+          <button type="submit" class="submit-button" id="submit-btn" aria-describedby="submit-status">
+            <span class="button-text">{{ section.settings.submit_button_text | default: 'お問い合わせを送信' }}</span>
+          </button>
+          <div id="submit-status" class="sr-only" aria-live="polite"></div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% comment %} JavaScript読み込み {% endcomment %}
+{% if section.settings.load_external_js %}
+  {{ 'premium-order-form.js' | asset_url | script_tag }}
+{% else %}
+  <script>
+  (function() {
+    'use strict';
+    
+    const form = document.getElementById('order-form');
+    const submitButton = document.getElementById('submit-btn');
+    const messageDiv = document.getElementById('form-message');
+    const submitStatus = document.getElementById('submit-status');
+    
+    // 設定の取得
+    const settings = {
+      enableAutoSave: {{ section.settings.enable_auto_save | json }},
+      enableRealTimeValidation: {{ section.settings.enable_real_time_validation | json }},
+      enableAnimations: {{ section.settings.enable_animations | json }},
+      enableCollectionSelector: {{ section.settings.enable_collection_selector | json }}
+    };
+
+    // Shopify Collections API用のヘルパー関数
+    async function fetchCollectionProducts(collectionHandle) {
+      try {
+        const response = await fetch(`/collections/${collectionHandle}/products.json`);
+        const data = await response.json();
+        return data.products;
+      } catch (error) {
+        console.error('商品データの取得に失敗しました:', error);
+        return [];
+      }
+    }
+
+    // コレクション選択時の商品表示
+    function setupCollectionSelector() {
+      if (!settings.enableCollectionSelector) return;
+
+      const collectionSelects = document.querySelectorAll('.collection-select');
+      
+      collectionSelects.forEach(select => {
+        const productInputId = select.dataset.productInput;
+        const productInput = document.getElementById(productInputId);
+        const productsContainer = document.getElementById(`products_${productInputId.split('_')[1]}`);
+
+        select.addEventListener('change', async function() {
+          const collectionHandle = this.value;
+          
+          if (!collectionHandle) {
+            productsContainer.innerHTML = '';
+            productsContainer.classList.remove('show');
+            productInput.value = '';
+            return;
+          }
+
+          // ローディング表示
+          productsContainer.innerHTML = '<div class="product-option">商品を読み込み中...</div>';
+          productsContainer.classList.add('show');
+
+          try {
+            const products = await fetchCollectionProducts(collectionHandle);
+            
+            if (products.length === 0) {
+              productsContainer.innerHTML = '<div class="product-option">商品が見つかりませんでした</div>';
+              return;
+            }
+
+            // 商品リストを表示
+            productsContainer.innerHTML = products.map(product => 
+              `<div class="product-option" data-product-title="${product.title}" data-product-handle="${product.handle}">
+                ${product.title}
+              </div>`
+            ).join('');
+
+            // 商品選択イベントの設定
+            const productOptions = productsContainer.querySelectorAll('.product-option');
+            productOptions.forEach(option => {
+              option.addEventListener('click', function() {
+                const productTitle = this.dataset.productTitle;
+                productInput.value = productTitle;
+                productsContainer.classList.remove('show');
+                
+                // バリデーションエラーをクリア
+                if (productInput.classList.contains('error')) {
+                  productInput.classList.remove('error');
+                  hideFieldError(productInput);
+                }
+              });
+            });
+
+          } catch (error) {
+            productsContainer.innerHTML = '<div class="product-option">エラーが発生しました</div>';
+          }
+        });
+      });
+
+      // ドキュメントクリックで商品リストを閉じる
+      document.addEventListener('click', function(e) {
+        const collectionSelectors = document.querySelectorAll('.collection-selector');
+        collectionSelectors.forEach(selector => {
+          if (!selector.contains(e.target)) {
+            const productsContainer = selector.querySelector('.collection-products');
+            if (productsContainer) {
+              productsContainer.classList.remove('show');
+            }
+          }
+        });
+      });
+    }
+
+    // フォーム送信処理
+    form.addEventListener('submit', function(e) {
+      if (!validateForm()) {
+        e.preventDefault();
+        showMessage('必須項目を入力してください。', 'error');
+        smoothScrollToError();
+        return false;
+      }
+      
+      // 送信中の状態表示
+      submitButton.innerHTML = '<span class="button-text">送信中...</span>';
+      submitButton.disabled = true;
+      submitStatus.textContent = '送信中です...';
+      
+      // 実際のShopifyフォーム送信では以下は不要（自動処理される）
+      // 開発・テスト環境での動作確認用
+      if (window.location.hostname === 'localhost' || window.location.hostname.includes('ngrok')) {
+        e.preventDefault();
+        setTimeout(() => {
+          showMessage('お問い合わせを受け付けました。担当者よりご連絡いたします。', 'success');
+          if (settings.enableAutoSave) clearAutoSaveData();
+          resetForm();
+        }, 2000);
+      }
+    });
+
+    // メッセージ表示関数
+    function showMessage(text, type) {
+      messageDiv.textContent = text;
+      messageDiv.className = `form-message ${type}`;
+      messageDiv.style.display = 'block';
+      submitStatus.textContent = text;
+      
+      // 成功メッセージは自動で消す
+      if (type === 'success') {
+        setTimeout(() => {
+          messageDiv.style.display = 'none';
+          submitStatus.textContent = '';
+        }, 5000);
+      }
+      
+      // メッセージまでスクロール
+      messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // フォームリセット
+    function resetForm() {
+      form.reset();
+      submitButton.innerHTML = '<span class="button-text">{{ section.settings.submit_button_text | default: "お問い合わせを送信" }}</span>';
+      submitButton.disabled = false;
+      submitStatus.textContent = '';
+      
+      // エラー状態をクリア
+      const inputs = form.querySelectorAll('.form-input, .form-textarea, .form-select');
+      inputs.forEach(input => {
+        input.classList.remove('error');
+        hideFieldError(input);
+      });
+      
+      // 商品選択リストを閉じる
+      const productsContainers = form.querySelectorAll('.collection-products');
+      productsContainers.forEach(container => {
+        container.classList.remove('show');
+        container.innerHTML = '';
+      });
+      
+      updateProgress();
+    }
+
+    // バリデーション関数
+    function validateForm() {
+      const requiredFields = form.querySelectorAll('[required]');
+      let isValid = true;
+      
+      requiredFields.forEach(field => {
+        if (!validateField(field)) {
+          isValid = false;
+        }
+      });
+      
+      return isValid;
+    }
+
+    // 個別フィールドバリデーション
+    function validateField(field) {
+      let isValid = true;
+      
+      if (field.hasAttribute('required') && !field.value.trim()) {
+        field.classList.add('error');
+        showFieldError(field, '必須項目です');
+        isValid = false;
+      } else if (field.type === 'email' && field.value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(field.value)) {
+          field.classList.add('error');
+          showFieldError(field, '正しいメールアドレスを入力してください');
+          isValid = false;
+        }
+      } else if (field.type === 'tel' && field.value) {
+        const phoneRegex = /^[\d\-\(\)\+\s]+$/;
+        if (!phoneRegex.test(field.value)) {
+          field.classList.add('error');
+          showFieldError(field, '正しい電話番号を入力してください');
+          isValid = false;
+        }
+      }
+      
+      if (isValid) {
+        field.classList.remove('error');
+        hideFieldError(field);
+      }
+      
+      return isValid;
+    }
+
+    // フィールドエラー表示
+    function showFieldError(field, message) {
+      hideFieldError(field);
+      
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'field-error';
+      errorDiv.textContent = message;
+      errorDiv.setAttribute('role', 'alert');
+      errorDiv.style.cssText = `
+        color: #D2691E;
+        font-size: 12px;
+        margin-top: 6px;
+        font-weight: 500;
+      `;
+      
+      field.parentNode.appendChild(errorDiv);
+    }
+
+    // フィールドエラー非表示
+    function hideFieldError(field) {
+      const existingError = field.parentNode.querySelector('.field-error');
+      if (existingError) {
+        existingError.remove();
+      }
+    }
+
+    // スムーズスクロール機能
+    function smoothScrollToError() {
+      const firstError = form.querySelector('.form-input.error, .form-textarea.error, .form-select.error');
+      if (firstError) {
+        firstError.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+        setTimeout(() => firstError.focus(), 500);
+      }
+    }
+
+    // プログレス表示
+    function updateProgress() {
+      const totalFields = form.querySelectorAll('[required]').length;
+      const filledFields = Array.from(form.querySelectorAll('[required]')).filter(field => field.value.trim()).length;
+      const progress = Math.round((filledFields / totalFields) * 100);
+      
+      // プログレスバーがある場合の更新
+      const progressBar = document.querySelector('.form-progress-bar');
+      if (progressBar) {
+        progressBar.style.width = `${progress}%`;
+        progressBar.setAttribute('aria-valuenow', progress);
+      }
+    }
+
+    // 次の入力フィールドを取得
+    function getNextInput(currentInput) {
+      const inputs = Array.from(form.querySelectorAll('.form-input, .form-textarea, .form-select'));
+      const currentIndex = inputs.indexOf(currentInput);
+      return inputs[currentIndex + 1] || null;
+    }
+
+    // 自動保存データクリア
+    function clearAutoSaveData() {
+      if (!settings.enableAutoSave) return;
+      
+      const inputs = form.querySelectorAll('.form-input, .form-textarea, .form-select');
+      inputs.forEach(input => {
+        localStorage.removeItem(`form_${input.name}`);
+      });
+    }
+
+    // リアルタイムバリデーションとその他のイベントリスナー設定
+    const inputs = form.querySelectorAll('.form-input, .form-textarea, .form-select');
+    inputs.forEach(input => {
+      // 自動保存の復元
+      if (settings.enableAutoSave) {
+        const savedValue = localStorage.getItem(`form_${input.name}`);
+        if (savedValue && input.type !== 'email') {
+          input.value = savedValue;
+        }
+      }
+
+      // フォーカスアウト時のバリデーション
+      if (settings.enableRealTimeValidation) {
+        input.addEventListener('blur', function() {
+          validateField(this);
+        });
+      }
+
+      // 入力時の処理
+      input.addEventListener('input', function() {
+        // エラー状態クリア
+        if (this.classList.contains('error') && this.value.trim()) {
+          this.classList.remove('error');
+          hideFieldError(this);
+        }
+        
+        // リアルタイムでメール形式チェック
+        if (this.type === 'email' && this.value && settings.enableRealTimeValidation) {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (emailRegex.test(this.value)) {
+            this.classList.remove('error');
+            hideFieldError(this);
+          }
+        }
+
+        // 自動保存
+        if (settings.enableAutoSave && this.type !== 'email') {
+          localStorage.setItem(`form_${this.name}`, this.value);
+        }
+
+        // プログレス更新
+        updateProgress();
+      });
+
+      // エンターキーでの次フィールド移動
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && this.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          const nextInput = getNextInput(this);
+          if (nextInput) {
+            nextInput.focus();
+          } else {
+            // 最後のフィールドの場合は送信ボタンにフォーカス
+            submitButton.focus();
+          }
+        }
+      });
+    });
+
+    // 数値フィールドの処理
+    const numberInputs = form.querySelectorAll('input[type="number"]');
+    numberInputs.forEach(input => {
+      input.addEventListener('input', function() {
+        if (this.value < 0) this.value = 0;
+        if (this.value > 9999) this.value = 9999;
+      });
+    });
+
+    // 初期化
+    updateProgress();
+    setupCollectionSelector();
+
+    // アクセシビリティ: フォームにaria属性を設定
+    form.setAttribute('aria-label', '注文確認フォーム');
+
+    // スクロールアニメーション（IntersectionObserver使用）
+    if (settings.enableAnimations && 'IntersectionObserver' in window) {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.animationDelay = '0s';
+            entry.target.style.animationPlayState = 'running';
+          }
+        });
+      }, observerOptions);
+
+      observer.observe(document.querySelector('.order-form-section'));
+    }
+
+  })();
+  </script>
+{% endif %}
+
+<!-- スキーマ設定 -->
+<!-- スキーマ設定 -->
+{% schema %}
+{
+ "name": "高品質注文確認フォーム",
+ "tag": "section",
+ "class": "premium-order-form-wrapper",
+ "settings": [
+   {
+     "type": "header",
+     "content": "🎯 基本設定"
+   },
+   {
+     "type": "text",
+     "id": "title",
+     "label": "セクションタイトル",
+     "default": "まとまったご注文について"
+   },
+   {
+     "type": "richtext",
+     "id": "description",
+     "label": "説明文",
+     "default": "<p>アイテムを組み合わせて10個を超えるまとまった注文をご希望の場合は、送料を特別料金にてご案内致します。</p><p>価格の改定は当承華曜日まで、発送日から10日目までに下記フォームよりお気軽にお問合せください。</p>"
+   },
+   {
+     "type": "text",
+     "id": "delivery_notice",
+     "label": "配送に関する注意事項",
+     "default": "3日程度で担当者よりご返答させていただきます"
+   },
+   {
+     "type": "header",
+     "content": "🔄 プロセス設定"
+   },
+   {
+     "type": "text",
+     "id": "estimate_period",
+     "label": "見積期間",
+     "default": "通常営業日"
+   },
+   {
+     "type": "text",
+     "id": "quote_label",
+     "label": "見積ラベル",
+     "default": "お見積確認"
+   },
+   {
+     "type": "text",
+     "id": "application_label",
+     "label": "申込ラベル",
+     "default": "お申込み"
+   },
+   {
+     "type": "text",
+     "id": "current_step_note",
+     "label": "現在のステップ注釈",
+     "default": "test",
+     "info": "空白にすると非表示になります"
+   },
+   {
+     "type": "text",
+     "id": "shipping_label",
+     "label": "発送ラベル",
+     "default": "商品発送"
+   },
+   {
+     "type": "text",
+     "id": "shipping_period",
+     "label": "発送期間",
+     "default": "営業日以内"
+   },
+   {
+     "type": "header",
+     "content": "📝 フォーム設定"
+   },
+   {
+     "type": "text",
+     "id": "form_action",
+     "label": "フォーム送信先URL",
+     "default": "/contact#contact_form",
+     "info": "Shopifyの標準コンタクトフォーム処理を使用する場合は '/contact#contact_form' を入力"
+   },
+   {
+     "type": "text",
+     "id": "basic_info_title",
+     "label": "基本情報セクションタイトル",
+     "default": "お客様情報"
+   },
+   {
+     "type": "text",
+     "id": "product_info_title",
+     "label": "商品情報セクションタイトル",
+     "default": "ご希望商品情報"
+   },
+   {
+     "type": "text",
+     "id": "additional_info_title",
+     "label": "追加情報セクションタイトル",
+     "default": "その他のご要望"
+   },
+   {
+     "type": "header",
+     "content": "🏷️ フィールドラベル設定"
+   },
+   {
+     "type": "text",
+     "id": "name_label",
+     "label": "お名前ラベル",
+     "default": "お名前"
+   },
+   {
+     "type": "text",
+     "id": "name_placeholder",
+     "label": "お名前プレースホルダー",
+     "default": "山田 太郎"
+   },
+   {
+     "type": "text",
+     "id": "company_label",
+     "label": "会社名ラベル",
+     "default": "会社名"
+   },
+   {
+     "type": "text",
+     "id": "company_placeholder",
+     "label": "会社名プレースホルダー",
+     "default": "株式会社サンプル"
+   },
+   {
+     "type": "text",
+     "id": "email_label",
+     "label": "メールアドレスラベル",
+     "default": "メールアドレス"
+   },
+   {
+     "type": "text",
+     "id": "email_placeholder",
+     "label": "メールアドレスプレースホルダー",
+     "default": "example@company.com"
+   },
+   {
+     "type": "text",
+     "id": "phone_label",
+     "label": "電話番号ラベル",
+     "default": "電話番号"
+   },
+   {
+     "type": "text",
+     "id": "phone_placeholder",
+     "label": "電話番号プレースホルダー",
+     "default": "03-0000-0000"
+   },
+   {
+     "type": "text",
+     "id": "product_label",
+     "label": "商品名ラベル",
+     "default": "ご希望の商品"
+   },
+   {
+     "type": "checkbox",
+     "id": "enable_product_dropdown",
+     "label": "商品選択をプルダウンメニューにする",
+     "default": false,
+     "info": "有効にすると商品名の入力欄がプルダウン選択になります"
+   },
+   {
+     "type": "textarea",
+     "id": "product_options",
+     "label": "プルダウン商品選択肢",
+     "default": "商品A, 商品B, 商品C, 商品D, 商品E",
+     "info": "カンマ区切りで商品名を入力してください（例: 商品A, 商品B, 商品C）"
+   },
+   {
+     "type": "text",
+     "id": "product_placeholder",
+     "label": "商品名プレースホルダー/プルダウン初期表示",
+     "default": "商品を選択してください",
+     "info": "入力欄の場合はプレースホルダー、プルダウンの場合は初期選択肢として表示されます"
+   },
+   {
+     "type": "text",
+     "id": "quantity_label",
+     "label": "個数ラベル",
+     "default": "個数"
+   },
+   {
+     "type": "text",
+     "id": "unit_label",
+     "label": "単位ラベル",
+     "default": "単位"
+   },
+   {
+     "type": "text",
+     "id": "unit_placeholder",
+     "label": "単位プレースホルダー",
+     "default": "個・箱・セット等"
+   },
+   {
+     "type": "text",
+     "id": "additional_info_label",
+     "label": "その他要望ラベル",
+     "default": "その他のご要望・ご質問"
+   },
+   {
+     "type": "textarea",
+     "id": "additional_info_placeholder",
+     "label": "その他要望プレースホルダー",
+     "default": "ご質問、ご要望、配送に関するご希望などがございましたら、お気軽にお書きください。"
+   },
+   {
+     "type": "text",
+     "id": "submit_button_text",
+     "label": "送信ボタンテキスト",
+     "default": "お問い合わせを送信"
+   },
+   {
+     "type": "richtext",
+     "id": "form_notice",
+     "label": "フォーム注意事項",
+     "default": "<p>確認後にお客様担当者様あてメールにてお返事いたします。お客様情報は、お問い合わせ対応に利用させていただきます。<br>その他の用途につきましては、弊社プライバシーポリシーをご確認ください。</p>"
+   },
+   {
+     "type": "header",
+     "content": "🎨 色彩・グラデーション設定"
+   },
+   {
+     "type": "color",
+     "id": "background_gradient_start",
+     "label": "セクション背景グラデーション開始色",
+     "default": "#f8fafc"
+   },
+   {
+     "type": "color",
+     "id": "background_gradient_end",
+     "label": "セクション背景グラデーション終了色",
+     "default": "#e2e8f0"
+   },
+   {
+     "type": "color",
+     "id": "form_background_color",
+     "label": "フォーム背景色",
+     "default": "#ffffff"
+   },
+   {
+     "type": "color",
+     "id": "header_bg_start",
+     "label": "ヘッダー背景グラデーション開始色",
+     "default": "#ffffff"
+   },
+   {
+     "type": "color",
+     "id": "header_bg_end",
+     "label": "ヘッダー背景グラデーション終了色",
+     "default": "#f8fafc"
+   },
+   {
+     "type": "color",
+     "id": "primary_color",
+     "label": "プライマリーカラー",
+     "default": "#ef4444"
+   },
+   {
+     "type": "color",
+     "id": "primary_gradient_end",
+     "label": "プライマリーグラデーション終了色",
+     "default": "#dc2626"
+   },
+   {
+     "type": "color",
+     "id": "accent_color",
+     "label": "アクセントカラー",
+     "default": "#64748b"
+   },
+   {
+     "type": "color",
+     "id": "accent_gradient_end",
+     "label": "アクセントグラデーション終了色",
+     "default": "#475569"
+   },
+   {
+     "type": "color",
+     "id": "title_color",
+     "label": "タイトル色",
+     "default": "#1e293b"
+   },
+   {
+     "type": "color",
+     "id": "title_gradient_end",
+     "label": "タイトルグラデーション終了色",
+     "default": "#334155"
+   },
+   {
+     "type": "color",
+     "id": "text_color",
+     "label": "テキスト色",
+     "default": "#475569"
+   },
+   {
+     "type": "color",
+     "id": "label_color",
+     "label": "ラベル色",
+     "default": "#374151"
+   },
+   {
+     "type": "color",
+     "id": "section_title_color",
+     "label": "セクションタイトル色",
+     "default": "#1f2937"
+   },
+   {
+     "type": "color",
+     "id": "notice_color",
+     "label": "注意事項テキスト色",
+     "default": "#6b7280"
+   },
+   {
+     "type": "header",
+     "content": "🔘 ボタンデザイン設定"
+   },
+   {
+     "type": "color",
+     "id": "button_background",
+     "label": "ボタン背景グラデーション開始色",
+     "default": "#3b82f6"
+   },
+   {
+     "type": "color",
+     "id": "button_gradient_end",
+     "label": "ボタン背景グラデーション終了色",
+     "default": "#1d4ed8"
+   },
+   {
+     "type": "color",
+     "id": "button_hover_background",
+     "label": "ボタンホバーグラデーション開始色",
+     "default": "#2563eb"
+   },
+   {
+     "type": "color",
+     "id": "button_hover_gradient_end",
+     "label": "ボタンホバーグラデーション終了色",
+     "default": "#1e40af"
+   },
+   {
+     "type": "color",
+     "id": "button_text_color",
+     "label": "ボタンテキスト色",
+     "default": "#ffffff"
+   },
+   {
+     "type": "range",
+     "id": "button_font_size",
+     "label": "ボタンフォントサイズ",
+     "min": 14,
+     "max": 20,
+     "step": 1,
+     "default": 16,
+     "unit": "px"
+   },
+   {
+     "type": "range",
+     "id": "button_border_radius",
+     "label": "ボタン角丸",
+     "min": 6,
+     "max": 30,
+     "step": 2,
+     "default": 12,
+     "unit": "px"
+   },
+   {
+     "type": "header",
+     "content": "📱 フォントサイズ設定"
+   },
+   {
+     "type": "range",
+     "id": "title_font_size_desktop",
+     "label": "タイトルフォントサイズ（デスクトップ）",
+     "min": 24,
+     "max": 48,
+     "step": 2,
+     "default": 36,
+     "unit": "px"
+   },
+   {
+     "type": "range",
+     "id": "title_font_size_mobile",
+     "label": "タイトルフォントサイズ（モバイル）",
+     "min": 20,
+     "max": 32,
+     "step": 2,
+     "default": 28,
+     "unit": "px"
+   },
+   {
+     "type": "range",
+     "id": "description_font_size_desktop",
+     "label": "説明フォントサイズ（デスクトップ）",
+     "min": 14,
+     "max": 20,
+     "step": 1,
+     "default": 16,
+     "unit": "px"
+   },
+   {
+     "type": "range",
+     "id": "description_font_size_mobile",
+     "label": "説明フォントサイズ（モバイル）",
+     "min": 13,
+     "max": 18,
+     "step": 1,
+     "default": 15,
+     "unit": "px"
+   },
+   {
+     "type": "range",
+     "id": "label_font_size",
+     "label": "ラベルフォントサイズ",
+     "min": 12,
+     "max": 16,
+     "step": 1,
+     "default": 14,
+     "unit": "px"
+   },
+   {
+     "type": "range",
+     "id": "input_font_size",
+     "label": "入力フィールドフォントサイズ",
+     "min": 13,
+     "max": 18,
+     "step": 1,
+     "default": 15,
+     "unit": "px"
+   },
+   {
+     "type": "header",
+     "content": "📐 レイアウト設定"
+   },
+   {
+     "type": "range",
+     "id": "container_width",
+     "label": "コンテナ最大幅",
+     "min": 700,
+     "max": 1200,
+     "step": 50,
+     "default": 900,
+     "unit": "px"
+   },
+   {
+     "type": "range",
+     "id": "padding_top",
+     "label": "セクション上部余白",
+     "min": 40,
+     "max": 120,
+     "step": 10,
+     "default": 80,
+     "unit": "px"
+   },
+   {
+     "type": "range",
+     "id": "padding_bottom",
+     "label": "セクション下部余白",
+     "min": 40,
+     "max": 120,
+     "step": 10,
+     "default": 80,
+     "unit": "px"
+   },
+   {
+     "type": "range",
+     "id": "border_radius",
+     "label": "フォーム角丸（デスクトップ）",
+     "min": 8,
+     "max": 32,
+     "step": 2,
+     "default": 20,
+     "unit": "px"
+   },
+   {
+     "type": "range",
+     "id": "mobile_border_radius",
+     "label": "フォーム角丸（モバイル）",
+     "min": 8,
+     "max": 24,
+     "step": 2,
+     "default": 16,
+     "unit": "px"
+   },
+   {
+     "type": "range",
+     "id": "input_border_radius",
+     "label": "入力フィールド角丸",
+     "min": 6,
+     "max": 16,
+     "step": 1,
+     "default": 10,
+     "unit": "px"
+   },
+   {
+     "type": "header",
+     "content": "⚡ 機能設定"
+   },
+   {
+     "type": "checkbox",
+     "id": "enable_animations",
+     "label": "アニメーション効果を有効にする",
+     "default": true,
+     "info": "パフォーマンスを優先する場合は無効にしてください"
+   },
+   {
+     "type": "checkbox",
+     "id": "enable_auto_save",
+     "label": "フォーム入力の自動保存を有効にする",
+     "default": true,
+     "info": "ユーザーの入力内容をローカルストレージに一時保存します（メールアドレスは除く）"
+   },
+   {
+     "type": "checkbox",
+     "id": "enable_real_time_validation",
+     "label": "リアルタイムバリデーションを有効にする",
+     "default": true,
+     "info": "入力中にリアルタイムでエラーチェックを行います"
+   },
+   {
+     "type": "header",
+     "content": "📂 アセット管理"
+   },
+   {
+     "type": "checkbox",
+     "id": "load_external_css",
+     "label": "外部CSSファイルを使用する",
+     "default": false,
+     "info": "assets/premium-order-form.css ファイルがある場合に有効にしてください"
+   },
+   {
+     "type": "checkbox",
+     "id": "load_external_js",
+     "label": "外部JavaScriptファイルを使用する",
+     "default": false,
+     "info": "assets/premium-order-form.js ファイルがある場合に有効にしてください"
+   },
+   {
+     "type": "header",
+     "content": "📋 アクセシビリティ設定"
+   },
+   {
+     "type": "checkbox",
+     "id": "high_contrast_mode",
+     "label": "高コントラストモードを有効にする",
+     "default": false,
+     "info": "視覚的なアクセシビリティを向上させます"
+   },
+   {
+     "type": "checkbox",
+     "id": "enable_keyboard_navigation",
+     "label": "キーボードナビゲーション強化を有効にする",
+     "default": true,
+     "info": "Enterキーでの次フィールド移動などを有効にします"
+   },
+   {
+     "type": "range",
+     "id": "focus_ring_size",
+     "label": "フォーカスリングサイズ",
+     "min": 2,
+     "max": 6,
+     "step": 1,
+     "default": 3,
+     "unit": "px",
+     "info": "高コントラストモード時のフォーカス表示サイズ"
+   },
+   {
+     "type": "header",
+     "content": "🔧 開発者向け設定"
+   },
+   {
+     "type": "text",
+     "id": "custom_css_classes",
+     "label": "カスタムCSSクラス",
+     "info": "追加のCSSクラスを指定（スペース区切り）"
+   },
+   {
+     "type": "textarea",
+     "id": "custom_attributes",
+     "label": "カスタム属性",
+     "info": "フォーム要素に追加する属性（例: data-analytics='true'）"
+   },
+   {
+     "type": "text",
+     "id": "analytics_event_name",
+     "label": "アナリティクスイベント名",
+     "default": "form_submit_order_inquiry",
+     "info": "Google Analytics等で使用するイベント名"
+   }
+ ],
+ "presets": [
+   {
+     "name": "高品質注文確認フォーム",
+     "category": "プレミアムフォーム",
+     "settings": {
+       "title": "まとまったご注文について",
+       "enable_animations": true,
+       "enable_auto_save": true,
+       "enable_real_time_validation": true,
+       "enable_keyboard_navigation": true
+     }
+   },
+   {
+     "name": "シンプル注文フォーム",
+     "category": "プレミアムフォーム",
+     "settings": {
+       "title": "商品お問い合わせ",
+       "enable_animations": false,
+       "enable_auto_save": false,
+       "enable_real_time_validation": true,
+       "background_gradient_start": "#ffffff",
+       "background_gradient_end": "#ffffff",
+       "border_radius": 8,
+       "mobile_border_radius": 8
+     }
+   },
+   {
+     "name": "アクセシブル注文フォーム",
+     "category": "プレミアムフォーム",
+     "settings": {
+       "title": "ご注文・お見積もり依頼",
+       "high_contrast_mode": true,
+       "focus_ring_size": 4,
+       "enable_animations": false,
+       "enable_keyboard_navigation": true,
+       "button_border_radius": 6,
+       "input_border_radius": 6
+     }
+   }
+ ],
+ "enabled_on": {
+   "templates": ["*"],
+   "groups": ["header", "footer", "aside"]
+ }
+}
+{% endschema %}

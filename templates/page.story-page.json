@@ -1,0 +1,232 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "904a1b62-89ad-4035-9ed0-abecc19555bb": {
+      "type": "rich-text",
+      "blocks": {
+        "template--21359471362331__904a1b62-89ad-4035-9ed0-abecc19555bb-heading-1": {
+          "type": "heading",
+          "settings": {
+            "heading": "Coming Soon",
+            "heading_size": "h1"
+          }
+        },
+        "template--21359471362331__904a1b62-89ad-4035-9ed0-abecc19555bb-text-1": {
+          "type": "text",
+          "settings": {
+            "text": "<p>現在準備中です</p>"
+          }
+        }
+      },
+      "block_order": [
+        "template--21359471362331__904a1b62-89ad-4035-9ed0-abecc19555bb-heading-1",
+        "template--21359471362331__904a1b62-89ad-4035-9ed0-abecc19555bb-text-1"
+      ],
+      "disabled": true,
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 100,
+        "padding_bottom": 100
+      }
+    },
+    "e9f8568d-e1dd-4142-9d1f-83ed760a846c": {
+      "type": "rich-text",
+      "blocks": {
+        "template--21584816865563__e9f8568d-e1dd-4142-9d1f-83ed760a846c-heading-1": {
+          "type": "heading",
+          "settings": {
+            "heading": "只今イベントはございません。",
+            "heading_size": "h2"
+          }
+        }
+      },
+      "block_order": [
+        "template--21584816865563__e9f8568d-e1dd-4142-9d1f-83ed760a846c-heading-1"
+      ],
+      "disabled": true,
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
+    },
+    "product_information_section_RJQPip": {
+      "type": "product-information-section",
+      "blocks": {
+        "spec_item_NfVDMD": {
+          "type": "spec_item",
+          "disabled": true,
+          "settings": {
+            "spec_label": "Weight",
+            "spec_value": "100g"
+          }
+        }
+      },
+      "block_order": [
+        "spec_item_NfVDMD"
+      ],
+      "disabled": true,
+      "settings": {
+        "hero_image": "shopify://shop_images/EC_image_ohagi_kinako.jpg",
+        "hero_title": "",
+        "hero_subtitle": "",
+        "hero_description": "",
+        "hero_text_color": "#ffffff",
+        "overlay_opacity": 0.3,
+        "hero_title_size": 48,
+        "hero_subtitle_size": 24,
+        "hero_description_size": 16,
+        "hero_title_size_mobile": 32,
+        "hero_subtitle_size_mobile": 18,
+        "hero_description_size_mobile": 14,
+        "product_image": "shopify://shop_images/IMG_9697_retouch.jpg",
+        "product_title": "Premium Tea Blend",
+        "product_description": "<p>Discover our carefully crafted citrus blend tea, made with premium ingredients and traditional techniques.</p>",
+        "product_title_size": 32,
+        "product_description_size": 16,
+        "spec_label_size": 14,
+        "spec_value_size": 14,
+        "product_title_size_mobile": 24,
+        "product_description_size_mobile": 14,
+        "cta_text": "商品ページはこちら",
+        "cta_url": "#",
+        "cta_bg_color": "#000000",
+        "cta_text_color": "#ffffff",
+        "cta_font_size": 16,
+        "cta_font_size_mobile": 14,
+        "section_bg_color": "#ffffff",
+        "product_info_bg_color": "#f8f8f8",
+        "product_title_color": "#333333",
+        "product_text_color": "#666666",
+        "section_padding_top": 0,
+        "section_padding_bottom": 0
+      }
+    },
+    "media_gallery_grid_section_r3tAph": {
+      "type": "media-gallery-grid-section",
+      "blocks": {
+        "media_item_NKicTW": {
+          "type": "media_item",
+          "settings": {
+            "item_size": "large",
+            "video_autoplay": false,
+            "video_loop": true,
+            "video_muted": true,
+            "video_controls": false,
+            "video_overlay_text": "",
+            "overlay_text": "Gallery Item 1",
+            "overlay_link": "",
+            "link_target": false
+          }
+        },
+        "media_item_AyzeWP": {
+          "type": "media_item",
+          "settings": {
+            "media_file": "shopify://shop_images/EC_image_ohagi_kinako_f9f8439b-ca8d-4341-956c-51d4fe8f83ca.jpg",
+            "item_size": "medium",
+            "video_autoplay": false,
+            "video_loop": true,
+            "video_muted": true,
+            "video_controls": false,
+            "video_overlay_text": "",
+            "overlay_text": "Gallery Item 3",
+            "overlay_link": "#",
+            "link_target": false
+          }
+        },
+        "media_item_WMeVMp": {
+          "type": "media_item",
+          "settings": {
+            "item_size": "small",
+            "video_autoplay": false,
+            "video_loop": true,
+            "video_muted": true,
+            "video_controls": false,
+            "video_overlay_text": "",
+            "overlay_text": "Gallery Item 4",
+            "overlay_link": "",
+            "link_target": false
+          }
+        },
+        "media_item_7DdffY": {
+          "type": "media_item",
+          "settings": {
+            "item_size": "small",
+            "video_autoplay": false,
+            "video_loop": true,
+            "video_muted": true,
+            "video_controls": false,
+            "video_overlay_text": "",
+            "overlay_text": "Gallery Item 6",
+            "overlay_link": "",
+            "link_target": false
+          }
+        }
+      },
+      "block_order": [
+        "media_item_NKicTW",
+        "media_item_AyzeWP",
+        "media_item_WMeVMp",
+        "media_item_7DdffY"
+      ],
+      "settings": {
+        "section_title": "Gallery",
+        "section_description": "",
+        "grid_layout": "equal",
+        "container_width": 1200,
+        "title_font_size": 32,
+        "title_font_size_mobile": 24,
+        "description_font_size": 16,
+        "description_font_size_mobile": 14,
+        "title_alignment": "center",
+        "description_alignment": "center",
+        "grid_gap": 16,
+        "grid_gap_mobile": 12,
+        "pinterest_columns": 4,
+        "pinterest_columns_mobile": 2,
+        "border_radius": 8,
+        "overlay_opacity": 0.4,
+        "overlay_text_color": "#ffffff",
+        "overlay_font_size": 16,
+        "overlay_font_size_mobile": 14,
+        "section_bg_color": "#ffffff",
+        "item_bg_color": "#f5f5f5",
+        "title_color": "#333333",
+        "description_color": "#666666",
+        "section_padding_top": 60,
+        "section_padding_bottom": 60,
+        "section_padding_top_mobile": 40,
+        "section_padding_bottom_mobile": 40
+      }
+    }
+  },
+  "order": [
+    "main",
+    "904a1b62-89ad-4035-9ed0-abecc19555bb",
+    "e9f8568d-e1dd-4142-9d1f-83ed760a846c",
+    "product_information_section_RJQPip",
+    "media_gallery_grid_section_r3tAph"
+  ]
+}

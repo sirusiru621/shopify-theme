@@ -1,0 +1,818 @@
+<!-- Artisanal Hero Section - Shopify Online Store 2.0 -->
+<section 
+  class="artisanal-hero" 
+  data-section-id="{{ section.id }}"
+  style="
+    --hero-padding-top: {{ section.settings.padding_top_desktop }}px;
+    --hero-padding-bottom: {{ section.settings.padding_bottom_desktop }}px;
+    --hero-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --hero-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --hero-overlay-opacity: {{ section.settings.overlay_opacity }}%;
+    --hero-text-color: {{ section.settings.text_color }};
+    --hero-accent-color: {{ section.settings.accent_color }};
+    --hero-height-desktop: {{ section.settings.hero_height_desktop }}vh;
+    --hero-height-mobile: {{ section.settings.hero_height_mobile }}vh;
+    --jp-heading-size-desktop: {{ section.settings.jp_heading_size_desktop }}px;
+    --jp-heading-size-mobile: {{ section.settings.jp_heading_size_mobile }}px;
+    --en-heading-size-desktop: {{ section.settings.en_heading_size_desktop }}px;
+    --en-heading-size-mobile: {{ section.settings.en_heading_size_mobile }}px;
+    --description-size-desktop: {{ section.settings.description_size_desktop }}px;
+    --description-size-mobile: {{ section.settings.description_size_mobile }}px;
+    --jp-heading-color: {{ section.settings.jp_heading_color }};
+    --en-heading-color: {{ section.settings.en_heading_color }};
+    --description-color: {{ section.settings.description_color }};
+  "
+>
+  <!-- Background Container -->
+  <div class="artisanal-hero__background">
+    {% if section.settings.hero_image %}
+      <picture class="artisanal-hero__image-wrapper">
+        <!-- Mobile Image -->
+        <source 
+          media="(max-width: 767px)" 
+          srcset="
+            {{ section.settings.hero_image | image_url: width: 375 }} 375w,
+            {{ section.settings.hero_image | image_url: width: 750 }} 750w
+          "
+          sizes="100vw"
+        >
+        
+        <!-- Desktop Image -->
+        <source 
+          media="(min-width: 768px)" 
+          srcset="
+            {{ section.settings.hero_image | image_url: width: 768 }} 768w,
+            {{ section.settings.hero_image | image_url: width: 1280 }} 1280w,
+            {{ section.settings.hero_image | image_url: width: 1920 }} 1920w,
+            {{ section.settings.hero_image | image_url: width: 2560 }} 2560w
+          "
+          sizes="100vw"
+        >
+        
+        <img 
+          src="{{ section.settings.hero_image | image_url: width: 1280 }}"
+          alt="{{ section.settings.hero_image.alt | default: section.settings.heading }}"
+          class="artisanal-hero__image"
+          loading="eager"
+          fetchpriority="high"
+          width="{{ section.settings.hero_image.width }}"
+          height="{{ section.settings.hero_image.height }}"
+        >
+      </picture>
+    {% endif %}
+    
+    <!-- Overlay -->
+    {% if section.settings.show_overlay %}
+      <div class="artisanal-hero__overlay" aria-hidden="true"></div>
+    {% endif %}
+  </div>
+
+  <!-- Content Container -->
+  <div class="artisanal-hero__container">
+    <div class="artisanal-hero__content" data-aos="fade-up">
+      
+      <!-- Main Heading (Japanese Text) -->
+      {% if section.settings.heading_jp %}
+        <h1 class="artisanal-hero__heading-jp">
+          {{ section.settings.heading_jp }}
+        </h1>
+      {% endif %}
+      <!-- Decorative Line -->
+      {% if section.settings.show_decorative_line %}
+        <div class="artisanal-hero__decorative-line" aria-hidden="true">
+          <span class="artisanal-hero__line-accent"></span>
+        </div>
+      {% endif %}
+
+      <!-- English Subtitle -->
+      {% if section.settings.heading_en %}
+        <h2 class="artisanal-hero__heading-en">
+          {{ section.settings.heading_en }}
+        </h2>
+      {% endif %}
+
+
+      <!-- Description Text -->
+      {% if section.settings.description %}
+        <div class="artisanal-hero__description">
+          {{ section.settings.description }}
+        </div>
+      {% endif %}
+
+      <!-- CTA Button -->
+      {% if section.settings.cta_text and section.settings.cta_url %}
+        <div class="artisanal-hero__cta">
+          <a 
+            href="{{ section.settings.cta_url }}" 
+            class="artisanal-hero__button"
+            {% if section.settings.cta_url contains 'http' %}target="_blank" rel="noopener noreferrer"{% endif %}
+          >
+            {{ section.settings.cta_text }}
+          </a>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+
+<style>
+/* ========================================
+   Artisanal Hero Section Styles
+======================================== */
+
+.artisanal-hero {
+  position: relative;
+  min-height: var(--hero-height-desktop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: var(--hero-padding-top) 0 var(--hero-padding-bottom);
+}
+
+/* Background & Image Styles */
+.artisanal-hero__background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.artisanal-hero__image-wrapper {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.artisanal-hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.artisanal-hero__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, calc(var(--hero-overlay-opacity) / 100));
+  z-index: 2;
+}
+
+/* Content Container */
+.artisanal-hero__container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.artisanal-hero__content {
+  text-align: center;
+  color: var(--hero-text-color);
+}
+
+/* Typography Styles */
+.artisanal-hero__heading-jp {
+  font-size: var(--jp-heading-size-desktop);
+  font-weight: 300;
+  line-height: 1.4;
+  letter-spacing: 0.1em;
+  margin: 0 0 1rem;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  display: inline-block;
+  margin-bottom: 0rem;
+  color: var(--jp-heading-color);
+}
+
+.artisanal-hero__heading-en {
+  font-size: var(--en-heading-size-desktop);
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin: 0 0 2rem;
+  opacity: 0.9;
+  color: var(--en-heading-color);
+}
+
+/* Decorative Line */
+.artisanal-hero__decorative-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.artisanal-hero__line-accent {
+  width: 60px;
+  height: 1px;
+  background-color: var(--hero-accent-color, #ff4757);
+  position: relative;
+}
+
+.artisanal-hero__line-accent::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--hero-accent-color, #ff4757);
+}
+
+/* Description */
+.artisanal-hero__description {
+  font-size: var(--description-size-desktop);
+  line-height: 1.8;
+  opacity: 0.8;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  color: var(--description-color);
+}
+
+/* CTA Button */
+.artisanal-hero__cta {
+  margin-top: 2.5rem;
+}
+
+.artisanal-hero__button {
+  display: inline-block;
+  padding: 12px 30px;
+    background-color: #FFF !important;
+    border: 1px solid var(--hero-text-color);
+    color: #000 !important;
+  text-decoration: none;
+    font-size: 1.275rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.artisanal-hero__button:hover,
+.artisanal-hero__button:focus {
+  background-color: transparent!important;
+  color: var(--hero-text-color)!important;
+  transform: translateY(-2px);
+  outline: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 767px) {
+  .artisanal-hero {
+    min-height: var(--hero-height-mobile);
+    padding: var(--hero-padding-top-mobile) 0 var(--hero-padding-bottom-mobile);
+  }
+
+  .artisanal-hero__container {
+    padding: 0 16px;
+  }
+
+  .artisanal-hero__heading-jp {    
+    writing-mode: vertical-rl;
+    display: inline-block;
+    margin-bottom: 0rem;
+    text-orientation: mixed;
+    font-size: var(--jp-heading-size-mobile);
+    margin-bottom: 1rem;
+  }
+
+  .artisanal-hero__heading-en {
+    font-size: var(--en-heading-size-mobile);
+    margin-bottom: 1.5rem;
+  }
+
+  .artisanal-hero__decorative-line {
+    margin: 1.5rem 0;
+  }
+
+  .artisanal-hero__line-accent {
+    width: 40px;
+  }
+
+  .artisanal-hero__description {
+    font-size: var(--description-size-mobile);
+    margin-bottom: 1.5rem;
+  }
+
+  .artisanal-hero__cta {
+    margin-top: 2rem;
+  }
+
+  .artisanal-hero__button {
+    padding: 10px 24px;
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .artisanal-hero {
+    min-height: var(--hero-height-desktop);
+  }
+}
+
+/* Animation Styles */
+@media (prefers-reduced-motion: no-preference) {
+  .artisanal-hero__content {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 1s ease-out 0.5s forwards;
+  }
+
+  .artisanal-hero__decorative-line {
+    overflow: hidden;
+  }
+
+  .artisanal-hero__line-accent {
+    transform: scaleX(0);
+    animation: scaleInX 0.8s ease-out 1.2s forwards;
+  }
+
+  .artisanal-hero__line-accent::after {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out 1.8s forwards;
+  }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleInX {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .artisanal-hero__content,
+  .artisanal-hero__line-accent,
+  .artisanal-hero__line-accent::after {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Focus Styles */
+.artisanal-hero__button:focus-visible {
+  outline: 2px solid var(--hero-accent-color, #ff4757);
+  outline-offset: 2px;
+}
+</style>
+
+<script>
+/* ========================================
+   Artisanal Hero Section JavaScript
+======================================== */
+
+(function() {
+  'use strict';
+
+  // Intersection Observer for scroll animations
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+      }
+    });
+  }, observerOptions);
+
+  // Initialize on DOM ready
+  function initArtisanalHero() {
+    const heroSection = document.querySelector('[data-section-id="{{ section.id }}"]');
+    
+    if (!heroSection) return;
+
+    // Observe hero content for animations
+    const heroContent = heroSection.querySelector('.artisanal-hero__content');
+    if (heroContent) {
+      observer.observe(heroContent);
+    }
+
+    // Handle image loading optimization
+    const heroImage = heroSection.querySelector('.artisanal-hero__image');
+    if (heroImage) {
+      // Preload critical image
+      const imageUrl = heroImage.src;
+      const preloadLink = document.createElement('link');
+      preloadLink.rel = 'preload';
+      preloadLink.as = 'image';
+      preloadLink.href = imageUrl;
+      document.head.appendChild(preloadLink);
+
+      // Handle image load error
+      heroImage.addEventListener('error', () => {
+        console.warn('Hero image failed to load:', imageUrl);
+        heroSection.classList.add('image-load-error');
+      });
+
+      // Handle successful image load
+      heroImage.addEventListener('load', () => {
+        heroSection.classList.add('image-loaded');
+      });
+    }
+
+    // Smooth scroll for internal CTA links
+    const ctaButton = heroSection.querySelector('.artisanal-hero__button');
+    if (ctaButton) {
+      const href = ctaButton.getAttribute('href');
+      
+      if (href && href.startsWith('#')) {
+        ctaButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetElement = document.querySelector(href);
+          
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      }
+    }
+
+    // Handle keyboard navigation
+    heroSection.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        // Ensure proper focus management
+        const focusableElements = heroSection.querySelectorAll(
+          'a, button, [tabindex]:not([tabindex="-1"])'
+        );
+        
+        if (focusableElements.length > 0) {
+          // Handle focus trapping if needed
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+          
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    });
+
+    // Resize handler for responsive adjustments
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        // Recalculate hero height if needed
+        const vh = window.innerHeight * 0.01;
+        heroSection.style.setProperty('--vh', `${vh}px`);
+      }, 250);
+    });
+
+    // Initial viewport height calculation
+    const vh = window.innerHeight * 0.01;
+    heroSection.style.setProperty('--vh', `${vh}px`);
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initArtisanalHero);
+  } else {
+    initArtisanalHero();
+  }
+
+  // Shopify section reload support
+  document.addEventListener('shopify:section:load', (e) => {
+    if (e.target.querySelector('[data-section-id="{{ section.id }}"]')) {
+      initArtisanalHero();
+    }
+  });
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Artisanal Hero",
+  "tag": "section",
+  "class": "section-artisanal-hero",
+  "settings": [
+    {
+      "type": "header",
+      "content": "📸 Background Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero Background Image",
+      "info": "Recommended: 1920x1080px or larger for best quality"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay",
+      "label": "Show Dark Overlay",
+      "default": true,
+      "info": "Helps improve text readability over images"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Opacity",
+      "default": 40,
+      "info": "Higher values create darker overlays"
+    },
+    {
+      "type": "header",
+      "content": "✍️ Text Content"
+    },
+    {
+      "type": "text",
+      "id": "heading_jp",
+      "label": "Japanese Heading",
+      "default": "作家作品",
+      "info": "Main heading in Japanese (displayed vertically on desktop)"
+    },
+    {
+      "type": "text",
+      "id": "heading_en",
+      "label": "English Subtitle",
+      "default": "Artisanal work",
+      "info": "English subtitle text"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description Text",
+      "info": "Optional description paragraph"
+    },
+    {
+      "type": "header",
+      "content": "🎯 Call to Action"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button Text",
+      "default": "Explore Collection",
+      "info": "Leave empty to hide button"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button Link",
+      "info": "Where the button should link to"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Design Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_decorative_line",
+      "label": "Show Decorative Line",
+      "default": true,
+      "info": "Display the accent line with red dot"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#ff4757",
+      "info": "Color for decorative elements"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Typography & Colors"
+    },
+    {
+      "type": "color",
+      "id": "jp_heading_color",
+      "label": "Japanese Heading Color",
+      "default": "#ffffff",
+      "info": "Color for Japanese main heading"
+    },
+    {
+      "type": "range",
+      "id": "jp_heading_size_desktop",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Japanese Heading Size (Desktop)",
+      "default": 56,
+      "info": "Font size for Japanese heading on desktop"
+    },
+    {
+      "type": "range",
+      "id": "jp_heading_size_mobile",
+      "min": 18,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Japanese Heading Size (Mobile)",
+      "default": 32,
+      "info": "Font size for Japanese heading on mobile"
+    },
+    {
+      "type": "color",
+      "id": "en_heading_color",
+      "label": "English Subtitle Color",
+      "default": "#ffffff",
+      "info": "Color for English subtitle"
+    },
+    {
+      "type": "range",
+      "id": "en_heading_size_desktop",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "English Subtitle Size (Desktop)",
+      "default": 18,
+      "info": "Font size for English subtitle on desktop"
+    },
+    {
+      "type": "range",
+      "id": "en_heading_size_mobile",
+      "min": 8,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "English Subtitle Size (Mobile)",
+      "default": 14,
+      "info": "Font size for English subtitle on mobile"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Text Color",
+      "default": "#ffffff",
+      "info": "Color for description paragraph"
+    },
+    {
+      "type": "range",
+      "id": "description_size_desktop",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Description Size (Desktop)",
+      "default": 16,
+      "info": "Font size for description text on desktop"
+    },
+    {
+      "type": "range",
+      "id": "description_size_mobile",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Description Size (Mobile)",
+      "default": 14,
+      "info": "Font size for description text on mobile"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff",
+      "info": "Color for CTA button text"
+    },
+    {
+      "type": "header",
+      "content": "📏 Height Settings"
+    },
+    {
+      "type": "range",
+      "id": "hero_height_desktop",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "unit": "vh",
+      "label": "Hero Height (Desktop)",
+      "default": 100,
+      "info": "Hero section height on desktop (viewport height percentage)"
+    },
+    {
+      "type": "range",
+      "id": "hero_height_mobile",
+      "min": 40,
+      "max": 120,
+      "step": 5,
+      "unit": "vh",
+      "label": "Hero Height (Mobile)",
+      "default": 70,
+      "info": "Hero section height on mobile (viewport height percentage)"
+    },
+    {
+      "type": "header",
+      "content": "📱 Spacing & Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Top Padding (Desktop)",
+      "default": 80,
+      "info": "Space above content on desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",  
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Bottom Padding (Desktop)",
+      "default": 80,
+      "info": "Space below content on desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Padding (Mobile)",
+      "default": 40,
+      "info": "Space above content on mobile"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Padding (Mobile)",
+      "default": 40,
+      "info": "Space below content on mobile"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Artisanal Hero",
+      "settings": {
+        "heading_jp": "作家作品",
+        "heading_en": "Artisanal work",
+        "show_decorative_line": true,
+        "show_overlay": true,
+        "overlay_opacity": 40,
+        "jp_heading_color": "#ffffff",
+        "en_heading_color": "#ffffff",
+        "description_color": "#ffffff",
+        "text_color": "#ffffff",
+        "accent_color": "#ff4757",
+        "jp_heading_size_desktop": 56,
+        "jp_heading_size_mobile": 32,
+        "en_heading_size_desktop": 18,
+        "en_heading_size_mobile": 14,
+        "description_size_desktop": 16,
+        "description_size_mobile": 14,
+        "hero_height_desktop": 100,
+        "hero_height_mobile": 70,
+        "padding_top_desktop": 80,
+        "padding_bottom_desktop": 80,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
+      }
+    }
+  ]
+}
+{% endschema %}

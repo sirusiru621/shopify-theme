@@ -1,0 +1,690 @@
+<!-- Hero Product Information Section -->
+<section class="hero-product-section" id="hero-product-{{ section.id }}">
+  <div class="hero-product-container">
+    <!-- Hero Image with Overlay Text -->
+    <div class="hero-image-wrapper">
+      {% if section.settings.hero_image %}
+        <img 
+          src="{{ section.settings.hero_image | image_url: width: 1920 }}"
+          srcset="{{ section.settings.hero_image | image_url: width: 600 }} 600w,
+                  {{ section.settings.hero_image | image_url: width: 1200 }} 1200w,
+                  {{ section.settings.hero_image | image_url: width: 1920 }} 1920w"
+          sizes="100vw"
+          alt="{{ section.settings.hero_image.alt | escape }}"
+          class="hero-image"
+          loading="lazy"
+        >
+      {% endif %}
+      
+      <!-- Hero Overlay Content -->
+      <div class="hero-overlay">
+        <div class="hero-content">
+          {% if section.settings.hero_title %}
+            <h1 class="hero-title">{{ section.settings.hero_title }}</h1>
+          {% endif %}
+          {% if section.settings.hero_subtitle %}
+            <p class="hero-subtitle">{{ section.settings.hero_subtitle }}</p>
+          {% endif %}
+          {% if section.settings.hero_description %}
+            <div class="hero-description">
+              {{ section.settings.hero_description }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Information Content -->
+    <div class="product-info-wrapper">
+      <div class="product-info-container">
+        <!-- Product Image -->
+        <div class="product-image-section">
+          {% if section.settings.product_image %}
+            <img 
+              src="{{ section.settings.product_image | image_url: width: 600 }}"
+              srcset="{{ section.settings.product_image | image_url: width: 300 }} 300w,
+                      {{ section.settings.product_image | image_url: width: 600 }} 600w,
+                      {{ section.settings.product_image | image_url: width: 800 }} 800w"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              alt="{{ section.settings.product_image.alt | escape }}"
+              class="product-image"
+              loading="lazy"
+            >
+          {% endif %}
+        </div>
+
+        <!-- Product Details -->
+        <div class="product-details-section">
+          {% if section.settings.product_title %}
+            <h2 class="product-title">{{ section.settings.product_title }}</h2>
+          {% endif %}
+          
+          {% if section.settings.product_description %}
+            <div class="product-description">
+              {{ section.settings.product_description }}
+            </div>
+          {% endif %}
+
+          <!-- Product Specifications -->
+          <div class="product-specs">
+            {% for block in section.blocks %}
+              {% case block.type %}
+                {% when 'spec_item' %}
+                  <div class="spec-item" {{ block.shopify_attributes }}>
+                    {% if block.settings.spec_label %}
+                      <span class="spec-label">{{ block.settings.spec_label }}</span>
+                    {% endif %}
+                    {% if block.settings.spec_value %}
+                      <span class="spec-value">{{ block.settings.spec_value }}</span>
+                    {% endif %}
+                  </div>
+              {% endcase %}
+            {% endfor %}
+          </div>
+
+          <!-- CTA Button -->
+          {% if section.settings.cta_text and section.settings.cta_url %}
+            <div class="cta-wrapper">
+              <a href="{{ section.settings.cta_url }}" class="cta-button">
+                {{ section.settings.cta_text }}
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Hero Product Section Styles */
+  .hero-product-section {
+    width: 100%;
+    background-color: {{ section.settings.section_bg_color | default: '#ffffff' }};
+    padding: {{ section.settings.section_padding_top | default: 0 }}px 0 {{ section.settings.section_padding_bottom | default: 0 }}px;
+  }
+
+  .hero-product-container {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  /* Hero Image Section */
+  .hero-image-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, {{ section.settings.overlay_opacity | default: 0.3 }});
+  }
+
+  .hero-content {
+    text-align: center;
+    color: {{ section.settings.hero_text_color | default: '#ffffff' }};
+    max-width: 600px;
+    padding: 20px;
+  }
+
+  .hero-title {
+    font-size: {{ section.settings.hero_title_size | default: 48 }}px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .hero-subtitle {
+    font-size: {{ section.settings.hero_subtitle_size | default: 24 }}px;
+    font-weight: 400;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .hero-description {
+    font-size: {{ section.settings.hero_description_size | default: 16 }}px;
+    line-height: 1.6;
+  }
+
+  /* Product Information Section */
+  .product-info-wrapper {
+    background-color: {{ section.settings.product_info_bg_color | default: '#f8f8f8' }};
+    padding: 60px 20px;
+  }
+
+  .product-info-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .product-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .product-title {
+    font-size: {{ section.settings.product_title_size | default: 32 }}px;
+    font-weight: 700;
+    color: {{ section.settings.product_title_color | default: '#333333' }};
+    margin-bottom: 24px;
+    line-height: 1.3;
+  }
+
+  .product-description {
+    font-size: {{ section.settings.product_description_size | default: 16 }}px;
+    color: {{ section.settings.product_text_color | default: '#666666' }};
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+
+  .product-specs {
+    margin-bottom: 32px;
+  }
+
+  .spec-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .spec-item:last-child {
+    border-bottom: none;
+  }
+
+  .spec-label {
+    font-weight: 600;
+    color: {{ section.settings.product_title_color | default: '#333333' }};
+    font-size: {{ section.settings.spec_label_size | default: 14 }}px;
+  }
+
+  .spec-value {
+    color: {{ section.settings.product_text_color | default: '#666666' }};
+    font-size: {{ section.settings.spec_value_size | default: 14 }}px;
+  }
+
+  .cta-button {
+    display: inline-block;
+    background-color: {{ section.settings.cta_bg_color | default: '#000000' }};
+    color: {{ section.settings.cta_text_color | default: '#ffffff' }};
+    padding: 16px 32px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: {{ section.settings.cta_font_size | default: 16 }}px;
+    transition: all 0.3s ease;
+    border: 2px solid {{ section.settings.cta_bg_color | default: '#000000' }};
+  }
+
+  .cta-button:hover {
+    background-color: transparent;
+    color: {{ section.settings.cta_bg_color | default: '#000000' }};
+    transform: translateY(-2px);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: {{ section.settings.hero_title_size_mobile | default: 32 }}px;
+    }
+
+    .hero-subtitle {
+      font-size: {{ section.settings.hero_subtitle_size_mobile | default: 18 }}px;
+    }
+
+    .hero-description {
+      font-size: {{ section.settings.hero_description_size_mobile | default: 14 }}px;
+    }
+
+    .product-info-container {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .product-title {
+      font-size: {{ section.settings.product_title_size_mobile | default: 24 }}px;
+    }
+
+    .product-description {
+      font-size: {{ section.settings.product_description_size_mobile | default: 14 }}px;
+    }
+
+    .product-info-wrapper {
+      padding: 40px 20px;
+    }
+
+    .hero-image-wrapper {
+      min-height: 300px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-content {
+      padding: 15px;
+    }
+
+    .cta-button {
+      padding: 14px 28px;
+      font-size: {{ section.settings.cta_font_size_mobile | default: 14 }}px;
+    }
+  }
+</style>
+
+<script>
+  // Intersection Observer for scroll animations
+  document.addEventListener('DOMContentLoaded', function() {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+        }
+      });
+    }, observerOptions);
+
+    // Observe product info elements
+    const productElements = document.querySelectorAll('.product-details-section > *');
+    productElements.forEach(el => {
+      observer.observe(el);
+    });
+
+    // Add animation styles
+    const style = document.createElement('style');
+    style.textContent = `
+      .product-details-section > * {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.6s ease;
+      }
+      
+      .product-details-section > *.animate-in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    `;
+    document.head.appendChild(style);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Hero Product Information",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero Section Settings"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero Background Image"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Hero Title",
+      "default": "SHOP"
+    },
+    {
+      "type": "text",
+      "id": "hero_subtitle",
+      "label": "Hero Subtitle",
+      "default": "GUMA TENGUMARI CITRUS BLEND TEA"
+    },
+    {
+      "type": "richtext",
+      "id": "hero_description",
+      "label": "Hero Description"
+    },
+    {
+      "type": "color",
+      "id": "hero_text_color",
+      "label": "Hero Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay Opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.3
+    },
+    {
+      "type": "header",
+      "content": "Hero Typography - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "hero_title_size",
+      "label": "Title Font Size (Desktop)",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "hero_subtitle_size",
+      "label": "Subtitle Font Size (Desktop)",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "hero_description_size",
+      "label": "Description Font Size (Desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Hero Typography - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "hero_title_size_mobile",
+      "label": "Title Font Size (Mobile)",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "hero_subtitle_size_mobile",
+      "label": "Subtitle Font Size (Mobile)",
+      "min": 14,
+      "max": 28,
+      "step": 2,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "hero_description_size_mobile",
+      "label": "Description Font Size (Mobile)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Product Information Settings"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Product Image"
+    },
+    {
+      "type": "text",
+      "id": "product_title",
+      "label": "Product Title",
+      "default": "Premium Tea Blend"
+    },
+    {
+      "type": "richtext",
+      "id": "product_description",
+      "label": "Product Description",
+      "default": "<p>Discover our carefully crafted citrus blend tea, made with premium ingredients and traditional techniques.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Product Typography - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "product_title_size",
+      "label": "Product Title Font Size (Desktop)",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "product_description_size",
+      "label": "Product Description Font Size (Desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "spec_label_size",
+      "label": "Spec Label Font Size (Desktop)",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "spec_value_size",
+      "label": "Spec Value Font Size (Desktop)",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Product Typography - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "product_title_size_mobile",
+      "label": "Product Title Font Size (Mobile)",
+      "min": 18,
+      "max": 36,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "product_description_size_mobile",
+      "label": "Product Description Font Size (Mobile)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Call to Action Settings"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA Button URL"
+    },
+    {
+      "type": "color",
+      "id": "cta_bg_color",
+      "label": "CTA Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "CTA Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "cta_font_size",
+      "label": "CTA Font Size (Desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "cta_font_size_mobile",
+      "label": "CTA Font Size (Mobile)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Color Settings"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Section Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "product_info_bg_color",
+      "label": "Product Info Background Color",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "product_title_color",
+      "label": "Product Title Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "product_text_color",
+      "label": "Product Text Color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Spacing Settings"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 0,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "spec_item",
+      "name": "Specification Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "spec_label",
+          "label": "Specification Label",
+          "default": "Weight"
+        },
+        {
+          "type": "text",
+          "id": "spec_value",
+          "label": "Specification Value",
+          "default": "100g"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Product Information",
+      "blocks": [
+        {
+          "type": "spec_item",
+          "settings": {
+            "spec_label": "容量",
+            "spec_value": "50g"
+          }
+        },
+        {
+          "type": "spec_item",
+          "settings": {
+            "spec_label": "原料",
+            "spec_value": "緑茶、柑橘類"
+          }
+        },
+        {
+          "type": "spec_item",
+          "settings": {
+            "spec_label": "製造国",
+            "spec_value": "日本"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,1138 @@
+{% comment %}
+/**
+ * 和風フローティング予約バナー
+ * 右側固定で表示される予約CTAバナー
+ * 和のテイストに合わせた上品なデザイン
+ */
+{% endcomment %}
+
+<!-- CSS Styles -->
+<style>
+  .floating-reservation-banner {
+    position: fixed;
+    right: {{ section.settings.banner_right_position }}px;
+    {% if section.settings.position_unit == 'percent' %}
+      {% if section.settings.vertical_position_type == 'top' %}
+        top: {{ section.settings.vertical_position_percent }}%;
+        bottom: auto;
+      {% else %}
+        bottom: {{ section.settings.vertical_position_percent }}%;
+        top: auto;
+      {% endif %}
+    {% else %}
+      bottom: {{ section.settings.banner_bottom_position }}px;
+    {% endif %}
+    z-index: 9999;
+    {% if section.settings.display_style == 'vertical' %}
+      width: {{ section.settings.vertical_banner_width }}px;
+      height: auto;
+      background: linear-gradient(135deg, 
+        {{ section.settings.vertical_background_color | default: '#2d1810' }} 0%, 
+        {{ section.settings.vertical_background_color_secondary | default: '#3a2318' }} 100%);
+    {% else %}
+      width: {{ section.settings.banner_width }}px;
+      background: linear-gradient(135deg, 
+        {{ section.settings.background_color | default: '#2d1810' }} 0%, 
+        {{ section.settings.background_color_secondary | default: '#3a2318' }} 100%);
+    {% endif %}
+    border-radius: 0;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border: 1px solid {{ section.settings.border_color | default: '#5a4234' }};
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+    opacity: 0;
+    animation: fadeInSlide 0.6s ease-out 0.5s forwards;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .floating-reservation-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      {{ section.settings.accent_color | default: '#d4af37' }} 50%, 
+      transparent 100%);
+  }
+
+  .floating-reservation-banner:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 12px 48px rgba(0, 0, 0, 0.4),
+      0 4px 16px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+
+  .floating-reservation-banner:focus {
+    outline: 2px solid {{ section.settings.accent_color | default: '#d4af37' }};
+    outline-offset: 2px;
+  }
+
+  .floating-reservation-banner:active {
+    transform: translateY(-2px);
+  }
+
+  .banner-content {
+    padding: {{ section.settings.inner_padding }}px;
+    text-align: center;
+    position: relative;
+    {% if section.settings.display_style == 'vertical' %}
+      padding: {{ section.settings.vertical_inner_padding }}px;
+    {% endif %}
+  }
+
+  /* 縦書きスタイル */
+  .banner-content.vertical-style {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    padding: 20px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+  }
+
+  .vertical-style .banner-title {
+    writing-mode: vertical-rl !important;
+    text-orientation: upright !important;
+    margin: 30px 0 16px 0 !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.3em !important;
+    text-align: center !important;
+  }
+
+  .vertical-style .banner-subtitle {
+    writing-mode: vertical-rl !important;
+    text-orientation: upright !important;
+    margin: 25px 5px 10px 0 !important;
+    font-size: {{ section.settings.vertical_subtitle_font_size | default: 11 }}px !important;
+    text-align: center !important;
+    line-height: 1.4 !important;
+  }
+
+  .vertical-style .banner-cta {
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    padding: 8px 12px !important;
+    font-size: {{ section.settings.vertical_cta_font_size | default: 12 }}px !important;
+    border-radius: 0 !important;
+    margin-top: 8px !important;
+    display: block !important;
+    width: auto !important;
+    min-width: 60px !important;
+  }
+
+  /* 縦書き時のアイコン非表示 */
+  .vertical-style .banner-icon {
+    display: none;
+  }
+
+  .banner-icon {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 12px;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+  }
+
+  .banner-title {
+    {% if section.settings.display_style == 'vertical' %}
+      color: {{ section.settings.vertical_text_color | default: '#f5f3f0' }};
+      font-size: {{ section.settings.vertical_title_font_size | default: 18 }}px;
+    {% else %}
+      color: {{ section.settings.text_color | default: '#f5f3f0' }};
+      font-size: {{ section.settings.title_font_size }}px;
+    {% endif %}
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0 0 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .banner-subtitle {
+    {% if section.settings.display_style == 'vertical' %}
+      color: {{ section.settings.vertical_subtitle_color | default: '#c5b8a8' }};
+      font-size: {{ section.settings.vertical_subtitle_font_size | default: 11 }}px;
+    {% else %}
+      color: {{ section.settings.subtitle_color | default: '#c5b8a8' }};
+      font-size: {{ section.settings.subtitle_font_size }}px;
+    {% endif %}
+    font-weight: 400;
+    line-height: 1.4;
+    margin: 0 0 16px;
+    opacity: 0.9;
+  }
+
+  .banner-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: {{ section.settings.text_color | default: '#f5f3f0' }};
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+    z-index: 10;
+  }
+
+  .banner-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    opacity: 1;
+  }
+
+  .banner-close:focus {
+    outline: 2px solid {{ section.settings.accent_color | default: '#d4af37' }};
+    outline-offset: 2px;
+  }
+
+  .floating-reservation-banner.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(100px);
+  }
+
+  @keyframes fadeInSlide {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* レスポンシブ対応 */
+  @media (max-width: 768px) {
+    .floating-reservation-banner {
+      right: {{ section.settings.mobile_right_position | default: 15 }}px;
+      {% if section.settings.position_unit == 'percent' %}
+        {% if section.settings.vertical_position_type == 'top' %}
+          top: {{ section.settings.mobile_vertical_position_percent | default: section.settings.vertical_position_percent }}%;
+          bottom: auto;
+        {% else %}
+          bottom: {{ section.settings.mobile_vertical_position_percent | default: section.settings.vertical_position_percent }}%;
+          top: auto;
+        {% endif %}
+      {% else %}
+        bottom: {{ section.settings.mobile_bottom_position }}px;
+      {% endif %}
+      {% if section.settings.display_style == 'vertical' %}
+        width: {{ section.settings.mobile_vertical_banner_width }}px;
+      {% else %}
+        width: {{ section.settings.mobile_banner_width }}px;
+      {% endif %}
+      max-width: calc(100vw - 32px);
+    }
+
+    .floating-reservation-banner:hover {
+      transform: translateY(-2px);
+    }
+
+    .floating-reservation-banner:active {
+      transform: translateY(0);
+    }
+
+    .banner-content {
+      padding: 16px;
+    }
+
+    .banner-content.vertical-style {
+      padding: 16px 12px;
+      min-height: 100px;
+    }
+
+    .vertical-style .banner-title {
+      font-size: {{ section.settings.mobile_title_font_size }}px !important;
+      writing-mode: vertical-rl !important;
+      text-orientation: upright !important;
+      letter-spacing: 0.3em !important;
+      transform: none !important;
+    }
+
+    .vertical-style .banner-subtitle {
+      font-size: {{ section.settings.mobile_subtitle_font_size }}px !important;
+      writing-mode: vertical-rl !important;
+      text-orientation: upright !important;
+      letter-spacing: 0.2em !important;
+      transform: none !important;
+    }
+
+    .banner-title {
+      font-size: {{ section.settings.mobile_title_font_size }}px;
+    }
+
+    .banner-subtitle {
+      font-size: {{ section.settings.mobile_subtitle_font_size }}px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .floating-reservation-banner {
+      width: 86px;
+        right: 0px;
+    }
+
+    .banner-content {
+      padding: 12px;
+    }
+  }
+
+  /* アクセシビリティ対応 */
+  @media (prefers-reduced-motion: reduce) {
+    .floating-reservation-banner,
+    .banner-cta,
+    .banner-close {
+      transition: none;
+      animation: none;
+    }
+
+    .floating-reservation-banner {
+      opacity: 1;
+    }
+  }
+
+  /* ハイコントラストモード対応 */
+  @media (prefers-contrast: high) {
+    .floating-reservation-banner {
+      border: 2px solid;
+    }
+    
+    .banner-cta {
+      border: 2px solid;
+    }
+  }/* 2つ目のタイトル用スタイル */
+.banner-title-2 {
+  {% if section.settings.display_style == 'vertical' %}
+    color: {{ section.settings.vertical_text_color_2 | default: section.settings.vertical_text_color | default: '#f5f3f0' }};
+    font-size: {{ section.settings.vertical_title_font_size_2 | default: 16 }}px;
+  {% else %}
+    color: {{ section.settings.text_color_2 | default: section.settings.text_color | default: '#f5f3f0' }};
+    font-size: {{ section.settings.title_font_size_2 | default: 16 }}px;
+  {% endif %}
+  font-weight: {{ section.settings.title_2_font_weight | default: 500 }};
+  line-height: 1.3;
+  margin: {{ section.settings.title_2_margin_top | default: 4 }}px 0 {{ section.settings.title_2_margin_bottom | default: 8 }}px;
+  letter-spacing: 0.5px;
+  opacity: {{ section.settings.title_2_opacity | default: 0.95 }};
+}
+
+/* 縦書きスタイルの2つ目のタイトル */
+.vertical-style .banner-title-2 {
+  writing-mode: vertical-rl !important;
+  text-orientation: upright !important;
+  margin: 30px 0 10px 0 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.25em !important;
+  text-align: center !important;
+}
+
+/* モバイル用 */
+@media (max-width: 768px) {
+  .banner-title-2 {
+    font-size: {{ section.settings.mobile_title_font_size_2 | default: 14 }}px;
+  }
+  
+  .vertical-style .banner-title-2 {
+    font-size: {{ section.settings.mobile_title_font_size_2 | default: 14 }}px !important;
+  }
+}
+
+</style>
+
+<!-- HTML Structure -->
+<a href="{% if section.settings.display_style == 'vertical' %}{{ section.settings.vertical_cta_url | default: '/pages/reservation' }}{% else %}{{ section.settings.cta_url | default: '/pages/reservation' }}{% endif %}" 
+   class="floating-reservation-banner" 
+   id="floating-reservation-banner"
+   role="banner"
+   aria-label="{% if section.settings.display_style == 'vertical' %}{{ section.settings.vertical_cta_aria_label | default: '予約ページへ移動' }}{% else %}{{ section.settings.cta_aria_label | default: '予約ページへ移動' }}{% endif %}"
+   {% if section.settings.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+  
+  {% if section.settings.show_close_button %}
+    <button class="banner-close" 
+            id="banner-close-btn"
+            onclick="event.preventDefault(); event.stopPropagation(); closeBanner(); return false;"
+            aria-label="バナーを閉じる"
+            type="button">
+      ×
+    </button>
+  {% endif %}
+
+  <div class="banner-content{% if section.settings.display_style == 'vertical' %} vertical-style{% endif %}">
+    {% if section.settings.icon_svg and section.settings.display_style != 'vertical' %}
+      <div class="banner-icon">
+        {{ section.settings.icon_svg }}
+      </div>
+    {% endif %}
+
+    {% if section.settings.display_style == 'vertical' %}
+      <h2 class="banner-title">
+        {{ section.settings.vertical_title_line_1 | default: section.settings.vertical_title | default: '予約' }}
+        {% assign vt2 = section.settings.vertical_title_line_2 | default: '' | strip %}
+        {% if vt2 != '' %}<br>{{ vt2 }}{% endif %}
+      </h2>
+      <!-- 2つ目のタイトルを追加（既存機能維持） -->
+      {% if section.settings.vertical_title_2 %}
+        <h3 class="banner-title banner-title-2">{{ section.settings.vertical_title_2 }}</h3>
+      {% endif %}
+
+      {% if section.settings.vertical_subtitle %}
+        <p class="banner-subtitle">{{ section.settings.vertical_subtitle }}</p>
+      {% endif %}
+    {% else %}
+      <h2 class="banner-title">
+        {{ section.settings.title_line_1 | default: section.settings.title | default: 'ご予約' }}
+        {% assign t2 = section.settings.title_line_2 | default: '' | strip %}
+        {% if t2 != '' %}<br>{{ t2 }}{% endif %}
+      </h2>
+      <!-- 2つ目のタイトルを追加（既存機能維持） -->
+      {% if section.settings.title_2 %}
+        <h3 class="banner-title banner-title-2">{{ section.settings.title_2 }}</h3>
+      {% endif %}
+    
+      {% if section.settings.subtitle %}
+        <p class="banner-subtitle">{{ section.settings.subtitle }}</p>
+      {% endif %}
+    {% endif %}
+  </div>
+</a>
+
+<!-- JavaScript -->
+<script>
+(function() {
+  'use strict';
+  
+  // IntersectionObserver for scroll-based visibility
+  let banner = document.getElementById('floating-reservation-banner');
+  let isVisible = true;
+  let scrollTimeout;
+  let isBannerClosed = false; // ページレベルの変数（リロード時にリセット）
+
+  function initBanner() {
+    // ページレベルの変数をチェック（リロード時は常にfalse）
+    if (isBannerClosed) {
+      banner.classList.add('hidden');
+      return;
+    }
+
+    // 表示スタイルの適用
+    const displayStyle = '{{ section.settings.display_style }}';
+    const bannerContent = banner.querySelector('.banner-content');
+    
+    console.log('Display style:', displayStyle); // デバッグ用
+    
+    if (displayStyle === 'vertical' && bannerContent) {
+      bannerContent.classList.add('vertical-style');
+      console.log('Vertical style applied'); // デバッグ用
+      
+      // 各要素に縦書きスタイルを確実に適用
+      const title = bannerContent.querySelector('.banner-title');
+      const subtitle = bannerContent.querySelector('.banner-subtitle');
+      const cta = bannerContent.querySelector('.banner-cta');
+      
+      if (title) {
+        title.style.writingMode = 'vertical-rl';
+        title.style.textOrientation = 'upright';
+        title.style.letterSpacing = '0.3em';
+        title.style.lineHeight = '1.2';
+        title.style.color = '{{ section.settings.vertical_text_color | default: "#f5f3f0" }}';
+        title.style.fontSize = '{{ section.settings.vertical_title_font_size | default: 18 }}px';
+      }
+      if (subtitle) {
+        subtitle.style.writingMode = 'vertical-rl';
+        subtitle.style.textOrientation = 'upright';
+        subtitle.style.letterSpacing = '0.2em';
+        subtitle.style.color = '{{ section.settings.vertical_subtitle_color | default: "#c5b8a8" }}';
+        subtitle.style.fontSize = '{{ section.settings.vertical_subtitle_font_size | default: 11 }}px';
+      }
+      if (cta) {
+        cta.style.writingMode = 'horizontal-tb';
+        cta.style.textOrientation = 'mixed';
+        cta.style.marginTop = '12px';
+        cta.style.fontSize = '{{ section.settings.vertical_cta_font_size | default: 12 }}px';
+      }
+    }
+
+    // 閉じるボタンのイベントリスナー
+    const closeBtn = document.getElementById('banner-close-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeBanner();
+      });
+    }
+
+    // スクロール方向の検出
+    let lastScrollY = window.scrollY;
+    
+    function handleScroll() {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        const currentScrollY = window.scrollY;
+        const scrollingDown = currentScrollY > lastScrollY;
+        const scrolledPastThreshold = currentScrollY > {{ section.settings.scroll_threshold | default: 200 }};
+
+        if (scrollingDown && scrolledPastThreshold && isVisible) {
+          // 下にスクロール中で閾値を超えた場合は非表示
+          if ({{ section.settings.hide_on_scroll_down | default: false }}) {
+            banner.style.opacity = '0.3';
+          }
+        } else if (!scrollingDown && isVisible) {
+          // 上にスクロール中は表示
+          banner.style.opacity = '1';
+        }
+
+        lastScrollY = currentScrollY;
+      }, 100);
+    }
+
+    // イベントリスナー
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // キーボードアクセシビリティ
+    banner.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeBanner();
+      }
+    });
+
+    // ホバーエフェクト強化
+    banner.addEventListener('mouseenter', function() {
+      if (window.innerWidth > 768) {
+        this.style.transform = 'translateY(-4px)';
+      }
+    });
+
+    banner.addEventListener('mouseleave', function() {
+      if (window.innerWidth > 768) {
+        this.style.transform = 'translateY(0)';
+      }
+    });
+  }
+
+  // バナーを閉じる関数（グローバルスコープ）
+  window.closeBanner = function() {
+    console.log('closeBanner function called'); // デバッグ用
+    
+    if (banner) {
+      banner.classList.add('hidden');
+      isBannerClosed = true; // ページレベルの変数を更新
+      isVisible = false;
+      
+      // アナリティクス追跡（GA4対応）
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'floating_banner_closed', {
+          event_category: 'engagement',
+          event_label: 'reservation_banner'
+        });
+      }
+      
+      console.log('Banner closed successfully'); // デバッグ用
+    } else {
+      console.log('Banner element not found'); // デバッグ用
+    }
+  };
+
+  // CTAクリック追跡（バナー全体のクリック）
+  banner.addEventListener('click', function(e) {
+    // 閉じるボタンのクリックの場合は何もしない
+    if (e.target.closest('.banner-close')) {
+      return;
+    }
+    
+    // アナリティクス追跡
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'floating_banner_click', {
+        event_category: 'conversion',
+        event_label: 'reservation_cta',
+        value: 1
+      });
+    }
+  });
+
+  // DOM読み込み完了後に初期化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBanner);
+  } else {
+    initBanner();
+  }
+
+  // ページ離脱時のクリーンアップ
+  window.addEventListener('beforeunload', function() {
+    // 注意: handleScroll は initBanner 内で定義されているため removeEventListener は不要/無害
+  });
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "和風フローティング予約バナー",
+  "tag": "section",
+  "class": "floating-reservation-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "表示スタイル"
+    },
+    {
+      "type": "select",
+      "id": "display_style",
+      "label": "表示形式",
+      "options": [
+        {
+          "value": "horizontal",
+          "label": "横書き（標準）"
+        },
+        {
+          "value": "vertical", 
+          "label": "縦書き（シンプル）"
+        }
+      ],
+      "default": "horizontal",
+      "info": "バナーの文字レイアウトを選択"
+    },
+    {
+      "type": "header",
+      "content": "基本設定"
+    },
+    {
+      "type": "header",
+      "content": "横書き用設定"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "横書き用タイトル（従来）",
+      "default": "ご予約",
+      "info": "従来の単一行タイトル（後方互換）"
+    },
+    {
+      "type": "text",
+      "id": "title_line_1",
+      "label": "横書きタイトル（1行目）",
+      "default": "ご予約",
+      "info": "横書き表示時のタイトル1行目"
+    },
+    {
+      "type": "text",
+      "id": "title_line_2",
+      "label": "横書きタイトル（2行目）",
+      "default": "イベント",
+      "info": "2行目を表示しない場合は空欄のままにしてください"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "横書き用サブタイトル",
+      "default": "心に残るひとときを",
+      "info": "横書き表示時の説明文"
+    },
+    {
+      "type": "text",
+      "id": "cta_url",
+      "label": "横書き用リンク先URL",
+      "default": "/pages/reservation",
+      "info": "横書き表示時のリンク先URL"
+    },
+    {
+      "type": "header",
+      "content": "縦書き用設定"
+    },
+    {
+      "type": "text",
+      "id": "vertical_title",
+      "label": "縦書き用タイトル（従来）",
+      "default": "予約",
+      "info": "従来の単一行タイトル（後方互換）"
+    },
+    {
+      "type": "text",
+      "id": "vertical_title_line_1",
+      "label": "縦書きタイトル（1行目）",
+      "default": "予約",
+      "info": "縦書き表示時のタイトル1行目"
+    },
+    {
+      "type": "text",
+      "id": "vertical_title_line_2",
+      "label": "縦書きタイトル（2行目）",
+      "default": "イベント",
+      "info": "2行目を表示しない場合は空欄のままにしてください"
+    },
+    {
+      "type": "textarea",
+      "id": "vertical_subtitle",
+      "label": "縦書き用サブタイトル",
+      "default": "承り中",
+      "info": "縦書き表示時の説明文（短いテキスト推奨）"
+    },
+    {
+      "type": "text",
+      "id": "vertical_cta_url",
+      "label": "縦書き用リンク先URL",
+      "default": "/pages/reservation",
+      "info": "縦書き表示時のリンク先URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "新しいタブで開く",
+      "default": false
+    },
+    {
+      "type": "html",
+      "id": "icon_svg",
+      "label": "アイコンSVG",
+      "info": "バナー上部に表示するSVGアイコン",
+      "default": "<svg width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 3L2 12h3v8h14v-8h3L12 3zm0 2.236L18 11v8h-4v-6h-4v6H6v-8l6-5.764z\"/></svg>"
+    },
+    {
+      "type": "header",
+      "content": "位置設定"
+    },
+    {
+      "type": "range",
+      "id": "banner_right_position",
+      "label": "右からの距離（デスクトップ）",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 0,
+      "unit": "px",
+      "info": "0で画面右端に固定"
+    },
+    {
+      "type": "range",
+      "id": "mobile_right_position",
+      "label": "右からの距離（モバイル）",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "position_unit",
+      "label": "縦位置の単位",
+      "options": [
+        {
+          "value": "pixel",
+          "label": "ピクセル（px）"
+        },
+        {
+          "value": "percent",
+          "label": "パーセント（%）"
+        }
+      ],
+      "default": "pixel",
+      "info": "縦位置の指定方法を選択"
+    },
+    {
+      "type": "range",
+      "id": "banner_bottom_position",
+      "label": "下からの距離（px指定時）",
+      "min": 10,
+      "max": 150,
+      "step": 10,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_bottom_position",
+      "label": "下からの距離（モバイル・px指定時）",
+      "min": 10,
+      "max": 150,
+      "step": 10,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "vertical_position_type",
+      "label": "縦位置の基準（%指定時）",
+      "options": [
+        {
+          "value": "top",
+          "label": "画面上部から"
+        },
+        {
+          "value": "bottom",
+          "label": "画面下部から"
+        }
+      ],
+      "default": "bottom",
+      "info": "%指定時の基準位置"
+    },
+    {
+      "type": "range",
+      "id": "vertical_position_percent",
+      "label": "縦位置（%指定時・デスクトップ）",
+      "min": 5,
+      "max": 95,
+      "step": 5,
+      "default": 20,
+      "unit": "%",
+      "info": "画面の上部または下部からの%位置"
+    },
+    {
+      "type": "range",
+      "id": "mobile_vertical_position_percent",
+      "label": "縦位置（%指定時・モバイル）",
+      "min": 5,
+      "max": 95,
+      "step": 5,
+      "default": 20,
+      "unit": "%",
+      "info": "モバイルでの%位置（空白時はデスクトップと同じ）"
+    },
+    {
+      "type": "range",
+      "id": "scroll_threshold",
+      "label": "スクロール反応の閾値",
+      "min": 100,
+      "max": 500,
+      "step": 50,
+      "default": 200,
+      "unit": "px",
+      "info": "この距離スクロールするとバナーの表示が変化"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_scroll_down",
+      "label": "下スクロール時に薄く表示",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "サイズ設定"
+    },
+    {
+      "type": "range",
+      "id": "banner_width",
+      "label": "バナー幅（横書き・デスクトップ）",
+      "min": 200,
+      "max": 400,
+      "step": 20,
+      "default": 280,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "vertical_banner_width",
+      "label": "バナー幅（縦書き・デスクトップ）",
+      "min": 80,
+      "max": 150,
+      "step": 10,
+      "default": 100,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_banner_width",
+      "label": "バナー幅（横書き・モバイル）",
+      "min": 180,
+      "max": 320,
+      "step": 20,
+      "default": 240,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_vertical_banner_width",
+      "label": "バナー幅（縦書き・モバイル）",
+      "min": 70,
+      "max": 120,
+      "step": 10,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_small_banner_width",
+      "label": "バナー幅（横書き・小画面）",
+      "min": 160,
+      "max": 280,
+      "step": 20,
+      "default": 200,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "inner_padding",
+      "label": "内側余白（横書き）",
+      "min": 12,
+      "max": 32,
+      "step": 4,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "vertical_inner_padding",
+      "label": "内側余白（縦書き）",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "横書き用フォントサイズ"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "横書きタイトルサイズ（デスクトップ）",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_font_size",
+      "label": "横書きサブタイトルサイズ（デスクトップ）",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "縦書き用フォントサイズ"
+    },
+    {
+      "type": "range",
+      "id": "vertical_title_font_size",
+      "label": "縦書きタイトルサイズ",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "vertical_subtitle_font_size",
+      "label": "縦書きサブタイトルサイズ",
+      "min": 9,
+      "max": 14,
+      "step": 1,
+      "default": 11,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_title_font_size",
+      "label": "タイトルサイズ（モバイル）",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_subtitle_font_size",
+      "label": "サブタイトルサイズ（モバイル）",
+      "min": 9,
+      "max": 14,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "横書き用カラー設定 - 背景"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "横書き背景色（上）",
+      "default": "#2d1810",
+      "info": "深みのある茶色"
+    },
+    {
+      "type": "color",
+      "id": "background_color_secondary",
+      "label": "横書き背景色（下）",
+      "default": "#3a2318",
+      "info": "グラデーション用"
+    },
+    {
+      "type": "header",
+      "content": "縦書き用カラー設定 - 背景"
+    },
+    {
+      "type": "color",
+      "id": "vertical_background_color",
+      "label": "縦書き背景色（上）",
+      "default": "#2d1810",
+      "info": "深みのある茶色"
+    },
+    {
+      "type": "color",
+      "id": "vertical_background_color_secondary",
+      "label": "縦書き背景色（下）",
+      "default": "#3a2318",
+      "info": "グラデーション用"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "ボーダー色",
+      "default": "#5a4234"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "アクセント色",
+      "default": "#d4af37",
+      "info": "上部のラインとハイライト"
+    },
+    {
+      "type": "header",
+      "content": "横書き用カラー設定 - テキスト"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "横書きタイトル色",
+      "default": "#f5f3f0"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "横書きサブタイトル色",
+      "default": "#c5b8a8"
+    },
+    {
+      "type": "header",
+      "content": "縦書き用カラー設定 - テキスト"
+    },
+    {
+      "type": "color",
+      "id": "vertical_text_color",
+      "label": "縦書きタイトル色",
+      "default": "#f5f3f0"
+    },
+    {
+      "type": "color",
+      "id": "vertical_subtitle_color",
+      "label": "縦書きサブタイトル色",
+      "default": "#c5b8a8"
+    },
+    {
+      "type": "header",
+      "content": "機能設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close_button",
+      "label": "閉じるボタンを表示",
+      "default": true,
+      "info": "ユーザーがバナーを閉じられるようにする"
+    },
+    {
+      "type": "header",
+      "content": "アクセシビリティ"
+    },
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "ARIAラベル",
+      "default": "予約バナー",
+      "info": "スクリーンリーダー用"
+    },
+    {
+      "type": "text",
+      "id": "cta_aria_label",
+      "label": "横書き用ARIAラベル",
+      "default": "予約ページへ移動",
+      "info": "横書き表示時のアクセシビリティラベル"
+    },
+    {
+      "type": "text",
+      "id": "vertical_cta_aria_label",
+      "label": "縦書き用ARIAラベル",
+      "default": "予約ページへ移動",
+      "info": "縦書き表示時のアクセシビリティラベル"
+    }
+  ],
+  "presets": [
+    {
+      "name": "和風予約バナー（横書き・右端固定）",
+      "settings": {
+        "title": "ご予約",
+        "title_line_1": "ご予約",
+        "title_line_2": " ",
+        "subtitle": "心に残るひとときを",
+        "display_style": "horizontal",
+        "vertical_title": "予約",
+        "vertical_subtitle": "承り中",
+        "banner_right_position": 0,
+        "position_unit": "percent",
+        "vertical_position_type": "bottom",
+        "vertical_position_percent": 20
+      }
+    },
+    {
+      "name": "和風予約バナー（縦書き・右端固定）",
+      "settings": {
+        "title": "ご予約",
+        "subtitle": "心に残るひとときを",
+        "display_style": "vertical",
+        "vertical_title": "予約",
+        "vertical_title_line_1": "予約",
+        "vertical_title_line_2": " ",
+        "vertical_subtitle": "承り中",
+        "banner_right_position": 0,
+        "position_unit": "percent",
+        "vertical_position_type": "bottom",
+        "vertical_position_percent": 20
+      }
+    },
+    {
+      "name": "シンプル縦書き（画面中央）",
+      "settings": {
+        "display_style": "vertical",
+        "vertical_title": "予約",
+        "vertical_title_line_1": "予約",
+        "vertical_title_line_2": " ",
+        "vertical_subtitle": "",
+        "vertical_title_font_size": 20,
+        "banner_right_position": 0,
+        "position_unit": "percent",
+        "vertical_position_type": "top",
+        "vertical_position_percent": 50
+      }
+    }
+  ]
+}
+{% endschema %}

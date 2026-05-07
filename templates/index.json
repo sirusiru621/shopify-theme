@@ -1,0 +1,647 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "fv_section_8y6Ke4": {
+      "type": "fv-section",
+      "blocks": {
+        "slide_4UiWQH": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/DSC00717.jpg",
+            "video_url": "",
+            "youtube_id": "",
+            "slide_title": "内藤千鶴",
+            "slide_description": "<p>しめ縄飾り　ワークショップ</p><p>ご案内</p>",
+            "slide_link": "shopify://collections/workshop",
+            "link_target": false
+          }
+        },
+        "slide_j4eLFP": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/DSC07479.jpg",
+            "video_url": "",
+            "youtube_id": "",
+            "slide_title": "カルダモン香る栗のおもち",
+            "slide_description": "<p>栗をまるごと一粒いれて<br/>スパイスを効かせた道明寺で包みました。</p><p>秋を感じるおもちです。</p>",
+            "slide_link": "shopify://products/季節のおもち",
+            "link_target": false
+          }
+        },
+        "slide_xdMWd9": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/IMG_0163.jpg",
+            "video_url": "",
+            "youtube_id": "",
+            "slide_title": "",
+            "slide_description": "",
+            "slide_link": "shopify://collections/雪景糖",
+            "link_target": false
+          }
+        },
+        "slide_z8KmrM": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/IMG_9756.jpg",
+            "video_url": "",
+            "youtube_id": "",
+            "slide_title": "",
+            "slide_description": "",
+            "slide_link": "shopify://collections/ohagi",
+            "link_target": false
+          }
+        },
+        "slide_VEmhBh": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/IMG_9067.jpg",
+            "video_url": "",
+            "youtube_id": "",
+            "slide_title": "",
+            "slide_description": "",
+            "slide_link": "shopify://collections/どら焼き",
+            "link_target": false
+          }
+        },
+        "slide_wgi9kA": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/EC_TOP4.jpg",
+            "video_url": "",
+            "youtube_id": "",
+            "slide_title": "",
+            "slide_description": "",
+            "slide_link": "shopify://collections/全ての商品",
+            "link_target": false
+          }
+        }
+      },
+      "block_order": [
+        "slide_4UiWQH",
+        "slide_j4eLFP",
+        "slide_xdMWd9",
+        "slide_z8KmrM",
+        "slide_VEmhBh",
+        "slide_wgi9kA"
+      ],
+      "name": "TOP PAGEプロダクトセクション",
+      "settings": {
+        "hero_title": "TOP PAGE",
+        "section_height": 100,
+        "mobile_height": 80,
+        "text_position": "position-right",
+        "desktop_font_size": 18,
+        "mobile_font_size": 18,
+        "text_color": "#ffffff",
+        "accent_color": "#ffffff",
+        "background_overlay": "linear-gradient(135deg, rgba(NaN, NaN, NaN, 1), rgba(0, 0, 0, 0.1) 100%)",
+        "autoplay_enabled": true,
+        "autoplay_duration": 5,
+        "show_arrows": true,
+        "show_dots": true,
+        "show_scroll_indicator": false,
+        "show_on_mobile": true
+      }
+    },
+    "custom_grid_section_Y3xMdB": {
+      "type": "custom-grid-section",
+      "blocks": {
+        "sweets_item_jBmLGL": {
+          "type": "sweets_item",
+          "settings": {
+            "title": "雪もち",
+            "image": "shopify://shop_images/EC_yukimochi_image_049791dd-7430-4aff-a171-bb24226b3515.jpg",
+            "link": "shopify://collections/雪もち"
+          }
+        },
+        "sweets_item_EXGnJt": {
+          "type": "sweets_item",
+          "settings": {
+            "title": "どら焼き",
+            "image": "shopify://shop_images/EC_image_dora_shiro_014c3849-b592-4a0a-bd59-844dbf3f684a.jpg",
+            "link": "shopify://collections/どら焼き"
+          }
+        },
+        "sweets_item_x9J3ra": {
+          "type": "sweets_item",
+          "settings": {
+            "title": "おはぎ",
+            "image": "shopify://shop_images/IMG_9793.jpg",
+            "link": "shopify://collections/ohagi"
+          }
+        },
+        "sweets_item_7yxcH9": {
+          "type": "sweets_item",
+          "settings": {
+            "title": "季節のおもち",
+            "image": "shopify://shop_images/DSC07479.jpg",
+            "link": "shopify://collections/季節のおもち"
+          }
+        },
+        "sweets_item_qRkEGn": {
+          "type": "sweets_item",
+          "settings": {
+            "title": "流氷羹",
+            "image": "shopify://shop_images/IMG_8784-Enhanced-NR-Edit_610d4d41-4f54-4398-9206-b48bcebd7c38.jpg",
+            "link": "shopify://collections/流氷羹"
+          }
+        },
+        "sweets_item_nBERtb": {
+          "type": "sweets_item",
+          "settings": {
+            "title": "雪景糖",
+            "image": "shopify://shop_images/7C201903_2a120209-ad88-4962-be92-d2efd4a201dc.jpg",
+            "link": "shopify://collections/雪景糖"
+          }
+        },
+        "sweets_item_rEXQqp": {
+          "type": "sweets_item",
+          "disabled": true,
+          "settings": {
+            "title": "米粉のぼうろ",
+            "image": "shopify://shop_images/31C36176-589A-4116-8147-2FFF9A47B2DC_699ace08-ffd7-4ba2-ad4e-98224e52f9dc.jpg",
+            "link": "shopify://collections/米粉のぼうろ"
+          }
+        },
+        "sweets_item_qJKTMd": {
+          "type": "sweets_item",
+          "disabled": true,
+          "settings": {
+            "title": "お茶",
+            "image": "shopify://shop_images/5933C011-9AED-4AC0-86FF-504CCC68D4E7_bdcaeca3-7191-493e-922c-a7b0ce32b614.jpg",
+            "link": "shopify://collections/japanese-tea-coffee"
+          }
+        },
+        "sweets_item_jxjkWP": {
+          "type": "sweets_item",
+          "disabled": true,
+          "settings": {
+            "title": "贈り物",
+            "image": "shopify://shop_images/DSC07218_cfaeb44d-35f3-419f-b973-83f3ed5fe3e2.jpg",
+            "link": "shopify://collections/贈り物"
+          }
+        }
+      },
+      "block_order": [
+        "sweets_item_jBmLGL",
+        "sweets_item_EXGnJt",
+        "sweets_item_x9J3ra",
+        "sweets_item_7yxcH9",
+        "sweets_item_qRkEGn",
+        "sweets_item_nBERtb",
+        "sweets_item_rEXQqp",
+        "sweets_item_qJKTMd",
+        "sweets_item_jxjkWP"
+      ],
+      "name": "Japanese Sweets Grid",
+      "settings": {
+        "heading_jp": "北和菓子",
+        "heading_en": "HOKUWAGASHI",
+        "description": "",
+        "cta_text": "View All Collection",
+        "cta_url": "",
+        "show_decorative_line": true,
+        "accent_color": "#121212",
+        "background_color": "#e7eaf0",
+        "jp_heading_color": "#595757",
+        "jp_heading_size_desktop": 32,
+        "jp_heading_size_mobile": 20,
+        "en_heading_color": "#333333",
+        "en_heading_size_desktop": 14,
+        "en_heading_size_mobile": 10,
+        "description_color": "#666666",
+        "description_size_desktop": 16,
+        "description_size_mobile": 14,
+        "text_color": "#333333",
+        "item_title_font_size_desktop": 16,
+        "item_title_font_size_mobile": 14,
+        "grid_gap": 24,
+        "grid_gap_mobile": 12,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
+      }
+    },
+    "artisanal_hero_section_TCNhxe": {
+      "type": "artisanal-hero-section",
+      "name": "Artisanal Hero",
+      "settings": {
+        "hero_image": "shopify://shop_images/DSC07218_cfaeb44d-35f3-419f-b973-83f3ed5fe3e2.jpg",
+        "show_overlay": true,
+        "overlay_opacity": 40,
+        "heading_jp": "贈り物",
+        "heading_en": "OKURIMONO",
+        "description": "",
+        "cta_text": "商品一覧を見る",
+        "cta_url": "shopify://collections/贈り物",
+        "show_decorative_line": true,
+        "accent_color": "#ffffff",
+        "jp_heading_color": "#ffffff",
+        "jp_heading_size_desktop": 32,
+        "jp_heading_size_mobile": 24,
+        "en_heading_color": "#ffffff",
+        "en_heading_size_desktop": 14,
+        "en_heading_size_mobile": 14,
+        "description_color": "#ffffff",
+        "description_size_desktop": 14,
+        "description_size_mobile": 14,
+        "text_color": "#ffffff",
+        "hero_height_desktop": 80,
+        "hero_height_mobile": 70,
+        "padding_top_desktop": 80,
+        "padding_bottom_desktop": 80,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
+      }
+    },
+    "artisanal_hero_section_7MYJeJ": {
+      "type": "artisanal-hero-section",
+      "name": "Artisanal Hero",
+      "settings": {
+        "hero_image": "shopify://shop_images/7C201966_da440ea8-7755-4616-90b9-b1e0c90ba3da.jpg",
+        "show_overlay": true,
+        "overlay_opacity": 25,
+        "heading_jp": "北和菓席",
+        "heading_en": "hokuwakaseki",
+        "description": "",
+        "cta_text": "空席を確認する",
+        "cta_url": "shopify://products/喫茶-北和菓席-ご予約-コピー",
+        "show_decorative_line": true,
+        "accent_color": "#ffffff",
+        "jp_heading_color": "#ffffff",
+        "jp_heading_size_desktop": 32,
+        "jp_heading_size_mobile": 24,
+        "en_heading_color": "#ffffff",
+        "en_heading_size_desktop": 14,
+        "en_heading_size_mobile": 14,
+        "description_color": "#ffffff",
+        "description_size_desktop": 14,
+        "description_size_mobile": 14,
+        "text_color": "#ffffff",
+        "hero_height_desktop": 80,
+        "hero_height_mobile": 70,
+        "padding_top_desktop": 80,
+        "padding_bottom_desktop": 80,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
+      }
+    },
+    "custom_liquid_WcpEhT": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 4
+      }
+    },
+    "artisanal_hero_section_wRckah": {
+      "type": "artisanal-hero-section",
+      "name": "Artisanal Hero",
+      "settings": {
+        "hero_image": "shopify://shop_images/IMG_0895.jpg",
+        "show_overlay": true,
+        "overlay_opacity": 50,
+        "heading_jp": "作家作品",
+        "heading_en": "SAKKA SAKUHIN",
+        "description": "",
+        "cta_text": "作品一覧を見る",
+        "cta_url": "shopify://pages/coming-soon",
+        "show_decorative_line": true,
+        "accent_color": "#ffffff",
+        "jp_heading_color": "#ffffff",
+        "jp_heading_size_desktop": 32,
+        "jp_heading_size_mobile": 24,
+        "en_heading_color": "#ffffff",
+        "en_heading_size_desktop": 14,
+        "en_heading_size_mobile": 14,
+        "description_color": "#ffffff",
+        "description_size_desktop": 16,
+        "description_size_mobile": 14,
+        "text_color": "#ffffff",
+        "hero_height_desktop": 80,
+        "hero_height_mobile": 70,
+        "padding_top_desktop": 50,
+        "padding_bottom_desktop": 80,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
+      }
+    },
+    "dedication_section_BhUN6T": {
+      "type": "dedication-section",
+      "blocks": {
+        "dedication_item_f8B8MR": {
+          "type": "dedication_item",
+          "settings": {
+            "image": "shopify://shop_images/EC_yukimochi_image_049791dd-7430-4aff-a171-bb24226b3515.jpg",
+            "title": "雪もちの話を読む",
+            "text": "<p>厳選された上質な素材のみを使用し、職人の技術と伝統を大切にした製品づくりを行っています。一つひとつに込められた想いをお届けします。</p>",
+            "title_font_size": 26,
+            "title_height": 220,
+            "text_font_size": 16,
+            "text_line_height": 1.8,
+            "text_height": 260,
+            "card_background_color": "rgba(255, 255, 255, 0.15)",
+            "blur_intensity": 0,
+            "button_text": "",
+            "button_url": "#",
+            "button_bg_color": "#d4002a",
+            "button_text_color": "#ffffff",
+            "content_alignment": "right",
+            "background_color": "",
+            "text_color": "#ffffff"
+          }
+        },
+        "dedication_item_KPRCbG": {
+          "type": "dedication_item",
+          "settings": {
+            "image": "shopify://shop_images/EC_image_dora_shiro_014c3849-b592-4a0a-bd59-844dbf3f684a.jpg",
+            "title": "どら焼きの話",
+            "text": "<p>代々受け継がれてきた製法を守り続け、変わらぬ美味しさを提供します。時代を超えて愛される味わいを大切にしています。</p>",
+            "title_font_size": 26,
+            "title_height": 220,
+            "text_font_size": 16,
+            "text_line_height": 1.8,
+            "text_height": 200,
+            "card_background_color": "rgba(255, 255, 255, 0.15)",
+            "blur_intensity": 0,
+            "button_text": "",
+            "button_url": "",
+            "button_bg_color": "#d4002a",
+            "button_text_color": "#ffffff",
+            "content_alignment": "right",
+            "background_color": "rgba(0,0,0,0.3)",
+            "text_color": "#ffffff"
+          }
+        },
+        "dedication_item_a63B7n": {
+          "type": "dedication_item",
+          "settings": {
+            "title": "おはぎの話を読む",
+            "text": "<p>機械では表現できない手作りならではの温もりと、職人の技が光る逸品をお届けします。ひとつひとつ心を込めて作り上げています。</p>",
+            "title_font_size": 25,
+            "title_height": 220,
+            "text_font_size": 16,
+            "text_line_height": 1.8,
+            "text_height": 240,
+            "card_background_color": "rgba(255, 255, 255, 0.15)",
+            "blur_intensity": 0,
+            "button_text": "",
+            "button_url": "",
+            "button_bg_color": "#d4002a",
+            "button_text_color": "#ffffff",
+            "content_alignment": "right",
+            "background_color": "rgba(0,0,0,0.3)",
+            "text_color": "#ffffff"
+          }
+        },
+        "dedication_item_LLw4CJ": {
+          "type": "dedication_item",
+          "settings": {
+            "title": "流水羹の話を読む",
+            "text": "<p>厳しい品質管理のもと、安心安全な製品をお客様にお届けしています。お客様の笑顔が私たちの何よりの喜びです。</p>",
+            "title_font_size": 26,
+            "title_height": 220,
+            "text_font_size": 16,
+            "text_line_height": 1.8,
+            "text_height": 220,
+            "card_background_color": "rgba(255, 255, 255, 0.15)",
+            "blur_intensity": 0,
+            "button_text": "",
+            "button_url": "",
+            "button_bg_color": "#d4002a",
+            "button_text_color": "#ffffff",
+            "content_alignment": "right",
+            "background_color": "rgba(0,0,0,0.3)",
+            "text_color": "#ffffff"
+          }
+        }
+      },
+      "block_order": [
+        "dedication_item_f8B8MR",
+        "dedication_item_KPRCbG",
+        "dedication_item_a63B7n",
+        "dedication_item_LLw4CJ"
+      ],
+      "disabled": true,
+      "name": "こだわりの品",
+      "settings": {
+        "main_title": "こだわりの品",
+        "subtitle": "Our Dedication",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "mobile_padding_top": 40,
+        "mobile_padding_bottom": 40
+      }
+    },
+    "order_confirmation_form_Uweaxa": {
+      "type": "order-confirmation-form",
+      "disabled": true,
+      "name": "注文確認フォーム",
+      "settings": {
+        "title": "まとまったご注文について",
+        "description": "<p>アイテムを組み合わせて10個を超えるまとまった注文をご希望の場合は、<br/>送料を特別料金にてご案内致します。</p><p>価格の改定は当承華曜日まで、<br/>発送日から10日目までに下記フォームよりお気軽にお問合せください。</p>",
+        "delivery_notice": "3日程度で担当者よりご返答させていただきます",
+        "estimate_period": "通常営業日",
+        "quote_label": "お見積確認",
+        "application_label": "お申込み",
+        "current_step_note": "お客様の工程です",
+        "shipping_label": "商品発送",
+        "shipping_period": "営業日以内",
+        "form_action": "/contact#contact_form",
+        "basic_info_title": "お客様情報",
+        "product_info_title": "ご希望商品情報",
+        "additional_info_title": "その他のご要望",
+        "name_label": "お名前",
+        "name_placeholder": "山田 太郎",
+        "company_label": "会社名",
+        "company_placeholder": "株式会社サンプル",
+        "email_label": "メールアドレス",
+        "email_placeholder": "example@company.com",
+        "phone_label": "電話番号",
+        "phone_placeholder": "03-0000-0000",
+        "product_label": "ご希望の商品",
+        "enable_product_dropdown": true,
+        "product_options": "商品A, 商品B, 商品C, 商品D, 商品E",
+        "product_placeholder": "商品名を入力してください",
+        "quantity_label": "個数",
+        "unit_label": "単位",
+        "unit_placeholder": "個・箱・セット等",
+        "additional_info_label": "その他のご要望・ご質問",
+        "additional_info_placeholder": "ご質問、ご要望、配送に関するご希望などがございましたら、お気軽にお書きください。",
+        "submit_button_text": "お問い合わせを送信",
+        "form_notice": "<p>確認後にお客様担当者様あてメールにてお返事いたします。お客様情報は、お問い合わせ対応に利用させていただきます。<br/>その他の用途につきましては、弊社プライバシーポリシーをご確認ください。</p>",
+        "background_gradient_start": "#d0d9d7",
+        "background_gradient_end": "#d0d9d7",
+        "form_background_color": "#ffffff",
+        "header_bg_start": "#ffffff",
+        "header_bg_end": "#ffffff",
+        "primary_color": "#121212",
+        "primary_gradient_end": "#121212",
+        "accent_color": "#252525",
+        "accent_gradient_end": "#000000",
+        "title_color": "#1e293b",
+        "title_gradient_end": "#334155",
+        "text_color": "#475569",
+        "label_color": "#374151",
+        "section_title_color": "#1f2937",
+        "notice_color": "#121212",
+        "button_background": "#121212",
+        "button_gradient_end": "#121212",
+        "button_hover_background": "#2563eb",
+        "button_hover_gradient_end": "#1e40af",
+        "button_text_color": "#ffffff",
+        "button_font_size": 16,
+        "button_border_radius": 12,
+        "title_font_size_desktop": 36,
+        "title_font_size_mobile": 28,
+        "description_font_size_desktop": 16,
+        "description_font_size_mobile": 15,
+        "label_font_size": 14,
+        "input_font_size": 15,
+        "container_width": 1000,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "border_radius": 20,
+        "mobile_border_radius": 16,
+        "input_border_radius": 10,
+        "enable_animations": false,
+        "enable_auto_save": true,
+        "enable_real_time_validation": true,
+        "load_external_css": false,
+        "load_external_js": false,
+        "high_contrast_mode": false,
+        "enable_keyboard_navigation": true,
+        "focus_ring_size": 3,
+        "custom_css_classes": "",
+        "custom_attributes": "",
+        "analytics_event_name": "form_submit_order_inquiry"
+      }
+    },
+    "floating_reservation_banner_z63iPD": {
+      "type": "floating-reservation-banner",
+      "name": "和風予約バナー（横書き）",
+      "settings": {
+        "display_style": "vertical",
+        "title": "内藤千鶴",
+        "title_line_1": "内藤千鶴",
+        "title_line_2": "イベント予約",
+        "subtitle": "",
+        "cta_url": "https://sisiri-test.myshopify.com/collections/workshop",
+        "vertical_title": "内藤千鶴イベント",
+        "vertical_title_line_1": "内藤千鶴　しめ縄飾り",
+        "vertical_title_line_2": "ワークショップ",
+        "vertical_subtitle": "ご予約はこちら",
+        "vertical_cta_url": "/pages/coming-soon",
+        "open_in_new_tab": false,
+        "icon_svg": "<svg width=\"32\" height=\"32\" viewbox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 3L2 12h3v8h14v-8h3L12 3zm0 2.236L18 11v8h-4v-6h-4v6H6v-8l6-5.764z\"></path></svg>",
+        "banner_right_position": 0,
+        "mobile_right_position": 0,
+        "position_unit": "pixel",
+        "banner_bottom_position": 10,
+        "mobile_bottom_position": 10,
+        "vertical_position_type": "bottom",
+        "vertical_position_percent": 20,
+        "mobile_vertical_position_percent": 5,
+        "scroll_threshold": 200,
+        "hide_on_scroll_down": false,
+        "banner_width": 280,
+        "vertical_banner_width": 80,
+        "mobile_banner_width": 180,
+        "mobile_vertical_banner_width": 70,
+        "mobile_small_banner_width": 160,
+        "inner_padding": 32,
+        "vertical_inner_padding": 18,
+        "title_font_size": 16,
+        "subtitle_font_size": 13,
+        "vertical_title_font_size": 14,
+        "vertical_subtitle_font_size": 9,
+        "mobile_title_font_size": 16,
+        "mobile_subtitle_font_size": 12,
+        "background_color": "#2d1810",
+        "background_color_secondary": "#3a2318",
+        "vertical_background_color": "#b3b6bc",
+        "vertical_background_color_secondary": "#b3b6bc",
+        "border_color": "#b3b6bc",
+        "accent_color": "#b3b6bc",
+        "text_color": "#f5f3f0",
+        "subtitle_color": "#c5b8a8",
+        "vertical_text_color": "#ffffff",
+        "vertical_subtitle_color": "#595757",
+        "show_close_button": true,
+        "aria_label": "予約バナー",
+        "cta_aria_label": "予約ページへ移動",
+        "vertical_cta_aria_label": "予約ページへ移動"
+      }
+    },
+    "cross_sell_popup_YbPgFy": {
+      "type": "cross-sell-popup",
+      "name": "クロスセル ポップアップ",
+      "settings": {
+        "enable_popup": true,
+        "cross_sell_collection": "amarillo",
+        "max_products": 3,
+        "popup_delay": 500,
+        "auto_close_delay": 0,
+        "show_on_mobile": true,
+        "show_variants": true,
+        "cart_subtitle": "Cart subtotal:",
+        "item_text": "Item",
+        "items_text": "Items",
+        "checkout_text": "Checkout",
+        "view_cart_text": "View Cart",
+        "add_to_cart_text": "Add to cart",
+        "sold_out_text": "Sold out",
+        "cross_sell_title": "Customers Also Bought",
+        "added_message": "Added to cart!",
+        "error_message": "Sorry, something went wrong.",
+        "overlay_color": "#00000099",
+        "popup_background": "#ffffff",
+        "primary_button_color": "#1f2937",
+        "secondary_button_color": "#4f46e5",
+        "popup_size": "medium",
+        "border_radius": 12,
+        "enable_blur_effect": true,
+        "enable_animations": true,
+        "close_on_overlay_click": true,
+        "prevent_body_scroll": true,
+        "enable_focus_management": true,
+        "enable_escape_key": true,
+        "announce_cart_updates": true,
+        "enable_analytics": false,
+        "analytics_event_name": "cross_sell_popup_interaction",
+        "enable_ab_testing": false,
+        "ab_test_percentage": 50,
+        "lazy_load_images": true,
+        "image_quality": 80,
+        "preload_popup_resources": false,
+        "enable_debug_mode": false,
+        "custom_css_class": "",
+        "custom_javascript": ""
+      }
+    }
+  },
+  "order": [
+    "fv_section_8y6Ke4",
+    "custom_grid_section_Y3xMdB",
+    "artisanal_hero_section_TCNhxe",
+    "artisanal_hero_section_7MYJeJ",
+    "custom_liquid_WcpEhT",
+    "artisanal_hero_section_wRckah",
+    "dedication_section_BhUN6T",
+    "order_confirmation_form_Uweaxa",
+    "floating_reservation_banner_z63iPD",
+    "cross_sell_popup_YbPgFy"
+  ]
+}

@@ -1,0 +1,203 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumb_m6DcWe": {
+      "type": "breadcrumb",
+      "name": "パンくずリスト",
+      "settings": {
+        "home_text": "TOP",
+        "show_home_icon": false,
+        "separator_style": "arrow",
+        "enable_animations": false,
+        "background_color": "#e7eaf0",
+        "text_color": "#595757",
+        "link_color": "#333333",
+        "current_page_color": "#999999",
+        "font_size_desktop": 12,
+        "font_size_mobile": 12,
+        "padding_top": 4,
+        "padding_bottom": 4,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "cart-items": {
+      "type": "main-cart-items",
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 36
+      }
+    },
+    "rich_text_FejR3c": {
+      "type": "rich-text",
+      "blocks": {
+        "text_GHhK7F": {
+          "type": "text",
+          "settings": {
+            "text": "<h6>※手提げ袋をご希望の場合は[紙袋]商品ページよりご購入をお願い致します(有料)。</h6>"
+          }
+        }
+      },
+      "block_order": [
+        "text_GHhK7F"
+      ],
+      "disabled": true,
+      "custom_css": [],
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "background-2",
+        "full_width": true,
+        "padding_top": 4,
+        "padding_bottom": 40
+      }
+    },
+    "cart-footer": {
+      "type": "main-cart-footer",
+      "blocks": {
+        "subtotal": {
+          "type": "subtotal",
+          "settings": {}
+        },
+        "buttons": {
+          "type": "buttons",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "subtotal",
+        "buttons"
+      ],
+      "settings": {}
+    },
+    "featured_collection_MJ8FwR": {
+      "type": "featured-collection",
+      "disabled": true,
+      "custom_css": [
+        "h2.title.inline-richtext.h2.scroll-trigger.animate--slide-in {text-align: center;}",
+        ".quick-add {position: relative; grid-row-start: 4; margin: 0 0 1rem; z-index: 1; border: 1px solid;}"
+      ],
+      "name": "t:sections.featured-collection.presets.name",
+      "settings": {
+        "title": "紙袋をご希望の方",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "紙袋",
+        "products_to_show": 3,
+        "columns_desktop": 3,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": true,
+        "color_scheme": "",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "enable_quick_add": true,
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 80,
+        "padding_bottom": 36
+      }
+    },
+    "product_grid_enhanced_UL63Wf": {
+      "type": "product-grid-enhanced",
+      "blocks": {
+        "product_card_qmybhn": {
+          "type": "product_card",
+          "settings": {
+            "product": "paper-bag-small",
+            "show_image": true,
+            "show_vendor": false,
+            "show_title": true,
+            "title_override": "",
+            "show_price": true,
+            "custom_description": "紙袋(小)：W220×D140×H140   おはぎ4個入、雪もち4個入 ／ 流氷羹、雪景糖",
+            "show_view_button": false,
+            "view_label": "",
+            "show_add_button": true,
+            "add_label": "カートに追加",
+            "show_badge": false,
+            "badge_text": "NEW"
+          }
+        },
+        "product_card_bGW6YP": {
+          "type": "product_card",
+          "settings": {
+            "product": "paper-bag-medium",
+            "show_image": true,
+            "show_vendor": false,
+            "show_title": true,
+            "title_override": "紙袋(中)",
+            "show_price": true,
+            "custom_description": "紙袋(中)：W250×D185×H200   おはぎ9個入、雪もち9個入、どら焼き6個入",
+            "show_view_button": false,
+            "view_label": "詳細を見る",
+            "show_add_button": true,
+            "add_label": "カートに追加",
+            "show_badge": false,
+            "badge_text": "NEW"
+          }
+        },
+        "product_card_c4a4ni": {
+          "type": "product_card",
+          "settings": {
+            "product": "paper-bag-large",
+            "show_image": true,
+            "show_vendor": false,
+            "show_title": true,
+            "title_override": "",
+            "show_price": true,
+            "custom_description": "紙袋(大)：W280×D240×H230   おはぎ16個入、雪もち16個入、どら焼き12個入",
+            "show_view_button": false,
+            "view_label": "詳細を見る",
+            "show_add_button": true,
+            "add_label": "カートに追加",
+            "show_badge": false,
+            "badge_text": "NEW"
+          }
+        }
+      },
+      "block_order": [
+        "product_card_qmybhn",
+        "product_card_bGW6YP",
+        "product_card_c4a4ni"
+      ],
+      "name": "Product grid enhanced",
+      "settings": {
+        "heading": "紙袋をご希望の方",
+        "heading_size": "h2",
+        "color_scheme": "background-1",
+        "secondary_background": false,
+        "grid_gap": 16,
+        "desktop_columns": 3,
+        "mobile_columns": "one",
+        "image_fit": "cover",
+        "image_ratio": 1,
+        "card_radius": 0,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "breadcrumb_m6DcWe",
+    "cart-items",
+    "rich_text_FejR3c",
+    "cart-footer",
+    "featured_collection_MJ8FwR",
+    "product_grid_enhanced_UL63Wf"
+  ]
+}

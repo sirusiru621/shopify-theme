@@ -1,0 +1,538 @@
+<!-- ファイル名: breadcrumb.liquid -->
+<!-- 機能説明: TOPページ以外の全ページに表示されるパンくずリストセクション -->
+<!-- SEO効果とユーザビリティを重視したナビゲーション実装 -->
+
+{%- comment -%}
+  パンくずリストセクション - Shopify Online Store 2.0対応
+  - TOPページ以外で表示
+  - JSON-LD構造化データでSEO強化
+  - レスポンシブ対応
+  - アクセシビリティ準拠
+{%- endcomment -%}
+
+{%- liquid
+  # TOPページでは表示しない
+  if request.page_type == 'index'
+    break
+  endif
+
+  # セクション設定の取得
+  assign show_home_icon = section.settings.show_home_icon
+  assign separator_style = section.settings.separator_style
+  assign enable_animations = section.settings.enable_animations
+  assign bg_color = section.settings.background_color
+  assign text_color = section.settings.text_color
+  assign link_color = section.settings.link_color
+  assign current_color = section.settings.current_page_color
+-%}
+
+{%- style -%}
+  .breadcrumb-section-{{ section.id }} {
+    background-color: {{ bg_color | default: 'transparent' }};
+    padding-top: {{ section.settings.padding_top | default: 4 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 4 }}px;
+    margin-top: {{ section.settings.margin_top | default: 0 }}px;
+    margin-bottom: {{ section.settings.margin_bottom | default: 0 }}px;
+  }
+  
+  .breadcrumb-section-{{ section.id }} .breadcrumb-text {
+    color: {{ text_color | default: '#666666' }};
+    font-size: {{ section.settings.font_size_desktop | default: 12 }}px;
+  }
+  
+  .breadcrumb-section-{{ section.id }} .breadcrumb-link {
+    color: {{ link_color | default: '#333333' }};
+  }
+  
+  .breadcrumb-section-{{ section.id }} .breadcrumb-current {
+    color: {{ current_color | default: '#999999' }};
+  }
+  
+  @media screen and (max-width: 768px) {
+    .breadcrumb-section-{{ section.id }} .breadcrumb-text {
+      font-size: {{ section.settings.font_size_mobile | default: 12 }}px;
+    }
+  }
+{%- endstyle -%}
+
+<nav class="breadcrumb-section breadcrumb-section-{{ section.id }}" 
+     aria-label="パンくずナビゲーション"
+     role="navigation"
+     {% if enable_animations %}data-animation="fadeInUp"{% endif %}>
+     
+  <div class="breadcrumb-container">
+    {%- comment -%} JSON-LD構造化データ（SEO対策） {%- endcomment -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "{{ section.settings.home_text | default: 'ホーム' }}",
+          "item": "{{ shop.secure_url }}"
+        }
+        {%- liquid
+          assign position = 2
+          
+          # コレクションページの場合
+          if request.page_type == 'collection' and collection
+            echo ','
+            echo '{'
+            echo '"@type": "ListItem",'
+            echo '"position": ' | append: position | append: ','
+            echo '"name": "' | append: collection.title | append: '",'
+            echo '"item": "' | append: shop.secure_url | append: collection.url | append: '"'
+            echo '}'
+            assign position = position | plus: 1
+          endif
+          
+          # 商品ページの場合
+          if request.page_type == 'product' and product
+            if product.collections.size > 0
+              assign main_collection = product.collections.first
+              echo ','
+              echo '{'
+              echo '"@type": "ListItem",'
+              echo '"position": ' | append: position | append: ','
+              echo '"name": "' | append: main_collection.title | append: '",'
+              echo '"item": "' | append: shop.secure_url | append: main_collection.url | append: '"'
+              echo '}'
+              assign position = position | plus: 1
+            endif
+            echo ','
+            echo '{'
+            echo '"@type": "ListItem",'
+            echo '"position": ' | append: position | append: ','
+            echo '"name": "' | append: product.title | append: '",'
+            echo '"item": "' | append: shop.secure_url | append: product.url | append: '"'
+            echo '}'
+          endif
+          
+          # 固定ページの場合
+          if request.page_type == 'page' and page
+            echo ','
+            echo '{'
+            echo '"@type": "ListItem",'
+            echo '"position": ' | append: position | append: ','
+            echo '"name": "' | append: page.title | append: '",'
+            echo '"item": "' | append: shop.secure_url | append: page.url | append: '"'
+            echo '}'
+          endif
+          
+          # ブログページの場合
+          if request.page_type == 'blog' and blog
+            echo ','
+            echo '{'
+            echo '"@type": "ListItem",'
+            echo '"position": ' | append: position | append: ','
+            echo '"name": "' | append: blog.title | append: '",'
+            echo '"item": "' | append: shop.secure_url | append: blog.url | append: '"'
+            echo '}'
+          endif
+          
+          # 記事ページの場合
+          if request.page_type == 'article' and article
+            echo ','
+            echo '{'
+            echo '"@type": "ListItem",'
+            echo '"position": ' | append: position | append: ','
+            echo '"name": "' | append: article.title | append: '",'
+            echo '"item": "' | append: shop.secure_url | append: article.url | append: '"'
+            echo '}'
+          endif
+        -%}
+      ]
+    }
+    </script>
+    
+    {%- comment -%} パンくずリスト表示 {%- endcomment -%}
+    <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+      {%- comment -%} ホームリンク {%- endcomment -%}
+      <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a href="{{ routes.root_url }}" 
+           class="breadcrumb-link breadcrumb-home"
+           itemprop="item"
+           aria-label="ホームページに戻る">
+          {%- if show_home_icon -%}
+            <svg class="breadcrumb-home-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 0L0 8h2v8h4V12h4v4h4V8h2L8 0z" fill="currentColor"/>
+            </svg>
+          {%- endif -%}
+          <span class="breadcrumb-text" itemprop="name">{{ section.settings.home_text | default: 'ホーム' }}</span>
+        </a>
+        <meta itemprop="position" content="1" />
+      </li>
+      
+      {%- liquid
+        assign position = 2
+        
+        # コレクションページの処理
+        if request.page_type == 'collection' and collection
+          echo '<span class="breadcrumb-separator-wrapper" aria-hidden="true">'
+          if separator_style == 'arrow'
+            echo '<svg class="breadcrumb-separator" width="8" height="12" viewBox="0 0 8 12" fill="none">'
+            echo '<path d="M1 1L6 6L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+            echo '</svg>'
+          elsif separator_style == 'slash'
+            echo '<span class="breadcrumb-separator">/</span>'
+          elsif separator_style == 'dot'
+            echo '<span class="breadcrumb-separator">•</span>'
+          else
+            echo '<span class="breadcrumb-separator">></span>'
+          endif
+          echo '</span>'
+          echo '<li class="breadcrumb-item breadcrumb-current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">'
+          echo '<span class="breadcrumb-text" itemprop="name">' | append: collection.title | append: '</span>'
+          echo '<meta itemprop="position" content="' | append: position | append: '" />'
+          echo '</li>'
+        endif
+        
+        # 商品ページの処理
+        if request.page_type == 'product' and product
+          if product.collections.size > 0
+            assign main_collection = product.collections.first
+            echo '<span class="breadcrumb-separator-wrapper" aria-hidden="true">'
+            if separator_style == 'arrow'
+              echo '<svg class="breadcrumb-separator" width="8" height="12" viewBox="0 0 8 12" fill="none">'
+              echo '<path d="M1 1L6 6L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+              echo '</svg>'
+            elsif separator_style == 'slash'
+              echo '<span class="breadcrumb-separator">/</span>'
+            elsif separator_style == 'dot'
+              echo '<span class="breadcrumb-separator">•</span>'
+            else
+              echo '<span class="breadcrumb-separator">></span>'
+            endif
+            echo '</span>'
+            echo '<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">'
+            echo '<a href="' | append: main_collection.url | append: '" class="breadcrumb-link" itemprop="item">'
+            echo '<span class="breadcrumb-text" itemprop="name">' | append: main_collection.title | append: '</span>'
+            echo '</a>'
+            echo '<meta itemprop="position" content="' | append: position | append: '" />'
+            echo '</li>'
+            assign position = position | plus: 1
+          endif
+          
+          echo '<span class="breadcrumb-separator-wrapper" aria-hidden="true">'
+          if separator_style == 'arrow'
+            echo '<svg class="breadcrumb-separator" width="8" height="12" viewBox="0 0 8 12" fill="none">'
+            echo '<path d="M1 1L6 6L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+            echo '</svg>'
+          elsif separator_style == 'slash'
+            echo '<span class="breadcrumb-separator">/</span>'
+          elsif separator_style == 'dot'
+            echo '<span class="breadcrumb-separator">•</span>'
+          else
+            echo '<span class="breadcrumb-separator">></span>'
+          endif
+          echo '</span>'
+          echo '<li class="breadcrumb-item breadcrumb-current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">'
+          echo '<span class="breadcrumb-text" itemprop="name">' | append: product.title | append: '</span>'
+          echo '<meta itemprop="position" content="' | append: position | append: '" />'
+          echo '</li>'
+        endif
+        
+        # 固定ページの処理
+        if request.page_type == 'page' and page
+          echo '<span class="breadcrumb-separator-wrapper" aria-hidden="true">'
+          if separator_style == 'arrow'
+            echo '<svg class="breadcrumb-separator" width="8" height="12" viewBox="0 0 8 12" fill="none">'
+            echo '<path d="M1 1L6 6L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+            echo '</svg>'
+          elsif separator_style == 'slash'
+            echo '<span class="breadcrumb-separator">/</span>'
+          elsif separator_style == 'dot'
+            echo '<span class="breadcrumb-separator">•</span>'
+          else
+            echo '<span class="breadcrumb-separator">></span>'
+          endif
+          echo '</span>'
+          echo '<li class="breadcrumb-item breadcrumb-current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">'
+          echo '<span class="breadcrumb-text" itemprop="name">' | append: page.title | append: '</span>'
+          echo '<meta itemprop="position" content="' | append: position | append: '" />'
+          echo '</li>'
+        endif
+        
+        # ブログページの処理
+        if request.page_type == 'blog' and blog
+          echo '<span class="breadcrumb-separator-wrapper" aria-hidden="true">'
+          if separator_style == 'arrow'
+            echo '<svg class="breadcrumb-separator" width="8" height="12" viewBox="0 0 8 12" fill="none">'
+            echo '<path d="M1 1L6 6L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+            echo '</svg>'
+          elsif separator_style == 'slash'
+            echo '<span class="breadcrumb-separator">/</span>'
+          elsif separator_style == 'dot'
+            echo '<span class="breadcrumb-separator">•</span>'
+          else
+            echo '<span class="breadcrumb-separator">></span>'
+          endif
+          echo '</span>'
+          echo '<li class="breadcrumb-item breadcrumb-current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">'
+          echo '<span class="breadcrumb-text" itemprop="name">' | append: blog.title | append: '</span>'
+          echo '<meta itemprop="position" content="' | append: position | append: '" />'
+          echo '</li>'
+        endif
+        
+        # 記事ページの処理
+        if request.page_type == 'article' and article
+          if blog
+            echo '<span class="breadcrumb-separator-wrapper" aria-hidden="true">'
+            if separator_style == 'arrow'
+              echo '<svg class="breadcrumb-separator" width="8" height="12" viewBox="0 0 8 12" fill="none">'
+              echo '<path d="M1 1L6 6L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+              echo '</svg>'
+            elsif separator_style == 'slash'
+              echo '<span class="breadcrumb-separator">/</span>'
+            elsif separator_style == 'dot'
+              echo '<span class="breadcrumb-separator">•</span>'
+            else
+              echo '<span class="breadcrumb-separator">></span>'
+            endif
+            echo '</span>'
+            echo '<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">'
+            echo '<a href="' | append: blog.url | append: '" class="breadcrumb-link" itemprop="item">'
+            echo '<span class="breadcrumb-text" itemprop="name">' | append: blog.title | append: '</span>'
+            echo '</a>'
+            echo '<meta itemprop="position" content="' | append: position | append: '" />'
+            echo '</li>'
+            assign position = position | plus: 1
+          endif
+          
+          echo '<span class="breadcrumb-separator-wrapper" aria-hidden="true">'
+          if separator_style == 'arrow'
+            echo '<svg class="breadcrumb-separator" width="8" height="12" viewBox="0 0 8 12" fill="none">'
+            echo '<path d="M1 1L6 6L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+            echo '</svg>'
+          elsif separator_style == 'slash'
+            echo '<span class="breadcrumb-separator">/</span>'
+          elsif separator_style == 'dot'
+            echo '<span class="breadcrumb-separator">•</span>'
+          else
+            echo '<span class="breadcrumb-separator">></span>'
+          endif
+          echo '</span>'
+          echo '<li class="breadcrumb-item breadcrumb-current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">'
+          echo '<span class="breadcrumb-text" itemprop="name">' | append: article.title | append: '</span>'
+          echo '<meta itemprop="position" content="' | append: position | append: '" />'
+          echo '</li>'
+        endif
+        
+        # カートページの処理
+        if request.page_type == 'cart'
+          echo '<span class="breadcrumb-separator-wrapper" aria-hidden="true">'
+          if separator_style == 'arrow'
+            echo '<svg class="breadcrumb-separator" width="8" height="12" viewBox="0 0 8 12" fill="none">'
+            echo '<path d="M1 1L6 6L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+            echo '</svg>'
+          elsif separator_style == 'slash'
+            echo '<span class="breadcrumb-separator">/</span>'
+          elsif separator_style == 'dot'
+            echo '<span class="breadcrumb-separator">•</span>'
+          else
+            echo '<span class="breadcrumb-separator">></span>'
+          endif
+          echo '</span>'
+          echo '<li class="breadcrumb-item breadcrumb-current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">'
+          echo '<span class="breadcrumb-text" itemprop="name">' | append: 'カート' | append: '</span>'
+          echo '<meta itemprop="position" content="' | append: position | append: '" />'
+          echo '</li>'
+        endif
+        
+        # 検索結果ページの処理
+        if request.page_type == 'search'
+          echo '<span class="breadcrumb-separator-wrapper" aria-hidden="true">'
+          if separator_style == 'arrow'
+            echo '<svg class="breadcrumb-separator" width="8" height="12" viewBox="0 0 8 12" fill="none">'
+            echo '<path d="M1 1L6 6L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+            echo '</svg>'
+          elsif separator_style == 'slash'
+            echo '<span class="breadcrumb-separator">/</span>'
+          elsif separator_style == 'dot'
+            echo '<span class="breadcrumb-separator">•</span>'
+          else
+            echo '<span class="breadcrumb-separator">></span>'
+          endif
+          echo '</span>'
+          echo '<li class="breadcrumb-item breadcrumb-current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">'
+          echo '<span class="breadcrumb-text" itemprop="name">検索結果</span>'
+          echo '<meta itemprop="position" content="' | append: position | append: '" />'
+          echo '</li>'
+        endif
+      -%}
+    </ol>
+  </div>
+</nav>
+
+{%- comment -%} セパレーター用の廃止されたスニペット参照を削除 {%- endcomment -%}
+{%- comment -%} 
+  セパレーターは各ページタイプ処理内で直接出力されるため、
+  以下のスニペット呼び出しとキャプチャは不要になりました。
+{%- endcomment -%}
+
+{%- comment -%} セクション専用CSS・JS読み込み {%- endcomment -%}
+{{ 'breadcrumb.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'breadcrumb.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "パンくずリスト",
+  "class": "breadcrumb-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "基本設定"
+    },
+    {
+      "type": "text",
+      "id": "home_text",
+      "label": "ホームテキスト",
+      "default": "TOP",
+      "info": "ホームページのリンクテキストを設定します"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_home_icon",
+      "label": "ホームアイコンを表示",
+      "default": false,
+      "info": "ホームリンクにアイコンを表示するかどうか"
+    },
+    {
+      "type": "select",
+      "id": "separator_style",
+      "label": "セパレータースタイル",
+      "options": [
+        {
+          "value": "arrow",
+          "label": "矢印 (>)"
+        },
+        {
+          "value": "slash",
+          "label": "スラッシュ (/)"
+        },
+        {
+          "value": "dot",
+          "label": "ドット (•)"
+        },
+        {
+          "value": "greater",
+          "label": "大なり記号 (>)"
+        }
+      ],
+      "default": "arrow",
+      "info": "パンくずリストのセパレーターを選択"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_animations",
+      "label": "アニメーションを有効化",
+      "default": true,
+      "info": "スクロール時のフェードインアニメーション"
+    },
+    {
+      "type": "header",
+      "content": "デザイン設定"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景色",
+      "info": "透明にする場合は色を選択しない"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "テキスト色",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "リンク色",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "current_page_color",
+      "label": "現在のページ色",
+      "default": "#999999",
+      "info": "現在のページのテキスト色"
+    },
+    {
+      "type": "header",
+      "content": "フォント設定"
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "デスクトップフォントサイズ",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "min": 8,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "モバイルフォントサイズ",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "スペーシング設定"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "label": "上パディング",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "label": "下パディング",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "label": "上マージン",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "label": "下マージン",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "パンくずリスト"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,432 @@
+
+{{ 'featured-collection-enhanced.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-rating.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign columns_desktop = section.settings.columns_desktop
+  assign columns_mobile = section.settings.columns_mobile | plus: 0
+  assign show_mobile_slider = false
+  if section.settings.enable_mobile_slider and section.blocks.size > columns_mobile
+    assign show_mobile_slider = true
+  endif
+  assign show_desktop_slider = false
+  if section.settings.enable_desktop_slider and section.blocks.size > columns_desktop
+    assign show_desktop_slider = true
+  endif
+-%}
+
+{%- style -%}
+.section-{{ section.id }}-padding {
+  padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+  padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+}
+@media screen and (min-width: 750px) {
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+}
+/* 動的カラーテーマ・列数（CSS変数） */
+.enhanced-product-grid-{{ section.id }} {
+  --primary-text: {{ section.settings.text_color | default: '#000000' }};
+  --secondary-text: {{ section.settings.secondary_text_color | default: '#666666' }};
+  --card-background: {{ section.settings.card_background | default: '#ffffff' }};
+  --button-background: {{ section.settings.button_background | default: '#000000' }};
+  --button-text-color: {{ section.settings.button_text_color | default: '#ffffff' }};
+  --section-background: {% if section.settings.secondary_background %}var(--color-background){% else %}transparent{% endif %};
+  --cols-d: {{ columns_desktop }};
+  --cols-m: {{ columns_mobile }};
+}
+/* スライダー（デスクトップ）で列数に追従 */
+.enhanced-product-grid-{{ section.id }} .enhanced-product-grid__container.slider--desktop .enhanced-product-grid__item {
+  width: calc((100% - (var(--spacing-lg, 2rem) * ({{ columns_desktop | minus: 1 }}))) / {{ columns_desktop }});
+  min-width: 16rem;
+}
+{%- endstyle -%}
+
+<section class="enhanced-product-grid enhanced-product-grid-{{ section.id }} color-{{ section.settings.color_scheme }} {% if section.settings.secondary_background %}background-secondary{% else %}gradient{% endif %} section-{{ section.id }}-padding" data-section-id="{{ section.id }}">
+  <div class="page-width{% if section.settings.secondary_background %} isolate{% endif %}">
+
+    {%- if section.settings.title != blank or section.settings.description != blank -%}
+      <div class="enhanced-product-grid__header text-center">
+        {%- if section.settings.title != blank -%}
+          <h2 class="enhanced-product-grid__title {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+            {{ section.settings.title }}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <div class="enhanced-product-grid__description rte {{ section.settings.description_style }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+            {{ section.settings.description }}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="enhanced-product-grid__wrapper{% if show_mobile_slider or show_desktop_slider %} slider-enabled{% endif %}">
+      {%- if show_mobile_slider or show_desktop_slider -%}
+        <slider-component class="enhanced-slider" data-section-id="{{ section.id }}"></slider-component>
+      {%- endif -%}
+
+      <ul
+        id="EnhancedProductGrid-{{ section.id }}"
+        class="enhanced-product-grid__container 
+               grid--{{ columns_desktop }}-col-desktop 
+               grid--{{ columns_mobile }}-col-mobile
+               {% if show_mobile_slider or show_desktop_slider %}slider{% endif %}
+               {% if show_mobile_slider %}slider--mobile{% endif %}
+               {% if show_desktop_slider %}slider--desktop{% endif %}"
+        role="list"
+        data-section-id="{{ section.id }}"
+      >
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+
+            {%- when 'product_item' -%}
+              {%- liquid
+                assign product = block.settings.product
+                assign placeholder = false
+                assign product_form_id = 'enhanced-product-form-' | append: section.id | append: '-' | append: forloop.index
+                if product == null
+                  assign placeholder = true
+                endif
+              -%} 
+              <li
+                class="enhanced-product-grid__item grid__item{% if show_mobile_slider or show_desktop_slider %} slider__slide{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                {{ block.shopify_attributes }}
+                {% if settings.animations_reveal_on_scroll %}data-cascade style="--animation-order: {{ forloop.index }};"{% endif %}
+              >
+                <div class="enhanced-product-card">
+
+                  <div class="enhanced-product-card__media">
+                    {%- unless placeholder -%}
+                      {%- if product.featured_media -%}
+                        {%- liquid
+                          assign image = product.featured_media
+                          assign image_alt = image.alt | default: product.title
+                        -%}
+                        <img
+                          srcset="
+                            {%- if image.width >= 165 -%}{{ image | image_url: width: 165 }} 165w,{%- endif -%}
+                            {%- if image.width >= 330 -%}{{ image | image_url: width: 330 }} 330w,{%- endif -%}
+                            {%- if image.width >= 535 -%}{{ image | image_url: width: 535 }} 535w,{%- endif -%}
+                            {%- if image.width >= 750 -%}{{ image | image_url: width: 750 }} 750w,{%- endif -%}
+                            {{ image | image_url }} {{ image.width }}w"
+                          src="{{ image | image_url: width: 535 }}"
+                          sizes="(min-width: 1200px) calc(100vw / {{ columns_desktop }}), (min-width: 750px) calc((100vw - 10rem) / 2), 100vw"
+                          alt="{{ image_alt | escape }}"
+                          class="enhanced-product-card__image"
+                          loading="lazy"
+                          width="{{ image.width }}"
+                          height="{{ image.height }}"
+                        >
+                      {%- else -%}
+                        <div class="enhanced-product-card__placeholder">
+                          <span class="enhanced-product-card__no-image">No Image</span>
+                        </div>
+                      {%- endif -%}
+                    {%- else -%}
+                      {%- if block.settings.custom_image -%}
+                        {%- liquid
+                          assign image = block.settings.custom_image
+                          assign image_alt = image.alt | default: block.settings.title | default: section.settings.title
+                        -%}
+                        <img
+                          srcset="
+                            {%- if image.width >= 165 -%}{{ image | image_url: width: 165 }} 165w,{%- endif -%}
+                            {%- if image.width >= 330 -%}{{ image | image_url: width: 330 }} 330w,{%- endif -%}
+                            {%- if image.width >= 535 -%}{{ image | image_url: width: 535 }} 535w,{%- endif -%}
+                            {%- if image.width >= 750 -%}{{ image | image_url: width: 750 }} 750w,{%- endif -%}
+                            {{ image | image_url }} {{ image.width }}w"
+                          src="{{ image | image_url: width: 535 }}"
+                          sizes="(min-width: 1200px) calc(100vw / {{ columns_desktop }}), (min-width: 750px) calc((100vw - 10rem) / 2), 100vw"
+                          alt="{{ image_alt | escape }}"
+                          class="enhanced-product-card__image"
+                          loading="lazy"
+                          width="{{ image.width }}"
+                          height="{{ image.height }}"
+                        >
+                      {%- else -%}
+                        <div class="enhanced-product-card__placeholder">
+                          {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                          <span class="enhanced-product-card__no-image">No Image</span>
+                        </div>
+                      {%- endif -%}
+                    {%- endunless -%}
+                  </div>
+
+                  <div class="enhanced-product-card__info">
+
+                    <h3 class="enhanced-product-card__title">
+                      {%- unless placeholder -%}
+                        {{ product.title | escape }}
+                      {%- else -%}
+                        {%- if block.settings.title != blank -%}
+                          {{ block.settings.title }}
+                        {%- else -%}
+                          {{ 'onboarding.product_title' | t }}
+                        {%- endif -%}
+                      {%- endunless -%}
+                    </h3>
+
+                    <div class="enhanced-product-card__price" id="price-{{ section.id }}-{{ forloop.index }}" role="status" aria-live="polite">
+                      {%- unless placeholder -%}
+                        {%- render 'price',
+                          product: product,
+                          placeholder: false,
+                          use_variant: true,
+                          show_badges: false,
+                          price_class: 'price--regular'
+                        -%}
+                      {%- else -%}
+                        {%- if block.settings.custom_price != blank -%}
+                          <span class="price price--regular">{{ block.settings.custom_price }}</span>
+                        {%- else -%}
+                          <span class="price price--regular">¥120から</span>
+                        {%- endif -%}
+                      {%- endunless -%}
+                    </div>
+
+                    {%- if block.settings.custom_text != blank -%}
+                      <div class="enhanced-product-card__custom-text rte">
+                        {{ block.settings.custom_text }}
+                      </div>
+                    {%- endif -%}
+
+                    {%- if block.settings.description != blank -%}
+                      <div class="enhanced-product-card__description">
+                        {{ block.settings.description }}
+                      </div>
+                    {%- endif -%}
+
+                    {%- if section.settings.show_vendor and product and product.vendor != blank -%}
+                      <p class="enhanced-product-card__vendor caption-with-letter-spacing">
+                        {{ product.vendor }}
+                      </p>
+                    {%- endif -%}
+
+                    {%- if section.settings.show_rating and product and product.metafields.reviews.rating.value != blank -%}
+                      <div class="enhanced-product-card__rating">
+                        {%- liquid
+                          assign rating_decimal = 0
+                          assign decimal = product.metafields.reviews.rating.value.rating | modulo: 1
+                          if decimal >= 0.3 and decimal <= 0.7
+                            assign rating_decimal = 0.5
+                          elsif decimal > 0.7
+                            assign rating_decimal = 1
+                          endif
+                        -%}
+                        <div class="rating" role="img" aria-label="{{ 'accessibility.star_reviews_info' | t: rating_value: product.metafields.reviews.rating.value, rating_max: product.metafields.reviews.rating.value.scale_max }}">
+                          <span aria-hidden="true" class="rating-star" style="--rating: {{ product.metafields.reviews.rating.value.rating | floor }}; --rating-max: {{ product.metafields.reviews.rating.value.scale_max }}; --rating-decimal: {{ rating_decimal }};"></span>
+                        </div>
+                      </div>
+                    {%- endif -%}
+
+                    <div class="enhanced-product-card__actions">
+                      {%- unless placeholder -%}
+                        {%- if product.available -%}
+                          {%- form 'product', product, id: product_form_id, class: 'enhanced-product-form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+                            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" class="product-variant-id">
+                            <input type="hidden" name="quantity" value="1" min="1" class="quantity__input">
+                            <button
+                              type="submit"
+                              name="add"
+                              class="enhanced-product-card__button enhanced-add-to-cart-button button button--full-width {% if product.selected_or_first_available_variant.available == false %}button--disabled{% endif %}"
+                              {% if product.selected_or_first_available_variant.available == false %}disabled{% endif %}
+                            >
+                              <span class="enhanced-add-to-cart-text">
+                                {%- if product.selected_or_first_available_variant.available -%}
+                                  {%- if block.settings.button_text != blank -%}{{ block.settings.button_text }}{%- else -%}{{ 'products.product.add_to_cart' | t }}{%- endif -%}
+                                {%- else -%}
+                                  {{ 'products.product.sold_out' | t }}
+                                {%- endif -%}
+                              </span>
+                              <div class="loading-overlay__spinner hidden">
+                                <svg aria-hidden="true" focusable="false" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                                  <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                                </svg>
+                              </div>
+                            </button>
+                          {%- endform -%}
+                        {%- else -%}
+                          <button type="button" class="enhanced-product-card__button button button--full-width button--disabled" disabled>{{ 'products.product.sold_out' | t }}</button>
+                        {%- endif -%}
+                        <a href="{{ product.url }}" class="enhanced-product-card__link link product__view-details animate-arrow" aria-label="{{ 'products.product.view_full_details' | t }}: {{ product.title }}">{{ 'products.product.view_full_details' | t }} {{- 'icon-arrow.svg' | inline_asset_content -}}</a>
+                      {%- else -%}
+                        <button type="button" class="enhanced-product-card__button button button--full-width button--disabled" disabled>
+                          {%- if block.settings.button_text != blank -%}{{ block.settings.button_text }}{%- else -%}{{ 'products.product.add_to_cart' | t }}{%- endif -%}
+                        </button>
+                      {%- endunless -%}
+                    </div>
+
+                  </div>
+                </div>
+              </li>
+
+            {%- when 'custom_content' -%}
+              <li class="enhanced-product-grid__item enhanced-product-grid__custom-content grid__item{% if show_mobile_slider or show_desktop_slider %} slider__slide{% endif %}" {{ block.shopify_attributes }}>
+                <div class="enhanced-custom-card">
+                  {%- if block.settings.custom_image -%}
+                    <div class="enhanced-custom-card__media">
+                      <img src="{{ block.settings.custom_image | image_url: width: 535 }}" alt="{{ block.settings.custom_image.alt | escape }}" class="enhanced-custom-card__image" loading="lazy">
+                    </div>
+                  {%- endif -%}
+                  <div class="enhanced-custom-card__content">
+                    {%- if block.settings.custom_title != blank -%}
+                      <h3 class="enhanced-custom-card__title">{{ block.settings.custom_title }}</h3>
+                    {%- endif -%}
+                    {%- if block.settings.custom_content != blank -%}
+                      <div class="enhanced-custom-card__text rte">{{ block.settings.custom_content }}</div>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </li>
+
+          {%- endcase -%}
+        {%- else -%}
+          {%- for i in (1..3) -%}
+            <li class="enhanced-product-grid__item enhanced-product-grid__placeholder grid__item">
+              <div class="enhanced-product-card">
+                <div class="enhanced-product-card__media">
+                  <div class="enhanced-product-card__placeholder">
+                    {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                    <span class="enhanced-product-card__no-image">No Image</span>
+                  </div>
+                </div>
+                <div class="enhanced-product-card__info">
+                  <h3 class="enhanced-product-card__title">{{ 'onboarding.product_title' | t }}</h3>
+                  <div class="enhanced-product-card__price"><span class="price price--regular">¥120から</span></div>
+                  <div class="enhanced-product-card__description">サンプル商品の説明テキストです。</div>
+                  <div class="enhanced-product-card__actions">
+                    <button type="button" class="enhanced-product-card__button button button--full-width button--disabled" disabled>{{ 'products.product.add_to_cart' | t }}</button>
+                  </div>
+                </div>
+              </div>
+            </li>
+          {%- endfor -%}
+        {%- endfor -%}
+      </ul>
+
+      {%- if show_mobile_slider or show_desktop_slider -%}
+        <div class="enhanced-slider__controls no-js-hidden" data-section-id="{{ section.id }}">
+          <button type="button" class="enhanced-slider__button enhanced-slider__button--prev" name="previous" aria-label="前のスライド" aria-controls="EnhancedProductGrid-{{ section.id }}">
+            <svg viewBox="0 0 10 6" class="icon"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z"/></svg>
+          </button>
+          <div class="enhanced-slider__counter" aria-live="polite">
+            <span class="enhanced-slider__current">1</span><span aria-hidden="true"> / </span><span class="enhanced-slider__total">{{ section.blocks.size }}</span>
+          </div>
+          <button type="button" class="enhanced-slider__button enhanced-slider__button--next" name="next" aria-label="次のスライド" aria-controls="EnhancedProductGrid-{{ section.id }}">
+            <svg viewBox="0 0 10 6" class="icon"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z"/></svg>
+          </button>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<!-- カート通知（アクセシビリティ改善: aria-live, aria-hidden切替） -->
+<div id="cart-notification" class="cart-notification-wrapper page-width" aria-modal="true" aria-label="{{ 'general.cart.item_added' | t }}" role="dialog" tabindex="-1" aria-hidden="true" aria-live="polite">
+  <div class="cart-notification">
+    <div class="cart-notification__header">
+      <h3 class="cart-notification__heading caption-large text-body">
+        <svg class="icon icon-checkmark" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 9" fill="none">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M11.35.643a.5.5 0 01.006.707L4.717 8.84a.5.5 0 01-.717-.006L.292 5.915A.5.5 0 01.708 5.5L4.353 7.956l6.64-7.313a.5.5 0 01.707-.006z" fill="currentColor"/>
+        </svg>
+        {{ 'general.cart.item_added' | t }}
+      </h3>
+      <button type="button" class="cart-notification__close modal__close-button link link--text focus-inset" aria-label="{{ 'accessibility.close' | t }}">
+        <svg class="icon icon-close" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="m11.707 6.207-5.5 5.5a1 1 0 0 1-1.414-1.414L9.293 5.793 4.793 1.293a1 1 0 0 1 1.414-1.414l5.5 5.5a1 1 0 0 1 0 1.414Z"/></svg>
+      </button>
+    </div>
+    <div class="cart-notification__body">
+      <div class="cart-notification-product">
+        <div class="cart-notification-product__image global-media-settings">
+          <img class="cart-notification__image" alt="" loading="lazy">
+        </div>
+        <div>
+          <h3 class="cart-notification-product__name h4"></h3>
+          <p class="product-option"></p>
+          <ul class="product-options list-unstyled" role="list"></ul>
+          <p class="cart-notification__quantity">{{ 'general.cart.quantity' | t }}: <span></span></p>
+        </div>
+      </div>
+      <div class="cart-notification__links">
+        <a href="{{ routes.cart_url }}" class="button button--secondary button--full-width" id="cart-notification-button">
+          {{ 'general.cart.view' | t }} ({{ 'general.cart.item_count' | t: count: '[item_count]' }})
+        </a>
+        <form action="{{ routes.cart_url }}" method="post" id="cart-notification-form">
+          <button class="button button--primary button--full-width" name="add" type="submit" form="cart-notification-form">{{ 'general.continue_shopping' | t }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ 'featured-collection-enhanced.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "商品グリッド表示（ブロック対応）",
+  "tag": "section",
+  "class": "section enhanced-product-grid-section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "header", "content": "🎨 セクション設定" },
+    { "type": "inline_richtext", "id": "title", "label": "セクション見出し", "default": "紙袋をご希望の方", "info": "セクションの上部に表示される見出しテキスト" },
+    { "type": "select", "id": "heading_size", "options": [ { "value": "h2", "label": "標準" }, { "value": "h1", "label": "大" }, { "value": "h0", "label": "特大" }, { "value": "hxl", "label": "超特大" } ], "default": "h1", "label": "見出しサイズ" },
+    { "type": "richtext", "id": "description", "label": "セクション説明文", "info": "見出し下に表示される説明テキスト（HTML対応）" },
+    { "type": "select", "id": "description_style", "label": "説明文スタイル", "options": [ { "value": "body", "label": "本文" }, { "value": "subtitle", "label": "サブタイトル" }, { "value": "caption", "label": "キャプション" } ], "default": "body" },
+    { "type": "header", "content": "📱 レイアウト設定" },
+    { "type": "range", "id": "columns_desktop", "min": 1, "max": 5, "step": 1, "default": 3, "label": "デスクトップ表示列数", "info": "画面幅1200px以上での表示列数" },
+    { "type": "select", "id": "columns_mobile", "default": "1", "label": "モバイル表示列数", "options": [ { "value": "1", "label": "1列" }, { "value": "2", "label": "2列" } ], "info": "画面幅750px未満での表示列数" },
+    { "type": "checkbox", "id": "enable_mobile_slider", "default": true, "label": "モバイルでスライダー機能を有効にする", "info": "モバイル表示時にスワイプ操作を可能にする" },
+    { "type": "checkbox", "id": "enable_desktop_slider", "default": false, "label": "デスクトップでスライダー機能を有効にする", "info": "デスクトップ表示時にスライダー操作を可能にする" },
+    { "type": "checkbox", "id": "show_vendor", "default": false, "label": "ベンダー名を表示", "info": "商品のブランド・メーカー名を表示" },
+    { "type": "checkbox", "id": "show_rating", "default": false, "label": "レーティングを表示", "info": "商品レビューの星評価を表示" },
+    { "type": "header", "content": "🎨 デザインカスタマイズ" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "カラースキーム", "default": "scheme-1", "info": "セクション全体のカラーテーマ" },
+    { "type": "checkbox", "id": "secondary_background", "default": false, "label": "セカンダリ背景を使用" },
+    { "type": "color", "id": "text_color", "label": "メインテキスト色", "default": "#000000" },
+    { "type": "color", "id": "secondary_text_color", "label": "サブテキスト色", "default": "#666666" },
+    { "type": "color", "id": "card_background", "label": "カード背景色", "default": "#ffffff" },
+    { "type": "color", "id": "button_background", "label": "ボタン背景色", "default": "#000000" },
+    { "type": "color", "id": "button_text_color", "label": "ボタンテキスト色", "default": "#ffffff" },
+    { "type": "header", "content": "📏 余白設定" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "上部余白", "default": 36 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "下部余白", "default": 36 }
+  ],
+  "blocks": [
+    {
+      "type": "product_item",
+      "name": "🛍️ 商品アイテム",
+      "settings": [
+        { "type": "header", "content": "商品選択" },
+        { "type": "product", "id": "product", "label": "商品を選択", "info": "Shopifyの商品から自動で情報を取得" },
+        { "type": "header", "content": "カスタム設定（商品選択時は下記が優先）" },
+        { "type": "text", "id": "title", "label": "カスタム商品名", "info": "商品を選択していない場合に表示される名前" },
+        { "type": "image_picker", "id": "custom_image", "label": "カスタム画像", "info": "商品を選択していない場合に表示される画像" },
+        { "type": "text", "id": "custom_price", "label": "カスタム価格表示", "default": "¥120から", "info": "商品を選択していない場合の価格表示" },
+        { "type": "header", "content": "✨ 追加テキスト設定" },
+        { "type": "richtext", "id": "custom_text", "label": "価格下テキスト", "info": "価格の下に表示するカスタムテキスト（HTML対応）", "default": "<p>小サイズ W280×D240×H230</p><p>例）<br>4個入り×2箱<br>雪景膝×3箱<br>焼き菓子や香草茶などの丸容器×8個</p>" },
+        { "type": "textarea", "id": "description", "label": "商品説明", "info": "商品の詳細説明（改行対応）" },
+        { "type": "text", "id": "button_text", "label": "ボタンテキスト", "default": "カートに追加", "info": "カートに追加ボタンに表示するテキスト" }
+      ]
+    },
+    {
+      "type": "custom_content",
+      "name": "📝 カスタムコンテンツ",
+      "settings": [
+        { "type": "text", "id": "custom_title", "label": "カスタムタイトル", "info": "自由にタイトルを設定" },
+        { "type": "image_picker", "id": "custom_image", "label": "カスタム画像" },
+        { "type": "richtext", "id": "custom_content", "label": "カスタムコンテンツ", "info": "自由にコンテンツを作成（HTML対応）" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "商品グリッド表示（ブロック対応）",
+      "blocks": [ { "type": "product_item" }, { "type": "product_item" }, { "type": "product_item" } ]
+    }
+  ]
+}
+{% endschema %}

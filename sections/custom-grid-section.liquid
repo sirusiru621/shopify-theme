@@ -1,0 +1,1111 @@
+<!-- Enhanced Japanese Sweets Grid Section -->
+{%- liquid
+  assign section_id = 'japanese-sweets-grid-' | append: section.id
+  assign animation_delay = 0
+-%}
+
+<!-- セクションスタイル -->
+<style>
+  #{{ section_id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --section-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --section-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --section-background: {{ section.settings.background_color }};
+    --text-color: {{ section.settings.text_color }};
+    --jp-heading-color: {{ section.settings.jp_heading_color }};
+    --en-heading-color: {{ section.settings.en_heading_color }};
+    --description-color: {{ section.settings.description_color }};
+    --accent-color: {{ section.settings.accent_color }};
+    --jp-heading-size-desktop: {{ section.settings.jp_heading_size_desktop }}px;
+    --jp-heading-size-mobile: {{ section.settings.jp_heading_size_mobile }}px;
+    --en-heading-size-desktop: {{ section.settings.en_heading_size_desktop }}px;
+    --en-heading-size-mobile: {{ section.settings.en_heading_size_mobile }}px;
+    --description-size-desktop: {{ section.settings.description_size_desktop }}px;
+    --description-size-mobile: {{ section.settings.description_size_mobile }}px;
+    --item-title-font-size-desktop: {{ section.settings.item_title_font_size_desktop }}px;
+    --item-title-font-size-mobile: {{ section.settings.item_title_font_size_mobile }}px;
+    --grid-gap: {{ section.settings.grid_gap }}px;
+    --grid-gap-mobile: {{ section.settings.grid_gap_mobile }}px;
+  }
+
+  #{{ section_id }} {
+    background-color: var(--section-background);
+    color: var(--text-color);
+    padding-top: var(--section-padding-top-mobile);
+    padding-bottom: var(--section-padding-bottom-mobile);
+    overflow: hidden;
+  }
+
+  @media screen and (min-width: 768px) {
+    #{{ section_id }} {
+      padding-top: var(--section-padding-top);
+      padding-bottom: var(--section-padding-bottom);
+    }
+  }
+
+  /* コンテナ */
+  .sweets-grid-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  @media screen and (min-width: 768px) {
+    .sweets-grid-container {
+      padding: 0 32px;
+    }
+  }
+
+  /* ヘッダーコンテンツセクション */
+  .sweets-grid-header {
+    text-align: center;
+    margin-bottom: 48px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  @media screen and (min-width: 768px) {
+    .sweets-grid-header {
+      margin-bottom: 64px;
+    }
+  }
+
+  .sweets-grid-header.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Japanese Heading */
+  .sweets-grid-heading-jp {
+    font-size: var(--jp-heading-size-mobile);
+    font-weight: 300;
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+    margin: 0 0 1rem;
+    color: var(--jp-heading-color);
+    writing-mode: horizontal-tb;
+    text-orientation: mixed;
+  }
+
+  @media screen and (min-width: 768px) {
+    .sweets-grid-heading-jp {
+      font-size: var(--jp-heading-size-desktop);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      display: inline-block;
+      margin-bottom: 0rem;
+    }
+  }
+
+  /* English Subtitle */
+  .sweets-grid-heading-en {
+    font-size: var(--en-heading-size-mobile);
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin: 0 0 1.5rem;
+    opacity: 0.9;
+    color: var(--en-heading-color);
+  }
+
+  @media screen and (min-width: 768px) {
+    .sweets-grid-heading-en {
+      font-size: var(--en-heading-size-desktop);
+      margin: 0 0 2rem;
+    }
+  }
+
+  /* Decorative Line */
+  .sweets-grid-decorative-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem 0;
+  }
+
+  @media screen and (min-width: 768px) {
+    .sweets-grid-decorative-line {
+      margin: 2rem 0;
+    }
+  }
+
+  .sweets-grid-line-accent {
+    width: 40px;
+    height: 1px;
+    background-color: var(--accent-color);
+    position: relative;
+    transform: scaleX(0);
+    animation: scaleInX 0.8s ease-out 1.2s forwards;
+  }
+
+  @media screen and (min-width: 768px) {
+    .sweets-grid-line-accent {
+      width: 60px;
+    }
+  }
+
+  .sweets-grid-line-accent::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--accent-color);
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out 1.8s forwards;
+  }
+
+  @media screen and (min-width: 768px) {
+    .sweets-grid-line-accent::after {
+    }
+  }
+
+  /* Description */
+  .sweets-grid-description {
+    font-size: var(--description-size-mobile);
+    line-height: 1.8;
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+    color: var(--description-color);
+  }
+
+  @media screen and (min-width: 768px) {
+    .sweets-grid-description {
+      font-size: var(--description-size-desktop);
+      margin: 0 auto 2rem;
+    }
+  }
+
+  /* CTA Button */
+  .sweets-grid-cta {
+    margin-top: 2rem;
+  }
+
+  @media screen and (min-width: 768px) {
+    .sweets-grid-cta {
+      margin-top: 2.5rem;
+    }
+  }
+
+  .sweets-grid-button {
+    display: inline-block;
+    padding: 10px 24px;
+    background-color: #FFF;
+    border: 1px solid var(--text-color);
+    color: #000;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  @media screen and (min-width: 768px) {
+    .sweets-grid-button {
+      padding: 12px 30px;
+      font-size: 1.125rem;
+    }
+  }
+
+  .sweets-grid-button:hover,
+  .sweets-grid-button:focus {
+    background-color: transparent;
+    color: var(--text-color);
+    transform: translateY(-2px);
+    outline: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .sweets-grid-button:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+
+  /* グリッドレイアウト */
+  .sweets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--grid-gap-mobile);
+    max-width: 100%;
+  }
+
+  @media screen and (min-width: 768px) {
+    .sweets-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--grid-gap);
+    }
+  }
+
+  /* グリッドアイテム */
+  .sweets-grid-item {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 0px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .sweets-grid-item.animate {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .sweets-grid-item:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  }
+
+  /* 画像スタイル */
+  .sweets-grid-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .sweets-grid-item:hover .sweets-grid-image {
+    transform: scale(1.05);
+  }
+
+  /* テキストオーバーレイ */
+  .sweets-grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .sweets-grid-item:hover .sweets-grid-overlay {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%);
+  }
+
+  /* アイテムタイトル */
+  .sweets-grid-item-title {
+    color: white;
+    font-size: var(--item-title-font-size-mobile);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-align: center;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  @media screen and (min-width: 768px) {
+    .sweets-grid-item-title {
+      font-size: var(--item-title-font-size-desktop);
+    }
+  }
+
+  .sweets-grid-item:hover .sweets-grid-item-title {
+    transform: translateY(-3px);
+  }
+
+  /* アクセシビリティ対応 */
+  .sweets-grid-item:focus {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+  }
+
+  .sweets-grid-item:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+
+  /* ローディング状態 */
+  .sweets-grid-image[loading="lazy"] {
+    background-color: #f0f0f0;
+    background-image: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+
+  @keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* 画像読み込み完了時 */
+  .sweets-grid-image.loaded {
+    animation: none;
+    background: none;
+  }
+
+  /* アニメーション */
+  @keyframes scaleInX {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* レスポンシブ調整 */
+  @media screen and (max-width: 767px) {
+    .sweets-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* 奇数個の場合、最後のアイテムを横幅100%に */
+    .sweets-grid-item:nth-child(odd):last-child {
+      grid-column: 1 / -1;
+    }
+    
+    h1.sweets-grid-heading-jp {
+      writing-mode: vertical-rl;
+      display: inline-block;
+      margin-bottom: 0rem;
+    }
+    
+    .sweets-grid-item-title {
+      font-size: 14px;
+    }
+  }
+
+  /* プリント用スタイル */
+  @media print {
+    .sweets-grid-overlay {
+      background: none;
+    }
+    
+    .sweets-grid-item-title {
+      color: black;
+      text-shadow: none;
+    }
+    
+    .sweets-grid-button {
+      display: none;
+    }
+  }
+
+  /* ダークモード対応 */
+  @media (prefers-color-scheme: dark) {
+    .sweets-grid-item {
+      background-color: #2a2a2a;
+    }
+    
+    .sweets-grid-button {
+      background-color: #333;
+      border-color: var(--text-color);
+      color: var(--text-color);
+    }
+  }
+
+  /* モーション低減設定対応 */
+  @media (prefers-reduced-motion: reduce) {
+    .sweets-grid-header,
+    .sweets-grid-item,
+    .sweets-grid-image,
+    .sweets-grid-overlay,
+    .sweets-grid-item-title,
+    .sweets-grid-button,
+    .sweets-grid-line-accent,
+    .sweets-grid-line-accent::after {
+      transition: none;
+      animation: none;
+      transform: none;
+    }
+    
+    .sweets-grid-header,
+    .sweets-grid-item,
+    .sweets-grid-line-accent,
+    .sweets-grid-line-accent::after {
+      opacity: 1;
+    }
+  }
+</style>
+
+
+<!-- セクションHTML -->
+<section id="{{ section_id }}" class="japanese-sweets-grid-section" role="region" aria-labelledby="sweets-grid-header-{{ section.id }}">
+  <div class="sweets-grid-container">
+    
+    <!-- Enhanced Header Section -->
+    <header class="sweets-grid-header" id="sweets-grid-header-{{ section.id }}">
+      
+      <!-- Japanese Heading -->
+      {%- if section.settings.heading_jp != blank -%}
+        <h1 class="sweets-grid-heading-jp">
+          {{ section.settings.heading_jp | escape }}
+        </h1>
+      {%- endif -%}
+      
+      <!-- Decorative Line -->
+      {%- if section.settings.show_decorative_line -%}
+        <div class="sweets-grid-decorative-line" aria-hidden="true">
+          <span class="sweets-grid-line-accent"></span>
+        </div>
+      {%- endif -%}
+
+
+      <!-- English Subtitle -->
+      {%- if section.settings.heading_en != blank -%}
+        <h2 class="sweets-grid-heading-en">
+          {{ section.settings.heading_en | escape }}
+        </h2>
+      {%- endif -%}
+
+      <!-- Description Text -->
+      {%- if section.settings.description != blank -%}
+        <div class="sweets-grid-description">
+          {{ section.settings.description }}
+        </div>
+      {%- endif -%}
+
+      <!-- CTA Button -->
+      {%- if section.settings.cta_text != blank and section.settings.cta_url != blank -%}
+        <div class="sweets-grid-cta">
+          <a 
+            href="{{ section.settings.cta_url }}" 
+            class="sweets-grid-button"
+            {% if section.settings.cta_url contains 'http' %}target="_blank" rel="noopener noreferrer"{% endif %}
+            aria-describedby="sweets-grid-header-{{ section.id }}"
+          >
+            {{ section.settings.cta_text | escape }}
+          </a>
+        </div>
+      {%- endif -%}
+
+    </header>
+
+    <!-- グリッドコンテナ -->
+    <div class="sweets-grid" role="grid" aria-label="Japanese sweets collection">
+      
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign item_title = block.settings.title | default: 'Untitled'
+          assign item_image = block.settings.image
+          assign item_link = block.settings.link | default: '#'
+          assign loading_type = 'lazy'
+          if forloop.index <= 3
+            assign loading_type = 'eager'
+          endif
+        -%}
+        
+        <div class="sweets-grid-item" 
+             role="gridcell"
+             tabindex="0"
+             data-animation-delay="{{ forloop.index | times: 100 }}"
+             {{ block.shopify_attributes }}>
+          
+          {%- if item_link != '#' and item_link != blank -%}
+            <a href="{{ item_link }}" 
+               class="sweets-grid-link" 
+               aria-label="{{ item_title | escape }} - {{ 'sections.japanese_sweets_grid.view_item' | t }}"
+               style="display: block; width: 100%; height: 100%;">
+          {%- endif -%}
+          
+          <!-- 画像 -->
+          {%- if item_image != blank -%}
+            {%- assign image_alt = item_image.alt | default: item_title -%}
+            <img src="{{ item_image | image_url: width: 600, height: 600, crop: 'center' }}"
+                 srcset="{{ item_image | image_url: width: 300, height: 300, crop: 'center' }} 300w,
+                          {{ item_image | image_url: width: 600, height: 600, crop: 'center' }} 600w,
+                          {{ item_image | image_url: width: 900, height: 900, crop: 'center' }} 900w"
+                 sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 400px"
+                 alt="{{ image_alt | escape }}"
+                 class="sweets-grid-image"
+                 loading="{{ loading_type }}"
+                 width="600"
+                 height="600"
+                 onload="this.classList.add('loaded')">
+          {%- else -%}
+            <!-- プレースホルダー画像 -->
+            <div class="sweets-grid-image" 
+                 style="background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999;"
+                 role="img"
+                 aria-label="{{ 'general.placeholders.image' | t }}">
+              <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+              </svg>
+            </div>
+          {%- endif -%}
+          
+          <!-- テキストオーバーレイ -->
+          <div class="sweets-grid-overlay">
+            <h3 class="sweets-grid-item-title">{{ item_title | escape }}</h3>
+          </div>
+          
+          {%- if item_link != '#' and item_link != blank -%}
+            </a>
+          {%- endif -%}
+        </div>
+        
+      {%- endfor -%}
+      
+    </div>
+  </div>
+</section>
+
+<!-- JavaScript -->
+<script>
+(function() {
+  'use strict';
+  
+  // セクション固有のスコープ
+  const sectionId = '{{ section_id }}';
+  const section = document.getElementById(sectionId);
+  
+  if (!section) return;
+  
+  // IntersectionObserver設定
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+  
+  // アニメーション処理
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const element = entry.target;
+        const delay = parseInt(element.dataset.animationDelay) || 0;
+        
+        setTimeout(() => {
+          element.classList.add('animate');
+        }, delay);
+        
+        observer.unobserve(element);
+      }
+    });
+  }, observerOptions);
+  
+  // 初期化処理
+  function initializeSection() {
+    // ヘッダーアニメーション
+    const header = section.querySelector('.sweets-grid-header');
+    if (header) {
+      observer.observe(header);
+    }
+    
+    // グリッドアイテムアニメーション
+    const gridItems = section.querySelectorAll('.sweets-grid-item');
+    gridItems.forEach(item => {
+      observer.observe(item);
+    });
+    
+    // キーボードナビゲーション
+    setupKeyboardNavigation();
+    
+    // 画像遅延読み込み（フォールバック）
+    setupLazyLoading();
+    
+    // CTAボタン用スムーススクロール
+    setupSmoothScrolling();
+  }
+  
+  // キーボードナビゲーション設定
+  function setupKeyboardNavigation() {
+    const gridItems = section.querySelectorAll('.sweets-grid-item');
+    const ctaButton = section.querySelector('.sweets-grid-button');
+    
+    gridItems.forEach(item => {
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const link = item.querySelector('a');
+          if (link) {
+            link.click();
+          }
+        }
+      });
+    });
+    
+    // CTAボタンのキーボードアクセシビリティ
+    if (ctaButton) {
+      ctaButton.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          ctaButton.click();
+        }
+      });
+    }
+  }
+  
+  // スムーススクロール設定
+  function setupSmoothScrolling() {
+    const ctaButton = section.querySelector('.sweets-grid-button');
+    if (ctaButton) {
+      const href = ctaButton.getAttribute('href');
+      
+      if (href && href.startsWith('#')) {
+        ctaButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetElement = document.querySelector(href);
+          
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      }
+    }
+  }
+  
+  // 遅延読み込み設定（フォールバック）
+  function setupLazyLoading() {
+    // ネイティブ遅延読み込み未対応ブラウザ用
+    if ('IntersectionObserver' in window && 'loading' in HTMLImageElement.prototype === false) {
+      const images = section.querySelectorAll('img[loading="lazy"]');
+      const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src || img.src;
+            img.classList.add('loaded');
+            imageObserver.unobserve(img);
+          }
+        });
+      });
+      
+      images.forEach(img => imageObserver.observe(img));
+    }
+  }
+  
+  // エラーハンドリング
+  function handleImageError(img) {
+    img.style.display = 'none';
+    const placeholder = img.parentElement.querySelector('.image-placeholder');
+    if (placeholder) {
+      placeholder.style.display = 'flex';
+    }
+  }
+  
+  // 画像エラー処理
+  const images = section.querySelectorAll('.sweets-grid-image');
+  images.forEach(img => {
+    img.addEventListener('error', () => handleImageError(img));
+  });
+  
+  // DOMContentLoaded後に初期化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeSection);
+  } else {
+    initializeSection();
+  }
+  
+  // リサイズ時の処理（デバウンス）
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      // レスポンシブ対応の調整
+      const vh = window.innerHeight * 0.01;
+      section.style.setProperty('--vh', `${vh}px`);
+    }, 250);
+  });
+  
+  // Shopify section reload support
+  document.addEventListener('shopify:section:load', (e) => {
+    if (e.target.querySelector('#' + sectionId)) {
+      initializeSection();
+    }
+  });
+  
+})();
+</script>
+
+<!-- JSON Schema設定 -->
+{% schema %}
+{
+  "name": "Japanese Sweets Grid",
+  "tag": "section",
+  "class": "section-japanese-sweets-grid",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "📝 Header Content Settings"
+    },
+    {
+      "type": "text",
+      "id": "heading_jp",
+      "label": "Japanese Heading",
+      "default": "お菓子",
+      "info": "Main heading in Japanese (displayed vertically on desktop)"
+    },
+    {
+      "type": "text",
+      "id": "heading_en",
+      "label": "English Subtitle",
+      "default": "Japanese Sweets",
+      "info": "English subtitle text"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description Text",
+      "info": "Optional description paragraph"
+    },
+    {
+      "type": "header",
+      "content": "🎯 Call to Action"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button Text",
+      "default": "View All Collection",
+      "info": "Leave empty to hide button"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button Link",
+      "info": "Where the button should link to"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Design Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_decorative_line",
+      "label": "Show Decorative Line",
+      "default": true,
+      "info": "Display the accent line with colored dot"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#ff4757",
+      "info": "Color for decorative elements"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff",
+      "info": "Section background color"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Typography & Colors"
+    },
+    {
+      "type": "color",
+      "id": "jp_heading_color",
+      "label": "Japanese Heading Color",
+      "default": "#333333",
+      "info": "Color for Japanese main heading"
+    },
+    {
+      "type": "range",
+      "id": "jp_heading_size_desktop",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Japanese Heading Size (Desktop)",
+      "default": 56,
+      "info": "Font size for Japanese heading on desktop"
+    },
+    {
+      "type": "range",
+      "id": "jp_heading_size_mobile",
+      "min": 18,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Japanese Heading Size (Mobile)",
+      "default": 32,
+      "info": "Font size for Japanese heading on mobile"
+    },
+    {
+      "type": "color",
+      "id": "en_heading_color",
+      "label": "English Subtitle Color",
+      "default": "#333333",
+      "info": "Color for English subtitle"
+    },
+    {
+      "type": "range",
+      "id": "en_heading_size_desktop",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "English Subtitle Size (Desktop)",
+      "default": 18,
+      "info": "Font size for English subtitle on desktop"
+    },
+    {
+      "type": "range",
+      "id": "en_heading_size_mobile",
+      "min": 8,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "English Subtitle Size (Mobile)",
+      "default": 14,
+      "info": "Font size for English subtitle on mobile"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Text Color",
+      "default": "#666666",
+      "info": "Color for description paragraph"
+    },
+    {
+      "type": "range",
+      "id": "description_size_desktop",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Description Size (Desktop)",
+      "default": 16,
+      "info": "Font size for description text on desktop"
+    },
+    {
+      "type": "range",
+      "id": "description_size_mobile",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Description Size (Mobile)",
+      "default": 14,
+      "info": "Font size for description text on mobile"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Button Text Color",
+      "default": "#333333",
+      "info": "Color for CTA button text"
+    },
+    {
+      "type": "header",
+      "content": "📱 Grid Item Settings"
+    },
+    {
+      "type": "range",
+      "id": "item_title_font_size_desktop",
+      "label": "Item Title Font Size (Desktop)",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "default": 16,
+      "unit": "px",
+      "info": "Font size for grid item titles on desktop"
+    },
+    {
+      "type": "range",
+      "id": "item_title_font_size_mobile",
+      "label": "Item Title Font Size (Mobile)",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "default": 14,
+      "unit": "px",
+      "info": "Font size for grid item titles on mobile"
+    },
+    {
+      "type": "header",
+      "content": "📏 Layout Settings"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Grid Gap (Desktop)",
+      "min": 8,
+      "max": 64,
+      "step": 4,
+      "default": 24,
+      "unit": "px",
+      "info": "Space between grid items on desktop"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_mobile",
+      "label": "Grid Gap (Mobile)",
+      "min": 4,
+      "max": 32,
+      "step": 2,
+      "default": 12,
+      "unit": "px",
+      "info": "Space between grid items on mobile"
+    },
+    {
+      "type": "header",
+      "content": "📐 Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding (Desktop)",
+      "min": 0,
+      "max": 200,
+      "step": 8,
+      "default": 80,
+      "unit": "px",
+      "info": "Top padding for desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding (Desktop)",
+      "min": 0,
+      "max": 200,
+      "step": 8,
+      "default": 80,
+      "unit": "px",
+      "info": "Bottom padding for desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top Padding (Mobile)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 40,
+      "unit": "px",
+      "info": "Top padding for mobile"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom Padding (Mobile)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 40,
+      "unit": "px",
+      "info": "Bottom padding for mobile"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "sweets_item",
+      "name": "Sweets Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Item Name",
+          "default": "お菓子",
+          "info": "Name of the sweet item"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Select image for the sweet item (recommended: 600x600px or larger square format)"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link URL",
+          "info": "Optional link destination when item is clicked"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Enhanced Japanese Sweets Grid",
+      "settings": {
+        "heading_jp": "お菓子",
+        "heading_en": "Japanese Sweets",
+        "description": "<p>伝統的な製法で作られた、季節の味わいをお楽しみください。</p>",
+        "cta_text": "コレクションを見る",
+        "show_decorative_line": true,
+        "accent_color": "#ff4757",
+        "background_color": "#ffffff",
+        "jp_heading_color": "#333333",
+        "en_heading_color": "#333333",
+        "description_color": "#666666",
+        "text_color": "#333333",
+        "jp_heading_size_desktop": 56,
+        "jp_heading_size_mobile": 32,
+        "en_heading_size_desktop": 18,
+        "en_heading_size_mobile": 14,
+        "description_size_desktop": 16,
+        "description_size_mobile": 14,
+        "item_title_font_size_desktop": 16,
+        "item_title_font_size_mobile": 14,
+        "grid_gap": 24,
+        "grid_gap_mobile": 12,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
+      },
+      "blocks": [
+        {
+          "type": "sweets_item",
+          "settings": {
+            "title": "草もち",
+            "link": ""
+          }
+        },
+        {
+          "type": "sweets_item",
+          "settings": {
+            "title": "どら焼き",
+            "link": ""
+          }
+        },
+        {
+          "type": "sweets_item",
+          "settings": {
+            "title": "おはぎ",
+            "link": ""
+          }
+        },
+        {
+          "type": "sweets_item",
+          "settings": {
+            "title": "季節のお菓子",
+            "link": ""
+          }
+        },
+        {
+          "type": "sweets_item",
+          "settings": {
+            "title": "薄茶菓子",
+            "link": ""
+          }
+        },
+        {
+          "type": "sweets_item",
+          "settings": {
+            "title": "贈り物",
+            "link": ""
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

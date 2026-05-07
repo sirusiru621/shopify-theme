@@ -1,0 +1,396 @@
+/* ファイル名: breadcrumb.css */
+/* パンくずリストセクション専用スタイル - Shopify Online Store 2.0対応 */
+/* レスポンシブデザイン & アクセシビリティ準拠 */
+
+/* ==========================================================================
+   基本スタイル
+   ========================================================================== */
+
+.breadcrumb-section {
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
+}
+
+.breadcrumb-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* パンくずリストのベース */
+.breadcrumb-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 8px;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================================================
+   リンクスタイル
+   ========================================================================== */
+
+.breadcrumb-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  border-radius: 4px;
+  padding: 4px 6px;
+  position: relative;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+  transform: translateY(-1px);
+}
+
+.breadcrumb-link:focus {
+  outline: 2px solid #007acc;
+  outline-offset: 2px;
+}
+
+/* ホームアイコン */
+.breadcrumb-home-icon {
+  flex-shrink: 0;
+  transition: transform 0.2s ease-in-out;
+}
+
+.breadcrumb-link:hover .breadcrumb-home-icon {
+  transform: scale(1.1);
+}
+
+/* テキストスタイル */
+.breadcrumb-text {
+  font-weight: 400;
+  letter-spacing: 0.02em;
+    word-break: keep-all;
+  hyphens: auto;
+}
+
+/* 現在のページ */
+.breadcrumb-current .breadcrumb-text {
+  font-weight: 500;
+  cursor: default;
+}
+
+/* 最終項目（現在のページ）の後のセパレーターを非表示 */
+.breadcrumb-current + .breadcrumb-separator-wrapper,
+.breadcrumb-item:last-child .breadcrumb-separator-wrapper,
+.breadcrumb-item.breadcrumb-current .breadcrumb-separator-wrapper,
+.breadcrumb-current ~ .breadcrumb-separator-wrapper,
+li.breadcrumb-current + * {
+  display: none !important;
+}
+
+/* 最終項目以降のすべての要素を非表示 */
+.breadcrumb-item.breadcrumb-current ~ *:not(.breadcrumb-item) {
+  display: none !important;
+}
+
+/* ==========================================================================
+   セパレーター
+   ========================================================================== */
+
+.breadcrumb-separator-wrapper {
+  display: flex;
+  align-items: center;
+  margin: 0 4px;
+  opacity: 0.6;
+}
+
+.breadcrumb-separator {
+  flex-shrink: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* セパレータータイプ別スタイル */
+.breadcrumb-separator-wrapper:has(svg) {
+  /* SVGアイコンの場合 */
+}
+
+.breadcrumb-separator-wrapper:has(span) {
+  /* テキストセパレーターの場合 */
+  font-weight: 300;
+}
+
+/* ==========================================================================
+   アニメーション
+   ========================================================================== */
+
+/* フェードインアニメーション */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.breadcrumb-section[data-animation="fadeInUp"] {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.breadcrumb-section[data-animation="fadeInUp"].animate {
+  animation-delay: 0.1s;
+}
+
+/* ホバーエフェクト */
+.breadcrumb-item {
+  transition: transform 0.2s ease-in-out;
+}
+
+.breadcrumb-item:hover {
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   レスポンシブデザイン
+   ========================================================================== */
+
+/* デスクトップ: 1280px以上 */
+@media screen and (min-width: 1280px) {
+  .breadcrumb-container {
+    padding: 0 40px;
+  }
+  
+  .breadcrumb-list {
+    gap: 12px;
+  }
+  
+  .breadcrumb-separator-wrapper {
+    margin: 0 6px;
+  }
+  
+  .breadcrumb-link {
+    padding: 6px 8px;
+  }
+}
+
+/* タブレット: 768px - 1279px */
+@media screen and (min-width: 768px) and (max-width: 1279px) {
+  .breadcrumb-container {
+    padding: 0 30px;
+  }
+  
+  .breadcrumb-list {
+    gap: 10px;
+  }
+  
+  .breadcrumb-separator-wrapper {
+    margin: 0 5px;
+  }
+}
+
+/* モバイル: 375px - 767px */
+@media screen and (max-width: 767px) {
+  .breadcrumb-container {
+    padding: 0 16px;
+  }
+  
+  .breadcrumb-list {
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .breadcrumb-list::-webkit-scrollbar {
+    height: 2px;
+  }
+  
+  .breadcrumb-list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .breadcrumb-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 1px;
+  }
+  
+  .breadcrumb-item {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  
+  .breadcrumb-text {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .breadcrumb-separator-wrapper {
+    margin: 0 3px;
+  }
+  
+  .breadcrumb-link {
+    padding: 3px 4px;
+  }
+  
+  /* モバイルでのホームアイコンサイズ調整 */
+  .breadcrumb-home-icon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* 小さなモバイル: 375px未満 */
+@media screen and (max-width: 374px) {
+  .breadcrumb-container {
+    padding: 0 12px;
+  }
+  
+  .breadcrumb-text {
+    max-width: 120px;
+  }
+  
+  .breadcrumb-list {
+    gap: 4px;
+  }
+  
+  .breadcrumb-separator-wrapper {
+    margin: 0 2px;
+  }
+}
+
+/* ==========================================================================
+   アクセシビリティ対応
+   ========================================================================== */
+
+/* スクリーンリーダー対応 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 高コントラストモード対応 */
+@media (prefers-contrast: high) {
+  .breadcrumb-link {
+    text-decoration: underline;
+  }
+  
+  .breadcrumb-separator {
+    opacity: 1;
+    font-weight: bold;
+  }
+}
+
+/* 動きを抑制する場合 */
+@media (prefers-reduced-motion: reduce) {
+  .breadcrumb-section[data-animation="fadeInUp"] {
+    animation: none;
+    opacity: 1;
+  }
+  
+  .breadcrumb-link,
+  .breadcrumb-item,
+  .breadcrumb-home-icon {
+    transition: none;
+  }
+  
+  .breadcrumb-link:hover {
+    transform: none;
+  }
+  
+  .breadcrumb-item:hover {
+    transform: none;
+  }
+}
+
+/* フォーカス表示の強化 */
+@media (prefers-reduced-motion: no-preference) {
+  .breadcrumb-link:focus {
+    animation: focusPulse 0.3s ease-in-out;
+  }
+}
+
+@keyframes focusPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* ==========================================================================
+   ダークモード対応
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  .breadcrumb-section {
+    /* ダークモード時のスタイルはテーマ側で設定される色変数を使用 */
+  }
+}
+
+/* ==========================================================================
+   印刷対応
+   ========================================================================== */
+
+@media print {
+  .breadcrumb-section {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   パフォーマンス最適化
+   ========================================================================== */
+
+/* GPU加速を利用 */
+.breadcrumb-link {
+  will-change: transform;
+}
+
+.breadcrumb-item:hover {
+  will-change: transform;
+}
+
+/* レイアウトシフト防止 */
+.breadcrumb-list {
+  contain: layout style;
+}
+
+/* ==========================================================================
+   IE11対応（必要に応じて）
+   ========================================================================== */
+
+/* IE11でflexboxサポート */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .breadcrumb-list {
+    display: -ms-flexbox;
+    -ms-flex-align: center;
+    -ms-flex-wrap: wrap;
+  }
+  
+  .breadcrumb-item {
+    display: -ms-flexbox;
+    -ms-flex-align: center;
+  }
+  
+  .breadcrumb-link {
+    display: -ms-inline-flexbox;
+    -ms-flex-align: center;
+  }
+}

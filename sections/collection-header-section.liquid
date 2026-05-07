@@ -1,0 +1,1201 @@
+<!-- 
+  コレクションヘッダーセクション
+  Shopify Online Store 2.0対応
+  ブロックシステム、レスポンシブ対応、アクセシビリティ準拠
+-->
+
+{%- style -%}
+  #CollectionHeader-{{ section.id }}::after {
+    opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};
+  }
+{%- endstyle -%}
+
+{%- if section.settings.image_height == 'adapt' and section.settings.image != blank -%}
+  {%- style -%}
+    @media screen and (max-width: 749px) {
+      #CollectionHeader-{{ section.id }}::before,
+      #CollectionHeader-{{ section.id }} .collection-header__media::before,
+      #CollectionHeader-{{ section.id }}:not(.collection-header--mobile-bottom) .collection-header__content::before {
+        padding-bottom: {{ 1 | divided_by: section.settings.image.aspect_ratio | times: 100 }}%;
+        content: '';
+        display: block;
+      }
+    }
+
+    @media screen and (min-width: 750px) {
+      #CollectionHeader-{{ section.id }}::before,
+      #CollectionHeader-{{ section.id }} .collection-header__media::before {
+        padding-bottom: {{ 1 | divided_by: section.settings.image.aspect_ratio | times: 100 }}%;
+        content: '';
+        display: block;
+      }
+    }
+  {%- endstyle -%}
+{%- endif -%}
+
+<style>
+  /* セクション限定スコープのCSS */
+  .collection-header {
+    --section-height: {{ section.settings.section_height }}vh;
+    --mobile-height: {{ section.settings.mobile_height }}vh;
+    --overlay-opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};
+    
+    position: relative;
+    width: 100%;
+    min-height: 500px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+.collection-header__text p {
+    font-size: 14px;
+    line-height:2;
+}
+  .collection-header--small {
+    min-height: 40vh;
+  }
+
+  .collection-header--medium {
+    min-height: 60vh;
+  }
+
+  .collection-header--large {
+    min-height: 90vh;
+  }
+
+  .collection-header--adapt {
+    min-height: auto;
+  }
+
+  /* 背景画像 */
+  .collection-header__media {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .collection-header__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* 背景オーバーレイ */
+  .collection-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, var(--overlay-opacity));
+    z-index: 5;
+  }
+
+  /* コンテンツエリア */
+  .collection-header__content {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 1280px;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    min-height: inherit;
+  }
+
+  .collection-header__content--middle-center {
+    justify-content: center;
+  }
+
+  .collection-header__content--middle-left {
+    justify-content: flex-start;
+  }
+
+  .collection-header__content--top-left,
+  .collection-header__content--top-center,
+  .collection-header__content--top-right {
+    align-items: flex-start;
+  }
+
+  .collection-header__content--bottom-left,
+  .collection-header__content--bottom-center,
+  .collection-header__content--bottom-right {
+    align-items: flex-end;
+  }
+
+  .collection-header__content--top-center,
+  .collection-header__content--middle-center,
+  .collection-header__content--bottom-center {
+    justify-content: center;
+  }
+
+  .collection-header__content--top-left,
+  .collection-header__content--middle-left,
+  .collection-header__content--bottom-left {
+    justify-content: flex-start;
+  }
+
+  /* メインコンテンツエリア */
+  .collection-header__main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 30px;
+    max-width: 600px;
+  }
+
+  .collection-header__main--center {
+    align-items: center;
+    text-align: center;
+  }
+
+  .collection-header__main--left {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  /* 縦書きテキストエリア */
+  .collection-header__text-area {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    line-height: 1.2;
+    letter-spacing: 0.16em;
+    position: relative;
+    padding: 40px 0px 0px 60px;
+    min-height: 300px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 12;
+    /* デバッグ用：一時的に背景色を追加 */
+    /* background: rgba(0, 0, 0, 0.1); */
+  }
+
+  .collection-header__text-content {
+    position: relative;
+    transform: translateX(50px);
+    opacity: 1;
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease;
+  }
+
+  /* ブロック要素のスタイル */
+  .collection-header__heading {
+    font-size: {{ section.settings.heading_font_size }}px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: {{ section.settings.heading_color }};
+    position: relative;
+    z-index: 15;
+  }
+
+  .collection-header__text {
+    font-size: {{ section.settings.text_font_size }}px;
+    color: {{ section.settings.text_color }};
+    margin-bottom: 0;
+    position: relative;
+    z-index: 15;
+  }
+
+  /* CTAボタンエリア */
+  .collection-header__buttons {
+    position: relative;
+    transform: translateX(50px);
+    opacity: 1;
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease;
+    transition-delay: 0.2s;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .collection-header__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    text-decoration: none;
+    font-size: {{ section.settings.button_font_size }}px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+    min-width: 140px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    z-index: 15;
+  }
+
+  .collection-header__button--primary {
+    background: {{ section.settings.button_primary_bg }};
+    color: {{ section.settings.button_primary_text }};
+  }
+
+  .collection-header__button--secondary {
+    background: transparent;
+    color: {{ section.settings.button_secondary_text }};
+    border-color: {{ section.settings.button_secondary_text }};
+  }
+
+  .collection-header__button:hover {
+    transform: translateY(-2px);
+
+  }
+
+  .collection-header__button--primary:hover {
+    background: {{ section.settings.button_primary_hover }};
+  }
+
+  .collection-header__button--secondary:hover {
+    background: {{ section.settings.button_secondary_text }};
+    color: {{ section.settings.button_primary_bg }};
+  }
+
+  .collection-header__button:focus {
+    outline: 3px solid {{ section.settings.heading_color }};
+    outline-offset: 2px;
+  }
+
+  /* アニメーション効果 */
+  .collection-header.animate-in .collection-header__text-content,
+  .collection-header.animate-in .collection-header__buttons {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  /* タブレット対応 */
+  @media (max-width: 1024px) {
+    .collection-header__content {
+      padding: 0 30px;
+    }
+    
+    .collection-header__text-area {
+      padding: 30px 40px;
+      min-height: 250px;
+    }
+
+    .collection-header__main {
+      gap: 25px;
+    }
+
+    .collection-header__button {
+      padding: 10px 20px;
+      min-width: 120px;
+    }
+
+    .collection-header__heading {
+      font-size: {{ section.settings.heading_font_size | times: 0.9 }}px;
+    }
+
+    .collection-header__text {
+      font-size: {{ section.settings.text_font_size | times: 0.9 }}px;
+    }
+
+    .collection-header__button {
+      font-size: {{ section.settings.button_font_size | times: 0.9 }}px;
+    }
+  }
+
+  /* モバイル対応 - 縦書きスタイル */
+  @media (max-width: 768px) {
+    .collection-header {
+      min-height: var(--mobile-height);
+    }
+
+    .collection-header__content {
+      padding: 0 20px;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .collection-header__main {
+      align-items: center;
+      gap: 20px;
+      max-width: 400px;
+    }
+
+    .collection-header__text-area {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      line-height: 1;
+      letter-spacing: 0.1em;
+      padding: 30px 20px;
+      min-height: auto;
+      text-align: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .collection-header__text-content,
+    .collection-header__buttons {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .collection-header.animate-in .collection-header__text-content,
+    .collection-header.animate-in .collection-header__buttons {
+      transform: translateY(0);
+    }
+
+    .collection-header__heading {
+      font-size: {{ section.settings.mobile_heading_font_size }}px;
+      margin-bottom: 15px;
+    }
+
+    .collection-header__text {
+      font-size: {{ section.settings.mobile_text_font_size }}px;
+    }
+
+    .collection-header__button {
+      font-size: {{ section.settings.mobile_button_font_size }}px;
+      padding: 10px 18px;
+      min-width: 110px;
+    }
+  }
+
+  /* モバイル対応 - 標準スタイル（image-banner互換） */
+  .collection-header--mobile-standard {
+    /* 標準レイアウト用の調整 */
+  }
+
+  @media (max-width: 768px) {
+    .collection-header--mobile-standard {
+      min-height: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .collection-header--mobile-standard .collection-header__media {
+      position: relative;
+      height: 50vh;
+      min-height: 300px;
+    }
+
+    .collection-header--mobile-standard::after {
+      display: none;
+    }
+
+    .collection-header--mobile-standard .collection-header__content {
+      position: relative;
+      z-index: 3;
+      min-height: auto;
+      align-items: stretch;
+      justify-content: stretch;
+      padding: 0;
+      margin-top: auto;
+        z-index: 1;
+    }
+
+    .collection-header--mobile-standard .collection-header__main {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      max-width: none;
+      width: 100%;
+      min-height: auto;
+    }
+
+    .collection-header--mobile-standard .collection-header__text-area {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      line-height: 1.3;
+      letter-spacing: 0.1em;
+      padding: 2rem;
+      min-height: auto;
+      text-align: left;
+      justify-content: flex-start;
+      width: 100%;
+      background: transparent;
+      border-radius: 0;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .collection-header--mobile-standard .collection-header__text-content {
+      transform: none;
+      opacity: 1;
+      width: 100%;
+    }
+
+    .collection-header--mobile-standard .collection-header__heading {
+      font-size: {{ section.settings.mobile_heading_font_size }}px;
+      margin-bottom: 1rem;
+      color: #333333;
+      text-shadow: none;
+      font-weight: 500;
+    }
+
+    .collection-header--mobile-standard .collection-header__text {
+      font-size: {{ section.settings.mobile_text_font_size }}px;
+      color: #666666;
+      margin-bottom: 0;
+      line-height: 1.8;
+    }
+
+    .collection-header--mobile-standard .collection-header__buttons {
+      transform: none;
+      opacity: 1;
+      padding: 0 2rem 2rem;
+      background: transparent;
+      border-radius: 0;
+      margin-top: 1.5rem;
+      justify-content: center;
+      writing-mode: horizontal-tb;
+    }
+
+    .collection-header--mobile-standard .collection-header__button {
+      font-size: {{ section.settings.mobile_button_font_size }}px;
+      padding: 0.75rem 1.5rem;
+      min-width: auto;
+      border-radius: 0;
+      background: #ffffff;
+      color: #333333;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      box-shadow: none;
+      border: none;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .collection-header--mobile-standard .collection-header__button:hover {
+      background: #f5f5f5;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .collection-header--mobile-standard .collection-header__button--secondary {
+      background: transparent;
+      color: #333333;
+      border: 1px solid #333333;
+    }
+
+    .collection-header--mobile-standard .collection-header__button--secondary:hover {
+      background: #333333;
+      color: #ffffff;
+    }
+  }
+
+  /* モバイル文字方向設定 - 横書き */
+  @media (max-width: 768px) {
+    .collection-header--mobile-horizontal .collection-header__text-area {
+      text-orientation: mixed !important;
+      line-height: 1.5 !important;
+      letter-spacing: 0.2em !important;
+      text-align: left !important;
+      align-items: flex-start !important;
+      justify-content: flex-start !important;
+    }
+
+    .collection-header__text-content {
+    align-content: center;
+        margin-top: 3rem;
+}
+    .collection-header--mobile-horizontal .collection-header__text-content {
+      width: 100%;
+    }
+
+    .collection-header--mobile-horizontal .collection-header__heading {
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .collection-header--mobile-horizontal .collection-header__text {
+      line-height: 1.1;
+    }
+
+    /* 標準スタイル + 横書きの場合の調整 */
+    .collection-header--mobile-standard.collection-header--mobile-horizontal .collection-header__text-area {
+      text-align: left;
+      padding: 2rem;
+    }
+
+    .collection-header--mobile-standard.collection-header--mobile-horizontal .collection-header__heading {
+      text-align: left;
+    }
+
+    .collection-header--mobile-standard.collection-header--mobile-horizontal .collection-header__text {
+      text-align: left;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .collection-header__content {
+      padding: 0 16px;
+    }
+    
+    .collection-header__text-area {
+      padding: 20px 15px;
+    }
+
+    .collection-header__button {
+      padding: 8px 16px;
+      min-width: 100px;
+    }
+
+    /* 480px以下での横書き調整 */
+    .collection-header--mobile-horizontal .collection-header__text-area {
+      padding: 15px;
+    }
+
+    .collection-header--mobile-standard.collection-header--mobile-horizontal .collection-header__text-area {
+      padding: 1.5rem;
+    }
+  }
+
+  /* 高コントラストモード対応 */
+  @media (prefers-contrast: high) {
+    .collection-header::after {
+      background: rgba(0, 0, 0, 0.6) !important;
+    }
+    
+    .collection-header__heading,
+    .collection-header__text {
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+    }
+
+    .collection-header__button {
+      border: 2px solid currentColor;
+    }
+  }
+
+  /* モーション軽減設定 */
+  @media (prefers-reduced-motion: reduce) {
+    .collection-header__text-content,
+    .collection-header__buttons,
+    .collection-header__button {
+      transition: none;
+    }
+  }
+</style>
+
+<div
+  id="CollectionHeader-{{ section.id }}"
+  class="collection-header collection-header--{{ section.settings.image_height }} collection-header--content-align-{{ section.settings.desktop_content_alignment }} collection-header--content-align-mobile-{{ section.settings.mobile_content_alignment }}{% if section.settings.mobile_layout_style == 'standard' %} collection-header--mobile-standard{% endif %}{% if section.settings.mobile_text_direction == 'horizontal' %} collection-header--mobile-horizontal{% endif %}{% if section.settings.show_text_below %} collection-header--mobile-bottom{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-section-type="collection-header"
+>
+  <!-- 背景画像 -->
+  {%- if section.settings.image != blank -%}
+    <div class="collection-header__media">
+      {{
+        section.settings.image
+        | image_url: width: 3840
+        | image_tag:
+          loading: 'lazy',
+          width: section.settings.image.width,
+          height: section.settings.image.height,
+          sizes: '100vw',
+          widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840'
+      }}
+    </div>
+  {%- else -%}
+    <div class="collection-header__media">
+      {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    </div>
+  {%- endif -%}
+
+  <!-- メインコンテンツ -->
+  <div class="collection-header__content collection-header__content--{{ section.settings.desktop_content_position }}">
+    <div class="collection-header__main collection-header__main--{{ section.settings.desktop_content_alignment }}">
+      
+      <!-- 縦書きテキストエリア -->
+      <div class="collection-header__text-area">
+        <div class="collection-header__text-content">
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
+              {%- when 'heading' -%}
+                <h1 class="collection-header__heading" {{ block.shopify_attributes }}>
+                  {{ block.settings.heading }}
+                </h1>
+              {%- when 'text' -%}
+                <div class="collection-header__text" {{ block.shopify_attributes }}>
+                  {{ block.settings.text }}
+                </div>
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
+      </div>
+
+      <!-- CTAボタンエリア -->
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'buttons' -%}
+          <div class="collection-header__buttons" {{ block.shopify_attributes }}>
+            {%- if block.settings.button_label_1 != blank -%}
+              <a
+                {% if block.settings.button_link_1 == blank %}
+                  role="link" aria-disabled="true"
+                {% else %}
+                  href="{{ block.settings.button_link_1 }}"
+                {% endif %}
+                class="collection-header__button{% if block.settings.button_style_secondary_1 %} collection-header__button--secondary{% else %} collection-header__button--primary{% endif %}"
+              >
+                {{ block.settings.button_label_1 | escape }}
+              </a>
+            {%- endif -%}
+            {%- if block.settings.button_label_2 != blank -%}
+              <a
+                {% if block.settings.button_link_2 == blank %}
+                  role="link" aria-disabled="true"
+                {% else %}
+                  href="{{ block.settings.button_link_2 }}"
+                {% endif %}
+                class="collection-header__button{% if block.settings.button_style_secondary_2 %} collection-header__button--secondary{% else %} collection-header__button--primary{% endif %}"
+              >
+                {{ block.settings.button_label_2 | escape }}
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+  
+  function initCollectionHeader() {
+    const header = document.querySelector('[data-section-type="collection-header"]');
+    if (!header) return;
+
+    // アニメーション開始
+    setTimeout(() => {
+      header.classList.add('animate-in');
+    }, 300);
+
+    // ボタンクリック追跡
+    const buttons = header.querySelectorAll('.collection-header__button');
+    buttons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        if (typeof analytics !== 'undefined' && analytics.track) {
+          analytics.track('Collection Header Button Clicked', {
+            section_id: header.dataset.sectionId,
+            button_text: this.textContent.trim(),
+            button_url: this.href
+          });
+        }
+      });
+    });
+
+    // リサイズ対応
+    function handleResize() {
+      if (window.innerWidth <= 768) {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      }
+    }
+
+    window.addEventListener('resize', handleResize, { passive: true });
+    handleResize();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCollectionHeader);
+  } else {
+    initCollectionHeader();
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "コレクションヘッダー",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "基本設定"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "背景画像",
+      "info": "推奨サイズ: 1920x1080px以上（16:9比率）"
+    },
+    {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "背景オーバーレイの透明度",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "画像に合わせる"
+        },
+        {
+          "value": "small",
+          "label": "小 (40vh)"
+        },
+        {
+          "value": "medium", 
+          "label": "中 (60vh)"
+        },
+        {
+          "value": "large",
+          "label": "大 (90vh)"
+        }
+      ],
+      "default": "medium",
+      "label": "セクションの高さ"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "label": "カスタム高さ（大画面）",
+      "min": 60,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "default": 80,
+      "info": "image_heightが'large'の場合に適用"
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "label": "モバイル高さ",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "default": 70,
+      "info": "モバイルデバイスでの高さ"
+    },
+    {
+      "type": "header",
+      "content": "レイアウト設定"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_position",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "上・左"
+        },
+        {
+          "value": "top-center",
+          "label": "上・中央"
+        },
+        {
+          "value": "top-right",
+          "label": "上・右"
+        },
+        {
+          "value": "middle-left",
+          "label": "中央・左"
+        },
+        {
+          "value": "middle-center",
+          "label": "中央・中央"
+        },
+        {
+          "value": "middle-right",
+          "label": "中央・右"
+        },
+        {
+          "value": "bottom-left",
+          "label": "下・左"
+        },
+        {
+          "value": "bottom-center",
+          "label": "下・中央"
+        },
+        {
+          "value": "bottom-right",
+          "label": "下・右"
+        }
+      ],
+      "default": "middle-right",
+      "label": "デスクトップでのコンテンツ位置"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "左寄せ"
+        },
+        {
+          "value": "center",
+          "label": "中央寄せ"
+        },
+        {
+          "value": "right",
+          "label": "右寄せ"
+        }
+      ],
+      "default": "right",
+      "label": "デスクトップでのコンテンツ整列"
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "左寄せ"
+        },
+        {
+          "value": "center",
+          "label": "中央寄せ"
+        },
+        {
+          "value": "right",
+          "label": "右寄せ"
+        }
+      ],
+      "default": "center",
+      "label": "モバイルでのコンテンツ整列"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout_style",
+      "options": [
+        {
+          "value": "vertical",
+          "label": "縦書きスタイル（オリジナル）"
+        },
+        {
+          "value": "standard",
+          "label": "標準スタイル（image-banner互換）"
+        }
+      ],
+      "default": "vertical",
+      "label": "モバイルレイアウトスタイル",
+      "info": "モバイル表示時のレイアウトスタイルを選択"
+    },
+    {
+      "type": "select",
+      "id": "mobile_text_direction",
+      "options": [
+        {
+          "value": "vertical",
+          "label": "縦書き"
+        },
+        {
+          "value": "horizontal",
+          "label": "横書き"
+        }
+      ],
+      "default": "vertical",
+      "label": "モバイル文字方向",
+      "info": "モバイル表示時の文字の書字方向を選択"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text_below",
+      "default": true,
+      "label": "モバイルでテキストを下に表示"
+    },
+    {
+      "type": "header",
+      "content": "デスクトップ文字設定"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "見出し文字サイズ",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "見出し文字色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "text_font_size",
+      "label": "本文文字サイズ",
+      "min": 14,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "本文文字色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "ボタン文字サイズ",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "モバイル文字設定"
+    },
+    {
+      "type": "range",
+      "id": "mobile_heading_font_size",
+      "label": "モバイル見出し文字サイズ",
+      "min": 18,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "mobile_text_font_size",
+      "label": "モバイル本文文字サイズ",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_button_font_size",
+      "label": "モバイルボタン文字サイズ",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "ボタンカラー設定"
+    },
+    {
+      "type": "color",
+      "id": "button_primary_bg",
+      "label": "プライマリボタン背景色",
+      "default": "#e8f4f8"
+    },
+    {
+      "type": "color",
+      "id": "button_primary_text",
+      "label": "プライマリボタンテキスト色",
+      "default": "#2c5282"
+    },
+    {
+      "type": "color",
+      "id": "button_primary_hover",
+      "label": "プライマリボタンホバー色",
+      "default": "#d4e8f0"
+    },
+    {
+      "type": "color",
+      "id": "button_secondary_text",
+      "label": "セカンダリボタンテキスト色",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "見出し",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "default": "雪もち",
+          "label": "見出しテキスト"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "本文",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "<p>絹のようになめらかな求肥と、上品な甘さの餡が織りなす、冬の静寂を思わせる逸品。</p>",
+          "label": "本文テキスト"
+        }
+      ]
+    },
+    {
+      "type": "buttons",
+      "name": "ボタン",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label_1",
+          "default": "雪もちのこだわりを読む",
+          "label": "ボタン1のテキスト"
+        },
+        {
+          "type": "url",
+          "id": "button_link_1",
+          "label": "ボタン1のリンク"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_style_secondary_1",
+          "default": false,
+          "label": "ボタン1をセカンダリスタイルにする"
+        },
+        {
+          "type": "text",
+          "id": "button_label_2",
+          "label": "ボタン2のテキスト"
+        },
+        {
+          "type": "url",
+          "id": "button_link_2",
+          "label": "ボタン2のリンク"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_style_secondary_2",
+          "default": true,
+          "label": "ボタン2をセカンダリスタイルにする"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "コレクションヘッダー",
+      "blocks": [
+        {
+          "type": "heading",
+          "settings": {
+            "heading": "雪もち"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "text": "<p>絹のようになめらかな求肥と、上品な甘さの餡が織りなす、冬の静寂を思わせる逸品。</p>"
+          }
+        },
+        {
+          "type": "buttons",
+          "settings": {
+            "button_label_1": "雪もちのこだわりを読む",
+            "button_link_1": "/collections/yuki-mochi"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<!-- コレクションヘッダーセクション使用方法
+
+## ❄️ コレクションヘッダーセクションの特徴
+image-banner.sectionをベースに縦書きレイアウトとCTAボタン配置を最適化したコレクション専用ヘッダーセクションです。
+
+## 🎯 主な特徴
+1. **ブロックシステム**: heading, text, buttonsブロックで柔軟な構成
+2. **縦書きレイアウト**: デスクトップで縦書き、モバイルで最適化
+3. **モバイルレイアウト選択**: 2つのスタイルから選択可能
+4. **モバイル文字方向選択**: 縦書き・横書きから選択可能 ← 新機能！
+5. **配置自由度**: 9つのポジション設定（上下左右中央）
+6. **文字サイズ個別設定**: 見出し・本文・ボタンを個別調整
+7. **カラー自由設定**: 文字色・ボタン色を個別設定
+8. **グラデーション不使用**: シンプルなオーバーレイのみ
+
+## 📱 モバイルレイアウト選択機能
+### 1. 縦書きスタイル（オリジナル）
+```
+見タ
+出イ  ← 縦書きエリア
+しト
+　ル
+本
+文
+
+ボタン1 ボタン2 ← 横文字で下部配置
+```
+
+### 2. 標準スタイル（image-banner互換）
+```
+見出し
+本文内容がここに表示されます
+
+[ボタン1] [ボタン2]
+```
+- 白い背景ボックス
+- 横書きテキスト
+- 通常のボタン配置
+
+## 🎨 設定項目詳細
+
+### レイアウト設定
+- **コンテンツ位置**: 9つのポジション（top-left〜bottom-right）
+- **コンテンツ整列**: left/center/right
+- **モバイルレイアウト**: vertical/standard選択
+- **セクション高さ**: small/medium/large/adapt
+
+### 文字設定（デスクトップ/モバイル）
+- **見出し**: 20-60px / 18-40px + 色設定
+- **本文**: 14-36px / 12-28px + 色設定
+- **ボタン**: 12-24px / 10-20px
+
+### ボタン設定
+- **プライマリ**: 背景色・テキスト色・ホバー色
+- **セカンダリ**: テキスト色（透明背景）
+- **最大2個**: ボタン1・ボタン2
+
+## 🛠️ ブロック構成
+1. **見出しブロック**: H1タグ、inline_richtext対応
+2. **本文ブロック**: richtext対応、改行・装飾可能
+3. **ボタンブロック**: 最大2個、プライマリ・セカンダリ選択可能
+
+## 📈 Analytics対応
+- Shopify Analytics連携
+- ボタンクリック追跡
+- セクション識別機能
+
+## 🎭 使用例
+```
+見出し: "雪もち"
+本文: "絹のようになめらかな求肥と、上品な甘さの餡が織りなす、冬の静寂を思わせる逸品。"
+ボタン1: "雪もちのこだわりを読む" (プライマリ)
+ボタン2: "商品一覧を見る" (セカンダリ)
+モバイルレイアウト: 標準スタイル
+モバイル文字方向: 縦書き （添付画像と同じ）
+```
+
+image-banner.sectionの柔軟性と縦書きレイアウトの美しさを両立し、
+モバイル表示も**レイアウトスタイル**×**文字方向**の4パターンから選択できるコレクション専用ヘッダーセクションです。
+
+-->

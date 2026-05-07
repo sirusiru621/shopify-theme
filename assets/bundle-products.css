@@ -1,0 +1,679 @@
+/* ファイル名: assets/bundle-products.css */
+/* バンドル商品セクション - レスポンシブ対応 & アクセシビリティ準拠 */
+
+/* ===========================================
+   基本設定
+   =========================================== */
+.bundle-products-section {
+  --bundle-primary-color: #007c89;
+  --bundle-secondary-color: #f8f9fa;
+  --bundle-text-color: #333333;
+  --bundle-border-color: #e1e5e9;
+  --bundle-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --bundle-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --bundle-border-radius: 12px;
+  --bundle-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  width: 100%;
+  max-width: 100%;
+  margin: 32px 0;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+/* ===========================================
+   セクションヘッダー
+   =========================================== */
+.bundle-products-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.bundle-products-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--bundle-text-color);
+  margin: 0 0 16px 0;
+  line-height: 1.3;
+}
+
+.bundle-products-description {
+  font-size: 16px;
+  color: #666666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.bundle-products-description p {
+  margin: 0;
+}
+
+/* ===========================================
+   メイングリッドレイアウト
+   =========================================== */
+.bundle-products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: stretch;
+}
+
+/* ===========================================
+   商品カード基本スタイル
+   =========================================== */
+.bundle-product-card {
+  background: #ffffff;
+  border: 1px solid var(--bundle-border-color);
+  border-radius: var(--bundle-border-radius);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: var(--bundle-transition);
+  box-shadow: var(--bundle-shadow);
+  min-height: 450px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bundle-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--bundle-shadow-hover);
+  border-color: var(--bundle-primary-color);
+}
+
+.bundle-product-card:focus-within {
+  outline: 2px solid var(--bundle-primary-color);
+  outline-offset: 2px;
+}
+
+/* ===========================================
+   商品画像
+   =========================================== */
+.bundle-product-image-wrapper {
+  width: 120px;
+  height: 120px;
+  margin: 0 0 20px 0;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bundle-secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bundle-product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.bundle-product-card:hover .bundle-product-image {
+  transform: scale(1.05);
+}
+
+.bundle-product-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999999;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* ===========================================
+   商品情報
+   =========================================== */
+.bundle-product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.bundle-product-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--bundle-text-color);
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.bundle-product-subtitle {
+  font-size: 14px;
+  color: #666666;
+  margin: 0 0 20px 0;
+  line-height: 1.4;
+}
+
+/* ===========================================
+   数量選択コンポーネント
+   =========================================== */
+.bundle-quantity-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 0;
+  border: 1px solid var(--bundle-border-color);
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.bundle-quantity-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: var(--bundle-primary-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--bundle-transition);
+  flex-shrink: 0;
+}
+
+.bundle-quantity-btn:hover {
+  background: var(--bundle-secondary-color);
+  color: var(--bundle-primary-color);
+}
+
+.bundle-quantity-btn:focus {
+  outline: 2px solid var(--bundle-primary-color);
+  outline-offset: -2px;
+}
+
+.bundle-quantity-btn:active {
+  transform: scale(0.95);
+}
+
+.bundle-quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bundle-quantity-input {
+  width: 60px;
+  height: 36px;
+  border: none;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--bundle-text-color);
+  background: transparent;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.bundle-quantity-input::-webkit-outer-spin-button,
+.bundle-quantity-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ===========================================
+   価格表示
+   =========================================== */
+.bundle-product-price {
+  margin: 16px 0 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.bundle-price-current {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--bundle-primary-color);
+  line-height: 1.2;
+}
+
+.bundle-price-compare {
+  font-size: 16px;
+  color: #999999;
+  text-decoration: line-through;
+  line-height: 1.2;
+}
+
+/* ===========================================
+   カート追加ボタン
+   =========================================== */
+.bundle-add-to-cart-btn {
+  width: 100%;
+  min-height: 44px;
+  background: var(--bundle-primary-color);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--bundle-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  margin-top: auto;
+}
+
+.bundle-add-to-cart-btn:hover:not(:disabled) {
+  background: #006570;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 124, 137, 0.3);
+}
+
+.bundle-add-to-cart-btn:focus {
+  outline: 2px solid var(--bundle-primary-color);
+  outline-offset: 2px;
+}
+
+.bundle-add-to-cart-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.bundle-add-to-cart-btn:disabled {
+  background: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.bundle-btn-loading {
+  display: none;
+}
+
+.bundle-add-to-cart-btn.loading .bundle-btn-text {
+  opacity: 0;
+}
+
+.bundle-add-to-cart-btn.loading .bundle-btn-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.bundle-loading-spinner {
+  animation: bundle-spin 1s linear infinite;
+}
+
+@keyframes bundle-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===========================================
+   選択促進メッセージ
+   =========================================== */
+.bundle-selection-message {
+  margin-top: 24px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border: 1px solid #2196f3;
+  border-radius: var(--bundle-border-radius);
+  text-align: center;
+  animation: bundle-fadeInUp 0.5s ease-out;
+}
+
+.bundle-message-content p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1976d2;
+  line-height: 1.4;
+}
+
+@keyframes bundle-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===========================================
+   タブレット対応 (768px以下)
+   =========================================== */
+@media screen and (max-width: 1023px) {
+  .bundle-products-section {
+    padding: 0 12px;
+    margin: 24px 0;
+  }
+
+  .bundle-products-grid {
+    gap: 16px;
+    max-width: 100%;
+  }
+
+  .bundle-product-card {
+    padding: 20px 16px;
+    min-height: 420px;
+  }
+
+  .bundle-products-title {
+    font-size: 22px;
+  }
+
+  .bundle-products-description {
+    font-size: 15px;
+  }
+
+  .bundle-product-image-wrapper {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 16px;
+  }
+
+  .bundle-product-title {
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  .bundle-product-subtitle {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .bundle-price-current {
+    font-size: 18px;
+  }
+
+  .bundle-price-compare {
+    font-size: 14px;
+  }
+
+  .bundle-add-to-cart-btn {
+    font-size: 15px;
+    min-height: 42px;
+  }
+}
+
+/* ===========================================
+   モバイル対応 (767px以下)
+   =========================================== */
+@media screen and (max-width: 767px) {
+  .bundle-products-section {
+    padding: 0 8px;
+    margin: 20px 0;
+  }
+
+  .bundle-products-header {
+    margin-bottom: 24px;
+  }
+
+  .bundle-products-title {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .bundle-products-description {
+    font-size: 14px;
+  }
+
+  .bundle-products-grid {
+    gap: 12px;
+  }
+
+  .bundle-product-card {
+    padding: 16px 12px;
+    min-height: 380px;
+    border-radius: 8px;
+  }
+
+  .bundle-product-image-wrapper {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+  }
+
+  .bundle-product-title {
+    font-size: 14px;
+    min-height: 36px;
+    margin-bottom: 6px;
+  }
+
+  .bundle-product-subtitle {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .bundle-quantity-selector {
+    margin: 12px 0;
+  }
+
+  .bundle-quantity-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .bundle-quantity-input {
+    width: 50px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .bundle-product-price {
+    margin: 12px 0 16px 0;
+  }
+
+  .bundle-price-current {
+    font-size: 16px;
+  }
+
+  .bundle-price-compare {
+    font-size: 13px;
+  }
+
+  .bundle-add-to-cart-btn {
+    font-size: 14px;
+    min-height: 40px;
+    border-radius: 6px;
+  }
+
+  .bundle-selection-message {
+    margin-top: 20px;
+    padding: 12px 16px;
+    border-radius: 8px;
+  }
+
+  .bundle-message-content p {
+    font-size: 13px;
+  }
+}
+
+/* ===========================================
+   極小画面対応 (375px以下)
+   =========================================== */
+@media screen and (max-width: 375px) {
+  .bundle-products-grid {
+    gap: 8px;
+  }
+
+  .bundle-product-card {
+    padding: 12px 8px;
+    min-height: 350px;
+  }
+
+  .bundle-product-image-wrapper {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 10px;
+  }
+
+  .bundle-product-title {
+    font-size: 13px;
+    min-height: 32px;
+  }
+
+  .bundle-product-subtitle {
+    font-size: 11px;
+  }
+
+  .bundle-quantity-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .bundle-quantity-input {
+    width: 40px;
+    height: 28px;
+    font-size: 13px;
+  }
+
+  .bundle-price-current {
+    font-size: 15px;
+  }
+
+  .bundle-price-compare {
+    font-size: 12px;
+  }
+
+  .bundle-add-to-cart-btn {
+    font-size: 13px;
+    min-height: 36px;
+  }
+}
+
+/* ===========================================
+   アクセシビリティ対応
+   =========================================== */
+
+/* ハイコントラストモード対応 */
+@media (prefers-contrast: high) {
+  .bundle-product-card {
+    border-width: 2px;
+    border-color: #000000;
+  }
+
+  .bundle-add-to-cart-btn {
+    border: 2px solid #000000;
+  }
+
+  .bundle-quantity-btn:focus {
+    outline-width: 3px;
+    outline-color: #000000;
+  }
+}
+
+/* 動きを減らす設定に対応 */
+@media (prefers-reduced-motion: reduce) {
+  .bundle-product-card,
+  .bundle-product-image,
+  .bundle-quantity-btn,
+  .bundle-add-to-cart-btn {
+    transition: none;
+  }
+
+  .bundle-product-card:hover {
+    transform: none;
+  }
+
+  .bundle-add-to-cart-btn:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .bundle-loading-spinner {
+    animation: none;
+  }
+
+  .bundle-selection-message {
+    animation: none;
+  }
+}
+
+/* フォーカス表示の強化 */
+.bundle-quantity-btn:focus-visible,
+.bundle-add-to-cart-btn:focus-visible {
+  outline: 3px solid var(--bundle-primary-color);
+  outline-offset: 2px;
+}
+
+/* スクリーンリーダー用の非表示テキスト */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 印刷時の最適化 */
+@media print {
+  .bundle-products-section {
+    break-inside: avoid;
+    margin: 16px 0;
+  }
+
+  .bundle-product-card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #000000;
+  }
+
+  .bundle-add-to-cart-btn {
+    display: none;
+  }
+
+  .bundle-quantity-selector {
+    display: none;
+  }
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+  .bundle-products-section {
+    --bundle-secondary-color: #2d3748;
+    --bundle-text-color: #e2e8f0;
+    --bundle-border-color: #4a5568;
+  }
+
+  .bundle-product-card {
+    background: #1a202c;
+    color: var(--bundle-text-color);
+  }
+
+  .bundle-product-placeholder {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+    color: #a0aec0;
+  }
+
+  .bundle-quantity-selector {
+    background: #2d3748;
+    border-color: var(--bundle-border-color);
+  }
+
+  .bundle-selection-message {
+    background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
+    border-color: #4299e1;
+  }
+
+  .bundle-message-content p {
+    color: #e2e8f0;
+  }
+}

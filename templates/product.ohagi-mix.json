@@ -1,0 +1,412 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumb_WGK4r6": {
+      "type": "breadcrumb",
+      "name": "パンくずリスト",
+      "settings": {
+        "home_text": "TOP",
+        "show_home_icon": false,
+        "separator_style": "arrow",
+        "enable_animations": false,
+        "background_color": "#e7eaf0",
+        "text_color": "#666666",
+        "link_color": "#333333",
+        "current_page_color": "#999999",
+        "font_size_desktop": 12,
+        "font_size_mobile": 12,
+        "padding_top": 4,
+        "padding_bottom": 4,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "inventory_options_yLVc9P": {
+          "type": "inventory_options",
+          "settings": {
+            "inventory_pool_size": 1000,
+            "enable_inventory_sync": true,
+            "low_stock_threshold": 10,
+            "show_inventory_status": false,
+            "show_total_inventory": false,
+            "show_debug_info": false,
+            "section_title": "店頭受け取りのみの商品です。",
+            "pickup_enabled": true,
+            "pickup_label": "店舗受け取り",
+            "pickup_description": "店舗で直接お受け取り",
+            "pickup_day_sunday": true,
+            "pickup_day_monday": false,
+            "pickup_day_tuesday": false,
+            "pickup_day_wednesday": false,
+            "pickup_day_thursday": false,
+            "pickup_day_friday": false,
+            "pickup_day_saturday": true,
+            "pickup_time": "9:00-16:00",
+            "pickup_sales_start_time": "9:00",
+            "pickup_max_options": 2,
+            "delivery_enabled": false,
+            "delivery_label": "オンライン配送",
+            "delivery_description": "ご指定の住所へお届け",
+            "delivery_day_sunday": false,
+            "delivery_day_monday": false,
+            "delivery_day_tuesday": false,
+            "delivery_day_wednesday": true,
+            "delivery_day_thursday": false,
+            "delivery_day_friday": false,
+            "delivery_day_saturday": false,
+            "delivery_time": "9:00-16:00",
+            "delivery_sales_start_time": "00:00",
+            "delivery_max_options": 1,
+            "pickup_sales_close_day": "5",
+            "pickup_sales_close_time": "12:00",
+            "pickup_close_before_days": 1,
+            "delivery_sales_close_day": "3",
+            "delivery_sales_close_time": "12:00",
+            "delivery_close_before_days": 0,
+            "show_closed_options": false,
+            "show_close_countdown": true,
+            "method_button_bg_color": "#627793",
+            "method_button_text_color": "#ffffff",
+            "accent_color": "#627793"
+          }
+        },
+        "delivery_schedule_picker_3LqJqg": {
+          "type": "delivery-schedule-picker",
+          "settings": {
+            "enable_schedule_picker": true,
+            "schedule_label": "お届け希望日",
+            "delivery_date_property": "配送希望日",
+            "show_heading": true,
+            "weekday_monday": false,
+            "weekday_tuesday": false,
+            "weekday_wednesday": false,
+            "weekday_thursday": false,
+            "weekday_friday": false,
+            "weekday_saturday": false,
+            "weekday_sunday": false,
+            "advance_days": 3,
+            "max_days": 6,
+            "cutoff_time": "15:00",
+            "show_cutoff_notice": true,
+            "cutoff_notice_text": "【北海道・中四国・九州・沖縄へ配送の場合】<br>\nお届け日指定のない場合は最短で木曜日発送の翌々日（土曜日）に到着します。<br>\n【それ以外の地域へ配送の場合】<br>\nお届け日指定のない場合は最短で木曜日発送の翌日（金曜日）に到着します。<br>\n※天候などにより変更となる場合がございますことをご了承ください。",
+            "bg_color": "#ffffff",
+            "text_color": "#333333",
+            "border_color": "#e0e6ed",
+            "primary_color": "#000000",
+            "padding_bottom": 16
+          }
+        },
+        "noshi_options_M74U9T": {
+          "type": "noshi-options",
+          "settings": {
+            "section_title": "のし設定",
+            "noshi_options": "無地熨斗|無地熨斗,粗品・こころばかり|粗品・こころばかり,御祝|御祝,寿|寿,内祝|内祝,御中元|御中元,暑中御見舞|暑中御見舞,御歳暮|御歳暮,御年賀|御年賀,寒中御見舞|寒中御見舞,快気祝・回帰内祝|快気祝・回帰内祝,御挨拶|御挨拶,志|志,御供（仏式・神式・キリスト教式）|御供（仏式・神式・キリスト教式）,御霊前（仏式・神式・キリスト教式）|御霊前（仏式・神式・キリスト教式）,粗供養|粗供養,弔辞|弔辞",
+            "noshi_image_plain": "shopify://shop_images/7C200280.jpg",
+            "border_color": "#e0e6ed",
+            "text_color": "#333333",
+            "primary_color": "#121212",
+            "padding_bottom": 16
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "dropdown"
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": false
+          }
+        },
+        "description": {
+          "type": "description",
+          "disabled": true,
+          "settings": {}
+        },
+        "custom_liquid_iEM8LD": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "<section class=\"product-description\">\n<p><strong>つぶあん：北海道産の餅米「風の子もち」を蒸しあげ、帯広で丁寧に育てられた有機栽培のえりも小豆を炊き上げたつぶあんで包みました。できるだけ粒を残しつつ、優しいおはぎに仕上げました。</strong></p>\n<p><strong>煎りきな粉：</strong>帯広で丁寧に育てられた有機栽培のえりも小豆を炊きあげたつぶあんを、蒸しあげた北海道産の餅米「風の子もち」で包みました。特別栽培で育てられた大豆のきな粉を香ばしく煎り、たっぷりとふりかけました。</p>\n<p>アレルギー特定原材料：なし<br>大豆・ナッツ類、乳製品を含むお菓子を同じ製造所で製造しています。</p>\n<h4>賞味期限／保存方法</h4>\n<p>日保ち：当日中<br>保存方法：直射日光・高温多湿を避け、涼しい場所で保存してください。</p>\n<h4>販売方法</h4>\n\n<b>【店舗受け取りのお客様】</b>\n\n<blockquote class=\"note\">※土・日曜日にご注文頂いた場合、商品のお渡しは翌週末となります。ご注意ください。</blockquote>\n<p>土〜翌金曜日までのご注文で、週末（土・日・祝）の営業時間内にお渡し致します。<br>※土・日曜日にご予約されたご注文は当日、翌日のお渡しではございませんのでご注意ください。<br>銀行振込の場合、入金確認日をご注文受付日といたします。受け取り日前日までにご入金ください。<br>お持ち帰り用の紙袋が必要な場合は、別途紙袋(有料)を合わせてご購入ください。</p>\n<p>ご予約がなくても、店頭にて当日販売分をご用意しております。</p>\n<img src=\"https://cdn.shopify.com/s/files/1/0784/4862/3899/files/0909_600x600.jpg?v=1725882258\">\n</section>"
+          }
+        },
+        "custom_liquid_6RK7Uh": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "<hr>\nよくあるご質問は<a href=\"/pages/faq\" class=\"faq-link\">こちら</a><hr>"
+          }
+        },
+        "share": {
+          "type": "share",
+          "settings": {
+            "share_label": "Share"
+          }
+        },
+        "493daddf-2c1f-4694-a099-5a29fd5c023c": {
+          "type": "text",
+          "settings": {
+            "text": "<p>-----------------------------------------------------------------------</p>",
+            "text_style": "uppercase"
+          }
+        },
+        "complementary_BPeXbb": {
+          "type": "complementary",
+          "disabled": true,
+          "settings": {
+            "block_heading": "こちらもいかがですか？",
+            "make_collapsible_row": false,
+            "icon": "price_tag",
+            "product_list_limit": 10,
+            "products_per_page": 3,
+            "pagination_style": "counter",
+            "image_ratio": "square",
+            "enable_quick_add": true
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "price",
+        "quantity_selector",
+        "inventory_options_yLVc9P",
+        "delivery_schedule_picker_3LqJqg",
+        "noshi_options_M74U9T",
+        "variant_picker",
+        "buy_buttons",
+        "description",
+        "custom_liquid_iEM8LD",
+        "custom_liquid_6RK7Uh",
+        "share",
+        "493daddf-2c1f-4694-a099-5a29fd5c023c",
+        "complementary_BPeXbb"
+      ],
+      "custom_css": [
+        ".product-form__submit {border: 1px solid;}"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "media_size": "small",
+        "constrain_to_viewport": false,
+        "media_fit": "contain",
+        "gallery_layout": "thumbnail_slider",
+        "media_position": "left",
+        "image_zoom": "lightbox",
+        "mobile_thumbnails": "show",
+        "hide_variants": false,
+        "enable_video_looping": false,
+        "padding_top": 16,
+        "padding_bottom": 72
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "おすすめ商品",
+        "heading_size": "h2",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "color_scheme": "background-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    },
+    "featured_collection_DhzKJX": {
+      "type": "featured-collection",
+      "disabled": true,
+      "custom_css": [
+        ".title.inline-richtext {text-align: center;}"
+      ],
+      "name": "t:sections.featured-collection.presets.name",
+      "settings": {
+        "title": "その他のお買いもの",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "雪もち",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": true,
+        "color_scheme": "",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "enable_quick_add": false,
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "76fca9f5-e4b3-42c9-bc43-24f71ab40f7c": {
+      "type": "rich-text",
+      "blocks": {
+        "392c3b29-5bcb-4eae-8d2b-a2b5f7efa8b5": {
+          "type": "caption",
+          "disabled": true,
+          "settings": {
+            "caption": "--------------------------------------------------------------------------　　　　",
+            "text_style": "caption-with-letter-spacing",
+            "text_size": "small"
+          }
+        },
+        "template--19650935193883__76fca9f5-e4b3-42c9-bc43-24f71ab40f7c-text-1": {
+          "type": "text",
+          "settings": {
+            "text": "<h5>紙袋と熨斗は商品と一緒にご購入をお願いいたします。 　　　　　　</h5>"
+          }
+        },
+        "cbebd1f6-baac-4dac-bed1-c79a92b2dc1e": {
+          "type": "text",
+          "settings": {
+            "text": "<h5><a href=\"/collections/紙袋\" title=\"紙袋\">紙袋のご購入はこちら</a>　　　　　　　　　　　　　　　　　　　　　</h5>"
+          }
+        },
+        "06460611-d13f-4695-9cf7-26df37ab5efd": {
+          "type": "text",
+          "settings": {
+            "text": "<h5><a href=\"/collections/熨斗\" title=\"熨斗\">熨斗のご購入はこちら</a>　　　　　　　　　　　　　　　　　　　　　</h5>"
+          }
+        }
+      },
+      "block_order": [
+        "392c3b29-5bcb-4eae-8d2b-a2b5f7efa8b5",
+        "template--19650935193883__76fca9f5-e4b3-42c9-bc43-24f71ab40f7c-text-1",
+        "cbebd1f6-baac-4dac-bed1-c79a92b2dc1e",
+        "06460611-d13f-4695-9cf7-26df37ab5efd"
+      ],
+      "disabled": true,
+      "settings": {
+        "desktop_content_position": "right",
+        "content_alignment": "right",
+        "color_scheme": "accent-1",
+        "full_width": true,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "product_cross_sell_iczWEh": {
+      "type": "product-cross-sell",
+      "disabled": true,
+      "name": "クロスセル商品",
+      "settings": {
+        "title": "こちらもおすすめ",
+        "description": "<p>これらのアイテムもチェックしてみてください</p>",
+        "collection": "紙袋",
+        "products_limit": 4,
+        "show_vendor": false,
+        "show_view_all": true,
+        "view_all_text": "すべて見る",
+        "button_text": "カートに追加",
+        "success_text": "カートに追加しました",
+        "soldout_text": "売り切れ",
+        "empty_text": "現在おすすめ商品はありません",
+        "show_debug": false,
+        "show_modal": true,
+        "modal_title": "カートに追加されました",
+        "modal_text": "",
+        "continue_shopping_text": "買い物を続ける",
+        "view_cart_text": "カートを見る",
+        "background_color": "#ffffff",
+        "text_color": "#333333",
+        "accent_color": "#000000",
+        "title_size": 28,
+        "text_size": 16,
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    },
+    "cross_sell_popup_d7fjzW": {
+      "type": "cross-sell-popup",
+      "disabled": true,
+      "name": "クロスセル ポップアップ",
+      "settings": {
+        "enable_popup": true,
+        "cross_sell_collection": "紙袋",
+        "max_products": 3,
+        "popup_delay": 500,
+        "auto_close_delay": 0,
+        "show_on_mobile": true,
+        "show_variants": true,
+        "cart_subtitle": "Cart subtotal:",
+        "item_text": "Item",
+        "items_text": "Items",
+        "checkout_text": "Checkout",
+        "view_cart_text": "View Cart",
+        "add_to_cart_text": "Add to cart",
+        "sold_out_text": "Sold out",
+        "cross_sell_title": "Customers Also Bought",
+        "added_message": "Added to cart!",
+        "error_message": "Sorry, something went wrong.",
+        "overlay_color": "#00000099",
+        "popup_background": "#ffffff",
+        "primary_button_color": "#1f2937",
+        "secondary_button_color": "#4f46e5",
+        "popup_size": "medium",
+        "border_radius": 8,
+        "enable_blur_effect": true,
+        "enable_animations": true,
+        "close_on_overlay_click": true,
+        "prevent_body_scroll": true,
+        "enable_focus_management": true,
+        "enable_escape_key": true,
+        "announce_cart_updates": true,
+        "enable_analytics": false,
+        "analytics_event_name": "cross_sell_popup_interaction",
+        "enable_ab_testing": false,
+        "ab_test_percentage": 50,
+        "lazy_load_images": true,
+        "image_quality": 80,
+        "preload_popup_resources": false,
+        "enable_debug_mode": false,
+        "custom_css_class": "",
+        "custom_javascript": ""
+      }
+    }
+  },
+  "order": [
+    "breadcrumb_WGK4r6",
+    "main",
+    "related-products",
+    "featured_collection_DhzKJX",
+    "76fca9f5-e4b3-42c9-bc43-24f71ab40f7c",
+    "product_cross_sell_iczWEh",
+    "cross_sell_popup_d7fjzW"
+  ]
+}

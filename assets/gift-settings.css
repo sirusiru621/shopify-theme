@@ -1,0 +1,1042 @@
+/* ファイル名: gift-settings-simple.css */
+/* Shopify Dawn テーマ対応 ギフト設定セクション スタイルシート */
+/* バージョン: 2.0 - エラー修正・レスポンシブ完全対応版 */
+
+/* ==========================================
+   CSS変数定義とベーススタイル
+   ========================================== */
+
+.gift-settings-simple {
+  /* デフォルトのCSS変数（Liquidで上書き可能） */
+  --gift-accent-color: #007c89;
+  --gift-text-color: #333333;
+  --gift-background-color: #fafbfc;
+  --gift-border-color: #e1e5e9;
+  --gift-border-radius: 8px;
+  --gift-spacing: 20px;
+  
+  /* 計算値 */
+  --gift-text-secondary: color-mix(in srgb, var(--gift-text-color) 70%, transparent);
+  --gift-text-muted: color-mix(in srgb, var(--gift-text-color) 50%, transparent);
+  --gift-accent-hover: color-mix(in srgb, var(--gift-accent-color) 90%, black);
+  --gift-accent-light: color-mix(in srgb, var(--gift-accent-color) 10%, transparent);
+  
+  /* フォント設定 */
+  --gift-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --gift-font-size-base: 16px;
+  --gift-font-size-small: 14px;
+  --gift-font-size-xs: 12px;
+  --gift-line-height: 1.5;
+  
+  /* レイアウト */
+  --gift-container-max-width: 100%;
+  --gift-container-padding: var(--gift-spacing);
+  
+  /* トランジション */
+  --gift-transition: all 0.3s ease;
+  --gift-transition-fast: all 0.15s ease;
+  
+  /* シャドウ */
+  --gift-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --gift-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --gift-shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.15);
+  
+  /* 基本設定 */
+  font-family: var(--gift-font-family);
+  font-size: var(--gift-font-size-base);
+  line-height: var(--gift-line-height);
+  color: var(--gift-text-color);
+  margin: var(--gift-spacing) 0;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.gift-settings-simple *,
+.gift-settings-simple *::before,
+.gift-settings-simple *::after {
+  box-sizing: border-box;
+}
+
+/* ==========================================
+   トリガーボタン（改善版）
+   ========================================== */
+
+.gift-settings-trigger-section {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.gift-settings-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  border: 2px solid var(--gift-border-color);
+  border-radius: var(--gift-border-radius);
+  background: white;
+  color: var(--gift-text-color);
+  font-size: var(--gift-font-size-base);
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--gift-transition);
+  text-align: left;
+  position: relative;
+  
+  /* ブラウザ固有スタイルリセット */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  text-decoration: none;
+  
+  /* アクセシビリティ */
+  min-height: 48px;
+}
+
+.gift-settings-btn:hover {
+  border-color: var(--gift-accent-color);
+  background-color: var(--gift-accent-light);
+  transform: translateY(-1px);
+  box-shadow: var(--gift-shadow-md);
+}
+
+.gift-settings-btn:focus {
+  outline: 2px solid var(--gift-accent-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--gift-accent-light);
+}
+
+.gift-settings-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--gift-shadow-sm);
+}
+
+/* ボタン状態別スタイル */
+.gift-settings-btn.settings-configured {
+  border-color: #28a745;
+  background-color: #f8fff8;
+}
+
+.gift-settings-btn.area-open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+
+.gift-settings-btn.area-open .gift-arrow {
+  transform: rotate(180deg);
+}
+
+/* ボタン内要素 */
+.gift-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--gift-accent-color);
+}
+
+.gift-btn-text {
+  flex: 1;
+  font-weight: 500;
+}
+
+.gift-status {
+  font-size: var(--gift-font-size-small);
+  color: var(--gift-text-secondary);
+  margin-left: auto;
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.gift-arrow {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--gift-text-color);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* ==========================================
+   ギフト設定エリア（レイアウト改善版）
+   ========================================== */
+
+.gift-settings-area {
+  width: 100%;
+  margin-top: 0;
+  padding: var(--gift-container-padding);
+  border: 2px solid var(--gift-border-color);
+  border-top: none;
+  border-radius: 0 0 var(--gift-border-radius) var(--gift-border-radius);
+  background: var(--gift-background-color);
+  overflow: hidden;
+  transition: var(--gift-transition);
+  box-shadow: var(--gift-shadow-sm);
+}
+
+.gift-settings-area[data-animating] {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+    transform: translateY(0);
+  }
+}
+
+.gift-settings-area.closing {
+  animation: slideUp 0.3s ease-in forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    max-height: 1000px;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* ヘッダー部分 */
+.gift-settings-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gift-border-color);
+}
+
+.gift-settings-title {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gift-text-color);
+  line-height: 1.3;
+}
+
+.gift-settings-description {
+  margin: 0;
+  font-size: var(--gift-font-size-small);
+  color: var(--gift-text-secondary);
+  line-height: 1.4;
+}
+
+/* ==========================================
+   フォーム要素（統一デザイン）
+   ========================================== */
+
+.gift-settings-form {
+  width: 100%;
+}
+
+.gift-form-group {
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.gift-form-group:last-child {
+  margin-bottom: 0;
+}
+
+.gift-form-group[data-step] {
+  position: relative;
+}
+
+.gift-form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gift-text-color);
+  line-height: 1.4;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--gift-accent-color);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.gift-help-text {
+  display: block;
+  margin-top: 6px;
+  font-size: var(--gift-font-size-small);
+  color: var(--gift-text-secondary);
+  line-height: 1.4;
+}
+
+/* 入力要素の共通スタイル */
+.gift-quantity-select,
+.gift-purpose-select,
+.gift-addressee-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--gift-border-color);
+  border-radius: calc(var(--gift-border-radius) * 0.75);
+  background: white;
+  color: var(--gift-text-color);
+  font-size: 15px;
+  font-family: inherit;
+  line-height: 1.4;
+  transition: var(--gift-transition-fast);
+  
+  /* ブラウザ固有スタイルリセット */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  
+  /* アクセシビリティ */
+  min-height: 44px;
+}
+
+.gift-quantity-select:focus,
+.gift-purpose-select:focus,
+.gift-addressee-input:focus {
+  outline: none;
+  border-color: var(--gift-accent-color);
+  box-shadow: 0 0 0 3px var(--gift-accent-light);
+  background-color: white;
+}
+
+.gift-quantity-select:hover,
+.gift-purpose-select:hover,
+.gift-addressee-input:hover {
+  border-color: var(--gift-accent-color);
+}
+
+/* セレクトボックス固有スタイル */
+.gift-quantity-select,
+.gift-purpose-select {
+  padding-right: 44px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%23333" d="M6 8L0 2h12z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 12px;
+  cursor: pointer;
+}
+
+.gift-quantity-select:focus,
+.gift-purpose-select:focus {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%23007c89" d="M6 8L0 2h12z"/></svg>');
+}
+
+/* 宛名書き入力の文字数カウンター */
+.addressee-counter {
+  margin-top: 4px;
+  text-align: right;
+}
+
+.addressee-count {
+  font-weight: 600;
+  color: var(--gift-accent-color);
+}
+
+/* ==========================================
+   サンプル画像表示エリア（改善版）
+   ========================================== */
+
+.purpose-sample-display {
+  width: 100%;
+  min-height: 200px;
+  padding: 24px;
+  border: 1px dashed var(--gift-border-color);
+  border-radius: var(--gift-border-radius);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: var(--gift-transition);
+}
+
+.purpose-sample-display:hover {
+  border-color: var(--gift-accent-color);
+}
+
+.sample-display-content {
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+}
+
+.sample-display-placeholder {
+  color: var(--gift-text-muted);
+  font-size: var(--gift-font-size-small);
+  line-height: 1.5;
+  padding: 20px;
+  transition: var(--gift-transition-fast);
+}
+
+.sample-display-image {
+  max-width: 100%;
+  max-height: 180px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: calc(var(--gift-border-radius) * 0.75);
+  box-shadow: var(--gift-shadow-md);
+  transition: var(--gift-transition);
+}
+
+.sample-display-image.loading {
+  opacity: 0.6;
+  filter: blur(2px);
+}
+
+.sample-display-image:hover {
+  transform: scale(1.02);
+  box-shadow: var(--gift-shadow-lg);
+}
+
+/* ==========================================
+   アクションボタン（改善版）
+   ========================================== */
+
+.gift-form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--gift-border-color);
+  width: 100%;
+}
+
+.gift-cancel-btn,
+.gift-confirm-btn {
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: calc(var(--gift-border-radius) * 0.75);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--gift-transition);
+  text-align: center;
+  line-height: 1.2;
+  min-height: 48px;
+  position: relative;
+  
+  /* ブラウザ固有スタイルリセット */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  text-decoration: none;
+}
+
+.gift-cancel-btn {
+  border: 2px solid var(--gift-border-color);
+  background: white;
+  color: var(--gift-text-color);
+}
+
+.gift-cancel-btn:hover {
+  background-color: var(--gift-background-color);
+  border-color: var(--gift-text-secondary);
+  transform: translateY(-1px);
+  box-shadow: var(--gift-shadow-sm);
+}
+
+.gift-cancel-btn:focus {
+  outline: 2px solid var(--gift-accent-color);
+  outline-offset: 2px;
+}
+
+.gift-confirm-btn {
+  border: 2px solid #ccc;
+  background: #ccc;
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.gift-confirm-btn:not(:disabled) {
+  border-color: var(--gift-accent-color);
+  background: var(--gift-accent-color);
+  cursor: pointer;
+  opacity: 1;
+}
+
+.gift-confirm-btn:not(:disabled):hover {
+  background: var(--gift-accent-hover);
+  border-color: var(--gift-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--gift-shadow-md);
+}
+
+.gift-confirm-btn:not(:disabled):focus {
+  outline: 2px solid var(--gift-accent-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--gift-accent-light);
+}
+
+.gift-confirm-btn:active {
+  transform: translateY(0);
+}
+
+/* ローディング状態 */
+.gift-confirm-btn.loading {
+  pointer-events: none;
+}
+
+.gift-confirm-btn.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid white;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================
+   サマリー表示（改善版）
+   ========================================== */
+
+.gift-summary {
+  width: 100%;
+  margin-top: var(--gift-spacing);
+  padding: 20px;
+  background: var(--gift-accent-light);
+  border-radius: var(--gift-border-radius);
+  border-left: 4px solid var(--gift-accent-color);
+  box-shadow: var(--gift-shadow-sm);
+  animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.gift-summary-header {
+  margin-bottom: 16px;
+}
+
+.gift-summary-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--gift-text-color);
+}
+
+.gift-summary-content {
+  font-size: var(--gift-font-size-small);
+  color: var(--gift-text-color);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.gift-summary-content div {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.gift-summary-content strong {
+  font-weight: 600;
+  color: var(--gift-text-color);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.gift-edit-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--gift-accent-color);
+  border-radius: calc(var(--gift-border-radius) * 0.5);
+  background: white;
+  color: var(--gift-accent-color);
+  font-size: var(--gift-font-size-small);
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--gift-transition);
+  
+  /* ブラウザ固有スタイルリセット */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  min-height: 32px;
+}
+
+.gift-edit-btn:hover {
+  background: var(--gift-accent-color);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: var(--gift-shadow-sm);
+}
+
+.gift-edit-btn:focus {
+  outline: 2px solid var(--gift-accent-color);
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   エラーメッセージ表示
+   ========================================== */
+
+.gift-error-container {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.gift-error-message {
+  padding: 12px 16px;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: calc(var(--gift-border-radius) * 0.75);
+  color: #c33;
+  font-size: var(--gift-font-size-small);
+  line-height: 1.4;
+  animation: errorSlideIn 0.3s ease-out;
+}
+
+@keyframes errorSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 成功メッセージ（トースト形式） */
+.gift-success-toast,
+.gift-error-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 16px 20px;
+  border-radius: var(--gift-border-radius);
+  color: white;
+  font-size: var(--gift-font-size-small);
+  font-weight: 500;
+  box-shadow: var(--gift-shadow-lg);
+  z-index: 9999;
+  max-width: 320px;
+  animation: toastSlideIn 0.3s ease-out;
+}
+
+.gift-success-toast {
+  background: #28a745;
+}
+
+.gift-error-toast {
+  background: #dc3545;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.gift-success-toast.removing,
+.gift-error-toast.removing {
+  animation: toastSlideOut 0.3s ease-in forwards;
+}
+
+@keyframes toastSlideOut {
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* ==========================================
+   レスポンシブ対応（タブレット: 768px以下）
+   ========================================== */
+
+@media screen and (max-width: 768px) {
+  .gift-settings-simple {
+    --gift-spacing: 16px;
+    --gift-font-size-base: 15px;
+    margin: 16px 0;
+  }
+  
+  .gift-settings-btn {
+    padding: 14px 16px;
+    font-size: 15px;
+    min-height: 44px;
+  }
+  
+  .gift-settings-area {
+    padding: 20px;
+  }
+  
+  .gift-settings-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  
+  .gift-form-group {
+    margin-bottom: 20px;
+  }
+  
+  .gift-form-label {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  
+  .step-number {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+  
+  .gift-quantity-select,
+  .gift-purpose-select,
+  .gift-addressee-input {
+    padding: 12px 14px;
+    font-size: 16px; /* iOS Safariのズーム防止 */
+    min-height: 44px;
+  }
+  
+  .purpose-sample-display {
+    min-height: 160px;
+    padding: 20px;
+  }
+  
+  .sample-display-image {
+    max-height: 140px;
+  }
+  
+  .gift-form-actions {
+    margin-top: 24px;
+    padding-top: 20px;
+  }
+  
+  .gift-cancel-btn,
+  .gift-confirm-btn {
+    padding: 12px 16px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+  
+  .gift-success-toast,
+  .gift-error-toast {
+    top: 16px;
+    right: 16px;
+    left: 16px;
+    max-width: none;
+  }
+}
+
+/* ==========================================
+   レスポンシブ対応（モバイル: 480px以下）
+   ========================================== */
+
+@media screen and (max-width: 480px) {
+  .gift-settings-simple {
+    --gift-spacing: 12px;
+    --gift-font-size-base: 14px;
+    margin: 12px 0;
+  }
+  
+  .gift-settings-btn {
+    padding: 12px 14px;
+    font-size: 14px;
+    gap: 8px;
+  }
+  
+  .gift-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .gift-settings-area {
+    padding: 16px;
+    border-radius: 0 0 6px 6px;
+  }
+  
+  .gift-settings-title {
+    font-size: 17px;
+    margin-bottom: 12px;
+  }
+  
+  .gift-settings-description {
+    font-size: 13px;
+  }
+  
+  .gift-form-group {
+    margin-bottom: 18px;
+  }
+  
+  .gift-form-label {
+    font-size: 13px;
+    margin-bottom: 6px;
+    gap: 6px;
+  }
+  
+  .step-number {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+  
+  .gift-quantity-select,
+  .gift-purpose-select,
+  .gift-addressee-input {
+    padding: 10px 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    min-height: 44px;
+  }
+  
+  .gift-quantity-select,
+  .gift-purpose-select {
+    padding-right: 40px;
+    background-position: right 12px center;
+  }
+  
+  .purpose-sample-display {
+    min-height: 140px;
+    padding: 16px;
+    border-radius: 6px;
+  }
+  
+  .sample-display-image {
+    max-height: 120px;
+  }
+  
+  .sample-display-placeholder {
+    font-size: 13px;
+    padding: 16px;
+  }
+  
+  /* モバイルでボタンを縦並びに変更 */
+  .gift-form-actions {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+  
+  .gift-cancel-btn,
+  .gift-confirm-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    min-height: 44px;
+  }
+  
+  .gift-summary {
+    padding: 16px;
+    margin-top: 16px;
+  }
+  
+  .gift-summary-title {
+    font-size: 16px;
+  }
+  
+  .gift-summary-content {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  
+  .gift-summary-content div {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .gift-summary-content strong {
+    min-width: auto;
+  }
+  
+  .gift-edit-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+/* ==========================================
+   アクセシビリティ対応（WCAG 2.1準拠）
+   ========================================== */
+
+/* フォーカス表示の強化 */
+.gift-settings-btn:focus-visible,
+.gift-quantity-select:focus-visible,
+.gift-purpose-select:focus-visible,
+.gift-addressee-input:focus-visible,
+.gift-cancel-btn:focus-visible,
+.gift-confirm-btn:focus-visible,
+.gift-edit-btn:focus-visible {
+  outline: 2px solid var(--gift-accent-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--gift-accent-light);
+}
+
+/* 高コントラストモード対応 */
+@media (prefers-contrast: high) {
+  .gift-settings-simple {
+    --gift-accent-color: #004d57;
+    --gift-border-color: #333333;
+    --gift-text-color: #000000;
+  }
+  
+  .gift-settings-btn,
+  .gift-quantity-select,
+  .gift-purpose-select,
+  .gift-addressee-input,
+  .gift-cancel-btn,
+  .gift-confirm-btn {
+    border-width: 2px;
+  }
+  
+  .purpose-sample-display {
+    border-width: 2px;
+    border-style: solid;
+  }
+}
+
+/* アニメーション抑制対応 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .gift-settings-btn:hover,
+  .gift-cancel-btn:hover,
+  .gift-confirm-btn:hover,
+  .gift-edit-btn:hover,
+  .sample-display-image:hover {
+    transform: none;
+  }
+}
+
+/* ==========================================
+   ダークモード対応
+   ========================================== */
+
+@media (prefers-color-scheme: dark) {
+  .gift-settings-simple {
+    --gift-accent-color: #4dd0e1;
+    --gift-background-color: #2a2a2a;
+    --gift-border-color: #444444;
+    --gift-text-color: #ffffff;
+  }
+  
+  .gift-settings-area {
+    background-color: #1a1a1a;
+    border-color: var(--gift-border-color);
+  }
+  
+  .gift-settings-btn {
+    background-color: #2a2a2a;
+    border-color: var(--gift-border-color);
+  }
+  
+  .gift-quantity-select,
+  .gift-purpose-select,
+  .gift-addressee-input {
+    background-color: #2a2a2a;
+    border-color: var(--gift-border-color);
+    color: var(--gift-text-color);
+  }
+  
+  .purpose-sample-display {
+    background-color: #1a1a1a;
+    border-color: var(--gift-border-color);
+  }
+  
+  .gift-summary {
+    background-color: #1a3333;
+    color: var(--gift-text-color);
+  }
+  
+  .gift-cancel-btn {
+    background-color: #2a2a2a;
+    border-color: var(--gift-border-color);
+    color: var(--gift-text-color);
+  }
+}
+
+/* ==========================================
+   印刷対応
+   ========================================== */
+
+@media print {
+  .gift-settings-simple {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .gift-settings-btn,
+  .gift-cancel-btn,
+  .gift-confirm-btn,
+  .gift-edit-btn {
+    display: none;
+  }
+  
+  .gift-settings-area {
+    display: block !important;
+    border: 1px solid #ccc !important;
+    background: white !important;
+    box-shadow: none !important;
+  }
+  
+  .gift-summary {
+    display: block !important;
+    background: #f9f9f9 !important;
+    border: 1px solid #ccc !important;
+  }
+}

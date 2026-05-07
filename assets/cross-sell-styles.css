@@ -1,0 +1,290 @@
+/* クロスセル商品 スタイル */
+.product__cross-sell {
+  margin: 3rem 0;
+  padding: 2rem 0;
+  border-top: 1px solid rgba(var(--color-foreground), 0.1);
+}
+
+.cross-sell-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.cross-sell-title {
+  margin: 0 0 1rem;
+  font-weight: 600;
+}
+
+.cross-sell-description {
+  opacity: 0.7;
+  margin: 0;
+}
+
+.cross-sell-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media screen and (max-width: 749px) {
+  .cross-sell-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 0.8rem;
+    max-width: 100%;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .cross-sell-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 1rem;
+    max-width: 320px;
+  }
+}
+
+.cross-sell-item {
+  position: relative;
+  border: 1px solid rgba(var(--color-foreground), 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: rgb(var(--color-background));
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cross-sell-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(var(--color-foreground), 0.1);
+}
+
+.cross-sell-image-wrapper {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  flex: 0 0 auto;
+  height: 140px;
+}
+
+.cross-sell-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.cross-sell-item:hover .cross-sell-image {
+  transform: scale(1.05);
+}
+
+.cross-sell-overlay-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.cross-sell-placeholder {
+  width: 100%;
+  height: 100%;
+  background: rgba(var(--color-foreground), 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(var(--color-foreground), 0.5);
+  font-size: 1.2rem;
+}
+
+.cross-sell-content {
+  padding: 0.8rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cross-sell-product-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0 0 0.4rem;
+  line-height: 1.3;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.cross-sell-product-link {
+  color: rgb(var(--color-foreground));
+  text-decoration: none;
+}
+
+.cross-sell-product-link:hover {
+  text-decoration: underline;
+}
+
+.cross-sell-vendor {
+  margin-bottom: 0.4rem;
+  opacity: 0.7;
+  font-size: 1.1rem;
+}
+
+.cross-sell-price {
+  margin-bottom: 0.8rem;
+}
+
+.cross-sell-price-compare {
+  font-size: 1.1rem;
+  color: rgba(var(--color-foreground), 0.5);
+  text-decoration: line-through;
+  margin-right: 0.4rem;
+}
+
+.cross-sell-price-current {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: rgb(var(--color-foreground));
+}
+
+.cross-sell-variants {
+  margin-bottom: 0.8rem;
+}
+
+.cross-sell-variant-select {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid rgba(var(--color-foreground), 0.2);
+  border-radius: 4px;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  font-size: 1.1rem;
+}
+
+.cross-sell-form {
+  position: relative;
+  margin-top: auto;
+}
+
+.cross-sell-add-to-cart {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  padding: 0.6rem 0.8rem;
+  font-size: 1.1rem;
+  min-height: 40px;
+}
+
+.cross-sell-add-to-cart.loading .add-to-cart-text {
+  opacity: 0;
+}
+
+.cross-sell-add-to-cart.loading .loading-spinner {
+  display: block !important;
+}
+
+.cross-sell-add-to-cart.success .add-to-cart-text {
+  opacity: 0;
+}
+
+.cross-sell-add-to-cart.success .add-to-cart-success {
+  display: block !important;
+}
+
+.add-to-cart-success,
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.loading-spinner svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.cross-sell-empty {
+  text-align: center;
+  padding: 2rem;
+  background: rgba(var(--color-foreground), 0.02);
+  border-radius: 8px;
+}
+
+.cross-sell-empty-text {
+  color: rgba(var(--color-foreground), 0.7);
+  margin: 0;
+}
+
+.cross-sell-footer {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* レスポンシブ調整 */
+@media screen and (max-width: 749px) {
+  .product__cross-sell {
+    margin: 2rem 0;
+    padding: 1.5rem 0;
+  }
+  
+  .cross-sell-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .cross-sell-content {
+    padding: 0.6rem;
+  }
+  
+  .cross-sell-product-title {
+    font-size: 1.1rem;
+  }
+  
+  .cross-sell-price-current {
+    font-size: 1.2rem;
+  }
+  
+  .cross-sell-item {
+    min-height: 240px;
+  }
+  
+  .cross-sell-image-wrapper {
+    height: 120px;
+  }
+  
+  .cross-sell-add-to-cart {
+    padding: 0.5rem 0.6rem;
+    font-size: 1rem;
+    min-height: 36px;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .cross-sell-item {
+    min-height: 300px;
+  }
+  
+  .cross-sell-image-wrapper {
+    height: 160px;
+  }
+  
+  .cross-sell-content {
+    padding: 0.8rem;
+  }
+  
+  .cross-sell-product-title {
+    font-size: 1.2rem;
+  }
+}

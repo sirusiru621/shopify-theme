@@ -1,0 +1,1838 @@
+<!-- カスタム商品詳細セクション - メニュー対応・画像2カラム構成 -->
+<section 
+  id="CustomProduct-{{ section.id }}" 
+  class="custom-product-section section-{{ section.id }}-padding"
+  data-section="{{ section.id }}"
+>
+  <!-- CSS読み込み -->
+  {{ 'section-custom-product.css' | asset_url | stylesheet_tag }}
+  {{ 'component-price.css' | asset_url | stylesheet_tag }}
+  {{ 'component-rating.css' | asset_url | stylesheet_tag }}
+  {{ 'component-loading-overlay.css' | asset_url | stylesheet_tag }}
+
+  <!-- セクション固有スタイル -->
+  {%- style -%}
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    }
+
+    @media screen and (min-width: 750px) {
+      .section-{{ section.id }}-padding {
+        padding-top: {{ section.settings.padding_top }}px;
+        padding-bottom: {{ section.settings.padding_bottom }}px;
+      }
+    }
+
+    .custom-product-section {
+      background-color: {{ section.settings.background_color }};
+      color: {{ section.settings.text_color }};
+    }
+
+    .custom-product-container {
+      max-width: {{ section.settings.max_width }}px;
+      grid-template-columns: {{ section.settings.sidebar_width }}px 1fr;
+      gap: {{ section.settings.content_gap }}rem;
+    }
+
+    .menu-sidebar {
+      background-color: {{ section.settings.sidebar_background }};
+      border-color: {{ section.settings.sidebar_border }};
+    }
+
+    .menu-link {
+      color: {{ section.settings.link_color }};
+      font-size: {{ section.settings.link_font_size }}px;
+    }
+
+    .menu-link:hover {
+      color: {{ section.settings.link_hover_color }};
+    }
+
+    .product-title {
+      font-size: {{ section.settings.title_font_size }}px;
+      font-weight: {{ section.settings.title_font_weight }};
+      color: {{ section.settings.title_color }};
+    }
+
+    .product-gallery-grid {
+      grid-template-columns: 1fr {{ section.settings.thumbnail_column_width }}px;
+      gap: {{ section.settings.gallery_gap }}rem;
+    }
+
+    .thumbnail-item {
+      width: {{ section.settings.thumbnail_size }}px;
+      height: {{ section.settings.thumbnail_size }}px;
+      border-color: {{ section.settings.thumbnail_border_active }};
+    }
+
+    .main-image-container {
+      aspect-ratio: {% case section.settings.image_aspect_ratio %}
+        {% when 'square' %}1/1
+        {% when 'portrait' %}3/4
+        {% when 'landscape' %}4/3
+        {% else %}auto
+      {% endcase %};
+    }
+  {%- endstyle -%}
+
+  <div class="custom-product-container">
+    <!-- 左サイドバー：Shopifyメニュー表示 -->
+    <aside class="menu-sidebar" aria-label="{{ section.settings.sidebar_title }}">
+      <div class="menu-sidebar-content">
+        {% if section.settings.sidebar_title != blank %}
+          <h2 class="sidebar-title">{{ section.settings.sidebar_title }}</h2>
+        {% endif %}
+        
+        <!-- Shopifyメニューの表示 -->
+        {% if section.settings.navigation_menu != blank %}
+          {% assign main_menu = linklists[section.settings.navigation_menu] %}
+          <nav class="menu-nav" aria-label="{{ main_menu.title }}">
+            <ul class="menu-list">
+              {% for link in main_menu.links %}
+                <li class="menu-item">
+                  <a 
+                    href="{{ link.url }}" 
+                    class="menu-link{% if link.active %} menu-link--active{% endif %}"
+                    {% if link.current %}aria-current="page"{% endif %}
+                  >
+                    {{ link.title }}
+                  </a>
+                  
+                  <!-- サブメニューがある場合 -->
+                  {% if link.links != blank %}
+                    <ul class="submenu-list">
+                      {% for child_link in link.links %}
+                        <li class="submenu-item">
+                          <a 
+                            href="{{ child_link.url }}" 
+                            class="menu-link submenu-link{% if child_link.active %} menu-link--active{% endif %}"
+                            {% if child_link.current %}aria-current="page"{% endif %}
+                          >
+                            {{ child_link.title }}
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          </nav>
+        {% endif %}
+
+        <!-- カスタムブロック（追加情報） -->
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'custom_link' %}
+              <div class="custom-link-block" {{ block.shopify_attributes }}>
+                {% if block.settings.link_title != blank %}
+                  <h3 class="custom-link-title">{{ block.settings.link_title }}</h3>
+                {% endif %}
+                <ul class="custom-link-list">
+                  {% assign custom_menu = linklists[block.settings.custom_menu] %}
+                  {% for link in custom_menu.links %}
+                    <li class="menu-item">
+                      <a href="{{ link.url }}" class="menu-link">
+                        {{ link.title }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% when 'text_block' %}
+              <div class="sidebar-text-block" {{ block.shopify_attributes }}>
+                {% if block.settings.text_title != blank %}
+                  <h3 class="text-block-title">{{ block.settings.text_title }}</h3>
+                {% endif %}
+                {% if block.settings.text_content != blank %}
+                  <div class="text-block-content rte">
+                    {{ block.settings.text_content }}
+                  </div>
+                {% endif %}
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </aside>
+
+    <!-- メインコンテンツエリア -->
+    <main class="product-main-content">
+      <!-- 商品画像ギャラリー（2カラム構成） -->
+      <div class="product-gallery-section">
+        <div class="product-gallery-grid">
+          <!-- 左：メイン画像 -->
+          <div class="main-image-container">
+            {% if product.featured_media %}
+              <div class="main-image-wrapper">
+                <img
+                  id="MainImage-{{ section.id }}"
+                  class="main-product-image{% if section.settings.enable_zoom %} image-zoom{% endif %}"
+                  src="{{ product.featured_media | image_url: width: 800 }}"
+                  srcset="
+                    {{ product.featured_media | image_url: width: 400 }} 400w,
+                    {{ product.featured_media | image_url: width: 600 }} 600w,
+                    {{ product.featured_media | image_url: width: 800 }} 800w,
+                    {{ product.featured_media | image_url: width: 1200 }} 1200w
+                  "
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 60vw, 40vw"
+                  alt="{{ product.featured_media.alt | escape }}"
+                  loading="eager"
+                  width="{{ product.featured_media.width }}"
+                  height="{{ product.featured_media.height }}"
+                >
+                
+                {% if section.settings.enable_lightbox %}
+                  <button 
+                    class="image-zoom-button" 
+                    type="button"
+                    aria-label="画像を拡大表示"
+                    data-image-src="{{ product.featured_media | image_url: width: 1200 }}"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M9 9a3 3 0 1 1 6 0 3 3 0 0 1-6 0zM9 1a8 8 0 1 0 6.32 12.906l3.387 3.387a1 1 0 0 0 1.414-1.414l-3.387-3.387A8 8 0 0 0 9 1z"/>
+                    </svg>
+                  </button>
+                {% endif %}
+              </div>
+            {% else %}
+              <div class="no-image-placeholder">
+                <svg width="60" height="60" viewBox="0 0 60 60" fill="currentColor">
+                  <path d="M30 5C16.2 5 5 16.2 5 30s11.2 25 25 25 25-11.2 25-25S43.8 5 30 5zm10 35H20V25h20v15z"/>
+                </svg>
+                <p>画像がありません</p>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- 右：サムネイルカルーセル -->
+          {% if product.media.size > 1 %}
+            <div class="thumbnail-column">
+              <div class="thumbnail-carousel-container">
+                <div class="thumbnail-carousel" id="ThumbnailCarousel-{{ section.id }}">
+                  {% for media in product.media limit: section.settings.max_thumbnails %}
+                    <button 
+                      class="thumbnail-item {% if forloop.first %}active{% endif %}"
+                      type="button"
+                      data-media-id="{{ media.id }}"
+                      data-media-type="{{ media.media_type }}"
+                      aria-label="商品{{ media.media_type }}{{ forloop.index }}を表示"
+                      tabindex="0"
+                    >
+                      {% case media.media_type %}
+                        {% when 'image' %}
+                          <img
+                            src="{{ media | image_url: width: 120 }}"
+                            alt="{{ media.alt | escape }}"
+                            loading="lazy"
+                            width="{{ section.settings.thumbnail_size }}"
+                            height="{{ section.settings.thumbnail_size }}"
+                          >
+                        {% when 'video' %}
+                          <div class="thumbnail-video">
+                            <img
+                              src="{{ media.preview_image | image_url: width: 120 }}"
+                              alt="{{ media.alt | escape }}"
+                              loading="lazy"
+                              width="{{ section.settings.thumbnail_size }}"
+                              height="{{ section.settings.thumbnail_size }}"
+                            >
+                            <div class="video-play-icon">
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M3 2v12l10-6L3 2z"/>
+                              </svg>
+                            </div>
+                          </div>
+                        {% when 'model' %}
+                          <div class="thumbnail-model">
+                            <img
+                              src="{{ media.preview_image | image_url: width: 120 }}"
+                              alt="{{ media.alt | escape }}"
+                              loading="lazy"
+                              width="{{ section.settings.thumbnail_size }}"
+                              height="{{ section.settings.thumbnail_size }}"
+                            >
+                            <div class="model-icon">3D</div>
+                          </div>
+                      {% endcase %}
+                    </button>
+                  {% endfor %}
+                </div>
+                
+                <!-- 縦スクロールナビゲーション -->
+                {% if product.media.size > section.settings.visible_thumbnails %}
+                  <button class="carousel-nav carousel-up" type="button" aria-label="上の画像">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                      <path d="M6 2l4 4H8v4H4V6H2l4-4z"/>
+                    </svg>
+                  </button>
+                  <button class="carousel-nav carousel-down" type="button" aria-label="下の画像">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                      <path d="M6 10L2 6h2V2h4v4h2l-4 4z"/>
+                    </svg>
+                  </button>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- 商品情報 -->
+      <div class="product-info-section">
+        <div class="product-info-container{% if section.settings.enable_sticky_info %} sticky-info{% endif %}">
+          <!-- ブランド名 -->
+          {% if section.settings.show_vendor and product.vendor != blank %}
+            <div class="product-vendor">
+              <span class="vendor-label">ブランド:</span>
+              <span class="vendor-name">{{ product.vendor }}</span>
+            </div>
+          {% endif %}
+
+          <!-- 商品タイトル -->
+          <h1 class="product-title">{{ product.title | escape }}</h1>
+
+          <!-- SKU -->
+          {% if section.settings.show_sku and product.selected_or_first_available_variant.sku != blank %}
+            <div class="product-sku">
+              <span class="sku-label">SKU:</span>
+              <span class="sku-value">{{ product.selected_or_first_available_variant.sku }}</span>
+            </div>
+          {% endif %}
+
+          <!-- 価格 -->
+          <div class="product-price-container">
+            {%- render 'price',
+              product: product,
+              use_variant: true,
+              show_badges: true,
+              price_class: 'price--large'
+            -%}
+          </div>
+
+          <!-- 在庫状況 -->
+          {% if section.settings.show_availability %}
+            <div class="product-availability">
+              {% if product.selected_or_first_available_variant.available %}
+                <span class="availability-in-stock">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                    <circle cx="6" cy="6" r="6" fill="#22c55e"/>
+                  </svg>
+                  在庫あり
+                </span>
+              {% else %}
+                <span class="availability-out-of-stock">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                    <circle cx="6" cy="6" r="6" fill="#ef4444"/>
+                  </svg>
+                  在庫切れ
+                </span>
+              {% endif %}
+            </div>
+          {% endif %}
+
+          <!-- 評価 -->
+          {% if section.settings.enable_reviews and product.metafields.reviews.rating.value != blank %}
+            <div class="product-rating">
+              {% liquid
+                assign rating_decimal = 0
+                assign decimal = product.metafields.reviews.rating.value.rating | modulo: 1
+                if decimal >= 0.3 and decimal <= 0.7
+                  assign rating_decimal = 0.5
+                elsif decimal > 0.7
+                  assign rating_decimal = 1
+                endif
+              %}
+              <div
+                class="rating"
+                role="img"
+                aria-label="評価: {{ product.metafields.reviews.rating.value.rating }} / {{ product.metafields.reviews.rating.value.scale_max }}"
+              >
+                <span
+                  class="rating-star"
+                  style="--rating: {{ product.metafields.reviews.rating.value.rating | floor }}; --rating-max: {{ product.metafields.reviews.rating.value.scale_max }}; --rating-decimal: {{ rating_decimal }};"
+                ></span>
+              </div>
+              <span class="rating-count">({{ product.metafields.reviews.rating_count }})</span>
+            </div>
+          {% endif %}
+
+          <!-- 商品説明 -->
+          {% if product.description != blank %}
+            <div class="product-description rte">
+              {{ product.description }}
+            </div>
+          {% endif %}
+
+          <!-- バリアント選択（既存のコードを統合） -->
+          {% render 'product-variant-picker', product: product, block: block, product_form_id: 'custom-product-form' %}
+
+          <!-- 購入ボタン -->
+          {%- render 'buy-buttons', 
+            block: block, 
+            product: product, 
+            product_form_id: 'custom-product-form', 
+            section_id: section.id, 
+            show_pickup_availability: true 
+          -%}
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ライトボックスモーダル -->
+  {% if section.settings.enable_lightbox %}
+    <div id="ImageLightbox-{{ section.id }}" class="image-lightbox" aria-hidden="true">
+      <div class="lightbox-backdrop" aria-label="ライトボックスを閉じる"></div>
+      <div class="lightbox-content">
+        <button class="lightbox-close" type="button" aria-label="閉じる">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 6l12 12M6 18L18 6"/>
+          </svg>
+        </button>
+        <img class="lightbox-image" src="" alt="">
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- JavaScript -->
+  <script>
+    // サムネイルギャラリー機能
+    class ProductGallery {
+      constructor(container) {
+        this.container = container;
+        this.thumbnails = container.querySelectorAll('.thumbnail-item');
+        this.mainImage = document.getElementById('MainImage-{{ section.id }}');
+        this.currentIndex = 0;
+        this.visibleCount = {{ section.settings.visible_thumbnails }};
+        this.productMedia = {{ product.media | json }};
+        
+        console.log('ProductGallery initialized', {
+          thumbnails: this.thumbnails.length,
+          mainImage: this.mainImage,
+          productMedia: this.productMedia.length
+        });
+        
+        this.init();
+      }
+
+      init() {
+        this.bindEvents();
+        this.setupKeyboardNavigation();
+        {% if section.settings.enable_lightbox %}
+          this.setupLightbox();
+        {% endif %}
+      }
+
+      bindEvents() {
+        // サムネイルクリックイベント
+        this.thumbnails.forEach((thumb, index) => {
+          thumb.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Thumbnail clicked:', index);
+            this.setActiveMedia(index);
+          });
+          
+          // タッチデバイス対応
+          thumb.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.setActiveMedia(index);
+          });
+        });
+
+        // 縦スクロールナビゲーション
+        const upBtn = this.container.querySelector('.carousel-up');
+        const downBtn = this.container.querySelector('.carousel-down');
+        
+        if (upBtn) upBtn.addEventListener('click', () => this.scrollUp());
+        if (downBtn) downBtn.addEventListener('click', () => this.scrollDown());
+      }
+
+      setupKeyboardNavigation() {
+        {% if section.settings.keyboard_navigation %}
+        this.container.addEventListener('keydown', (e) => {
+          switch(e.key) {
+            case 'ArrowUp':
+              e.preventDefault();
+              this.prevMedia();
+              break;
+            case 'ArrowDown':
+              e.preventDefault();
+              this.nextMedia();
+              break;
+            case 'ArrowLeft':
+              e.preventDefault();
+              this.prevMedia();
+              break;
+            case 'ArrowRight':
+              e.preventDefault();
+              this.nextMedia();
+              break;
+            case 'Home':
+              e.preventDefault();
+              this.setActiveMedia(0);
+              break;
+            case 'End':
+              e.preventDefault();
+              this.setActiveMedia(this.thumbnails.length - 1);
+              break;
+          }
+        });
+        {% endif %}
+      }
+
+      setupLightbox() {
+        const zoomButton = document.querySelector('.image-zoom-button');
+        const lightbox = document.getElementById('ImageLightbox-{{ section.id }}');
+        
+        if (!lightbox) return;
+        
+        const lightboxImage = lightbox.querySelector('.lightbox-image');
+        const closeButton = lightbox.querySelector('.lightbox-close');
+        const backdrop = lightbox.querySelector('.lightbox-backdrop');
+
+        if (zoomButton) {
+          zoomButton.addEventListener('click', () => {
+            const imageSrc = zoomButton.dataset.imageSrc;
+            lightboxImage.src = imageSrc;
+            lightboxImage.alt = this.mainImage.alt;
+            lightbox.style.display = 'flex';
+            lightbox.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            closeButton.focus();
+          });
+        }
+
+        [closeButton, backdrop].forEach(element => {
+          if (element) {
+            element.addEventListener('click', () => {
+              this.closeLightbox(lightbox);
+            });
+          }
+        });
+
+        lightbox.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            this.closeLightbox(lightbox);
+          }
+        });
+      }
+
+      closeLightbox(lightbox) {
+        lightbox.style.display = 'none';
+        lightbox.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        const zoomButton = document.querySelector('.image-zoom-button');
+        if (zoomButton) zoomButton.focus();
+      }
+
+      setActiveMedia(index) {
+        console.log('Setting active media:', index);
+        
+        // インデックスの範囲チェック
+        if (index < 0 || index >= this.thumbnails.length) {
+          console.warn('Invalid index:', index);
+          return;
+        }
+
+        // アクティブ状態の更新
+        this.thumbnails.forEach(thumb => thumb.classList.remove('active'));
+        this.thumbnails[index].classList.add('active');
+        
+        const mediaId = this.thumbnails[index].dataset.mediaId;
+        const mediaType = this.thumbnails[index].dataset.mediaType || 'image';
+        
+        console.log('Media data:', { mediaId, mediaType });
+        
+        this.updateMainMedia(mediaId, mediaType);
+        this.currentIndex = index;
+      }
+
+      updateMainMedia(mediaId, mediaType) {
+        const media = this.productMedia.find(m => m.id.toString() === mediaId.toString());
+        
+        console.log('Finding media:', {
+          searchId: mediaId,
+          found: media,
+          allMedia: this.productMedia.map(m => ({ id: m.id, type: m.media_type }))
+        });
+        
+        if (!media || !this.mainImage) {
+          console.warn('Media not found or main image missing', { media, mainImage: this.mainImage });
+          return;
+        }
+
+        // 画像URLの生成（より安全な方法）
+        let imageUrl = '';
+        
+        if (media.preview_image && media.preview_image.src) {
+          // Shopify画像URLの変換
+          const baseSrc = media.preview_image.src;
+          imageUrl = baseSrc.replace(/(_\d+x\d*)?(\.(jpg|jpeg|png|gif|webp))/i, '_800x800$2');
+        } else if (media.src) {
+          imageUrl = media.src.replace(/(_\d+x\d*)?(\.(jpg|jpeg|png|gif|webp))/i, '_800x800$2');
+        }
+
+        console.log('Generated image URL:', imageUrl);
+
+        if (imageUrl) {
+          // メイン画像の更新
+          this.mainImage.src = imageUrl;
+          this.mainImage.alt = media.alt || '{{ product.title | escape }}';
+          
+          // ズームボタンの更新
+          const zoomButton = document.querySelector('.image-zoom-button');
+          if (zoomButton && media.preview_image) {
+            const highResUrl = media.preview_image.src.replace(/(_\d+x\d*)?(\.(jpg|jpeg|png|gif|webp))/i, '_1200x1200$2');
+            zoomButton.dataset.imageSrc = highResUrl;
+          }
+          
+          // 画像読み込み完了時の処理
+          this.mainImage.onload = () => {
+            console.log('Main image loaded successfully');
+          };
+          
+          this.mainImage.onerror = () => {
+            console.error('Failed to load main image:', imageUrl);
+          };
+        }
+      }
+
+      prevMedia() {
+        const newIndex = this.currentIndex > 0 ? this.currentIndex - 1 : this.thumbnails.length - 1;
+        this.setActiveMedia(newIndex);
+        this.scrollToThumbnail(newIndex);
+      }
+
+      nextMedia() {
+        const newIndex = this.currentIndex < this.thumbnails.length - 1 ? this.currentIndex + 1 : 0;
+        this.setActiveMedia(newIndex);
+        this.scrollToThumbnail(newIndex);
+      }
+
+      scrollUp() {
+        const carousel = this.container.querySelector('.thumbnail-carousel');
+        const scrollAmount = {{ section.settings.thumbnail_size }} + {{ section.settings.thumbnail_gap }};
+        carousel.scrollBy({ top: -scrollAmount, behavior: 'smooth' });
+      }
+
+      scrollDown() {
+        const carousel = this.container.querySelector('.thumbnail-carousel');
+        const scrollAmount = {{ section.settings.thumbnail_size }} + {{ section.settings.thumbnail_gap }};
+        carousel.scrollBy({ top: scrollAmount, behavior: 'smooth' });
+      }
+
+      scrollToThumbnail(index) {
+        const carousel = this.container.querySelector('.thumbnail-carousel');
+        const thumbnail = this.thumbnails[index];
+        if (carousel && thumbnail) {
+          const scrollTop = thumbnail.offsetTop - (carousel.offsetHeight / 2) + (thumbnail.offsetHeight / 2);
+          carousel.scrollTo({ top: scrollTop, behavior: 'smooth' });
+        }
+      }
+    }
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOM loaded, initializing gallery...');
+      
+      // 少し遅延させて確実にDOM要素が利用可能になってから初期化
+      setTimeout(() => {
+        const galleryContainer = document.querySelector('.product-gallery-section');
+        if (galleryContainer) {
+          console.log('Gallery container found, creating ProductGallery instance');
+          window.productGallery = new ProductGallery(galleryContainer);
+        } else {
+          console.warn('Gallery container not found');
+        }
+      }, 100);
+
+      // スクロールアニメーション
+      {% if section.settings.enable_scroll_animations %}
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+          }
+        });
+      }, observerOptions);
+
+      const animateElements = document.querySelectorAll('.product-info-container, .main-image-container, .menu-sidebar');
+      animateElements.forEach(el => observer.observe(el));
+      {% endif %}
+    });
+
+    // デバッグ用：手動でテスト可能
+    function testThumbnailClick(index) {
+      if (window.productGallery) {
+        window.productGallery.setActiveMedia(index);
+      } else {
+        console.error('ProductGallery not initialized');
+      }
+    }
+  </script>
+
+  <!-- 構造化データ -->
+  {% if section.settings.enable_structured_data %}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org/",
+      "@type": "Product",
+      "name": {{ product.title | json }},
+      "url": {{ request.origin | append: product.url | json }},
+      {% if product.featured_media -%}
+        "image": [
+          {{ product.featured_media | image_url: width: 1200 | prepend: "https:" | json }}
+        ],
+      {%- endif %}
+      "description": {{ product.description | strip_html | append: section.settings.meta_description_suffix | json }},
+      {% if product.selected_or_first_available_variant.sku != blank -%}
+        "sku": {{ product.selected_or_first_available_variant.sku | json }},
+      {%- endif %}
+      "brand": {
+        "@type": "Brand",
+        "name": {{ product.vendor | json }}
+      },
+      "offers": [
+        {%- for variant in product.variants -%}
+          {
+            "@type" : "Offer",
+            "availability" : "http://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+            "price" : {{ variant.price | divided_by: 100.00 | json }},
+            "priceCurrency" : {{ cart.currency.iso_code | json }},
+            "url" : {{ request.origin | append: variant.url | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+  {% endif %}
+</section>
+
+<!-- CSS スタイル -->
+<style>
+  /* === ベースレイアウト === */
+  .custom-product-container {
+    display: grid;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* === メニューサイドバー === */
+  .menu-sidebar {
+    {% if section.settings.enable_sticky_sidebar %}
+    position: sticky;
+    top: 2rem;
+    {% endif %}
+    height: fit-content;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid;
+  }
+
+  .sidebar-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .menu-item {
+    margin-bottom: 0.25rem;
+  }
+
+  .menu-link {
+    display: block;
+    padding: 0.5rem 0;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    line-height: 1.4;
+  }
+
+  .menu-link:hover {
+    text-decoration: underline;
+  }
+
+  .menu-link--active {
+    font-weight: 600;
+  }
+
+  .submenu-list {
+    list-style: none;
+    margin: 0.5rem 0 0 1rem;
+    padding: 0;
+    border-left: 1px solid #e5e7eb;
+  }
+
+  .submenu-link {
+    font-size: 0.875rem;
+    padding: 0.25rem 0 0.25rem 1rem;
+  }
+
+  .custom-link-block,
+  .sidebar-text-block {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .custom-link-title,
+  .text-block-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .text-block-content {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  /* === メインコンテンツ === */
+  .product-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* === 商品ギャラリー（2カラム） === */
+  .product-gallery-grid {
+    display: grid;
+    align-items: start;
+  }
+
+  .main-image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #f9fafb;
+  }
+
+  .main-image-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .main-product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .image-zoom:hover {
+    transform: scale(1.05);
+  }
+
+  .image-zoom-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0;
+  }
+
+  .main-image-wrapper:hover .image-zoom-button {
+    opacity: 1;
+  }
+
+  .image-zoom-button:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+  }
+
+  .no-image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #9ca3af;
+    text-align: center;
+  }
+
+  .no-image-placeholder p {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  /* === サムネイルカラム === */
+  .thumbnail-column {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+  }
+
+  .thumbnail-carousel-container {
+    position: relative;
+    height: 100%;
+  }
+
+  .thumbnail-carousel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+    height: 100%;
+    padding: 0.5rem;
+  }
+
+  .thumbnail-carousel::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .thumbnail-carousel::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .thumbnail-carousel::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+  }
+
+  .thumbnail-carousel::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+
+  .thumbnail-item {
+    flex-shrink: 0;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    overflow: hidden;
+    background: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    position: relative;
+    display: block;
+    padding: 0;
+  }
+
+  .thumbnail-item:hover {
+    border-color: currentColor;
+    transform: scale(1.05);
+  }
+
+  .thumbnail-item.active {
+    border-color: currentColor;
+    border-width: 3px;
+  }
+
+  .thumbnail-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none; /* 画像のクリックイベントを無効化してボタンのクリックを確実にする */
+  }
+
+  .thumbnail-video,
+  .thumbnail-model {
+    position: relative;
+  }
+
+  .video-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+
+  .model-icon {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-size: 8px;
+    font-weight: bold;
+    padding: 1px 3px;
+    border-radius: 2px;
+  }
+
+  .carousel-nav {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 24px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 2;
+  }
+
+  .carousel-nav:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+  }
+
+  .carousel-up {
+    top: -12px;
+  }
+
+  .carousel-down {
+    bottom: -12px;
+  }
+
+  /* === 商品情報 === */
+  .product-info-section {
+    flex: 1;
+  }
+
+  .product-info-container {
+    {% if section.settings.enable_sticky_info %}
+    position: sticky;
+    top: 2rem;
+    {% endif %}
+  }
+
+  .product-vendor {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+  }
+
+  .vendor-label {
+    font-weight: 500;
+  }
+
+  .vendor-name {
+    margin-left: 0.5rem;
+  }
+
+  .product-title {
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .product-sku {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 1rem;
+  }
+
+  .sku-label {
+    font-weight: 500;
+  }
+
+  .sku-value {
+    margin-left: 0.5rem;
+    font-family: monospace;
+  }
+
+  .product-price-container {
+    margin-bottom: 1.5rem;
+  }
+
+  .product-availability {
+    margin-bottom: 1.5rem;
+  }
+
+  .availability-in-stock,
+  .availability-out-of-stock {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .availability-in-stock {
+    color: #22c55e;
+  }
+
+  .availability-out-of-stock {
+    color: #ef4444;
+  }
+
+  .product-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .rating-count {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  .product-description {
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  /* === ライトボックス === */
+  .image-lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+
+  .lightbox-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  .lightbox-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+  }
+
+  .lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* === アニメーション === */
+  {% if section.settings.enable_scroll_animations %}
+  .animate-in {
+    animation: fadeInUp {% case section.settings.animation_speed %}
+      {% when 'slow' %}1s
+      {% when 'fast' %}0.3s
+      {% else %}0.6s
+    {% endcase %} ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  {% endif %}
+
+  /* === レスポンシブ対応 === */
+  @media screen and (max-width: 1024px) {
+    .custom-product-container {
+      grid-template-columns: {{ section.settings.sidebar_width | minus: 20 }}px 1fr;
+      gap: 1.5rem;
+    }
+
+    .product-gallery-grid {
+      grid-template-columns: 1fr {{ section.settings.thumbnail_column_width | minus: 20 }}px;
+    }
+
+    .menu-sidebar {
+      padding: 1.25rem;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .custom-product-container {
+      {% case section.settings.mobile_layout %}
+        {% when 'stacked' %}
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        {% when 'sidebar_bottom' %}
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        {% when 'sidebar_hidden' %}
+          grid-template-columns: 1fr;
+      {% endcase %}
+    }
+
+    {% if section.settings.mobile_layout == 'sidebar_bottom' %}
+      .menu-sidebar {
+        order: 2;
+      }
+      .product-main-content {
+        order: 1;
+      }
+    {% elsif section.settings.mobile_layout == 'sidebar_hidden' %}
+      .menu-sidebar {
+        display: none;
+      }
+    {% endif %}
+
+    .product-gallery-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .thumbnail-column {
+      height: auto;
+    }
+
+    .thumbnail-carousel {
+      flex-direction: row;
+      height: auto;
+      overflow-x: auto;
+      overflow-y: visible;
+      justify-content: center;
+    }
+
+    .carousel-nav {
+      display: none;
+    }
+
+    .product-info-container {
+      position: static;
+    }
+
+    {% if section.settings.mobile_sticky_product_info %}
+      .product-info-container {
+        position: sticky;
+        bottom: 0;
+        background: white;
+        padding: 1rem;
+        border-top: 1px solid #e5e7eb;
+        margin: 0 -1rem;
+      }
+    {% endif %}
+  }
+
+  @media screen and (max-width: 480px) {
+    .custom-product-container {
+      padding: 0 0.75rem;
+    }
+
+    .menu-sidebar {
+      padding: 1rem;
+    }
+
+    .product-main-content {
+      gap: 1rem;
+    }
+
+    .thumbnail-item {
+      width: {{ section.settings.thumbnail_size | minus: 10 }}px;
+      height: {{ section.settings.thumbnail_size | minus: 10 }}px;
+    }
+
+    .product-title {
+      font-size: {{ section.settings.title_font_size | minus: 4 }}px;
+    }
+  }
+
+  /* === フォーカス状態 === */
+  .menu-link:focus,
+  .thumbnail-item:focus,
+  .carousel-nav:focus,
+  .image-zoom-button:focus,
+  .lightbox-close:focus {
+    outline: 2px solid {{ section.settings.accent_color }};
+    outline-offset: 2px;
+  }
+
+  /* === 高コントラストモード対応 === */
+  {% if section.settings.high_contrast_mode %}
+  @media (prefers-contrast: high) {
+    .thumbnail-item:hover,
+    .thumbnail-item.active {
+      border-color: #000;
+      border-width: 3px;
+    }
+
+    .carousel-nav {
+      border-color: #000;
+      border-width: 2px;
+    }
+
+    .menu-link:hover {
+      background-color: #000;
+      color: #fff;
+    }
+  }
+  {% endif %}
+
+  /* === モーション軽減設定 === */
+  @media (prefers-reduced-motion: reduce) {
+    .main-product-image,
+    .thumbnail-item,
+    .carousel-nav,
+    .menu-link,
+    .image-zoom-button {
+      transition: none;
+    }
+
+    .animate-in {
+      animation: none;
+    }
+
+    .thumbnail-carousel {
+      scroll-behavior: auto;
+    }
+  }
+
+  /* === ダークモード対応 === */
+  @media (prefers-color-scheme: dark) {
+    .no-image-placeholder {
+      color: #6b7280;
+    }
+
+    .carousel-nav {
+      background: #374151;
+      border-color: #4b5563;
+      color: #f9fafb;
+    }
+
+    .image-zoom-button {
+      background: rgba(55, 65, 81, 0.9);
+      color: #f9fafb;
+    }
+
+    .lightbox-close {
+      background: rgba(55, 65, 81, 0.8);
+    }
+  }
+</style>
+
+<!-- JSONスキーマ設定 -->
+{% schema %}
+{
+  "name": "カスタム商品詳細（メニュー対応）",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "基本設定"
+    },
+    {
+      "type": "text",
+      "id": "sidebar_title",
+      "label": "サイドバータイトル",
+      "default": "Artists and Brands",
+      "info": "作家一覧セクションのタイトル"
+    },
+    {
+      "type": "link_list",
+      "id": "navigation_menu",
+      "label": "メインナビゲーションメニュー",
+      "info": "サイドバーに表示するShopifyメニューを選択してください"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_sidebar",
+      "label": "サイドバー固定表示",
+      "default": true,
+      "info": "スクロール時にサイドバーを固定表示します"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_info",
+      "label": "商品情報固定表示",
+      "default": true,
+      "info": "スクロール時に商品情報を固定表示します"
+    },
+    {
+      "type": "header",
+      "content": "画像設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_zoom",
+      "label": "画像ズーム機能",
+      "default": true,
+      "info": "メイン画像のホバーズーム効果を有効にします"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_lightbox",
+      "label": "ライトボックス表示",
+      "default": true,
+      "info": "画像クリックで拡大表示します"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "メイン画像のアスペクト比",
+      "default": "square",
+      "options": [
+        { "value": "square", "label": "正方形 (1:1)" },
+        { "value": "portrait", "label": "縦長 (3:4)" },
+        { "value": "landscape", "label": "横長 (4:3)" },
+        { "value": "auto", "label": "オリジナル比率" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "色彩設定"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "テキスト色",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "sidebar_background",
+      "label": "サイドバー背景色",
+      "default": "#f9fafb"
+    },
+    {
+      "type": "color",
+      "id": "sidebar_border",
+      "label": "サイドバー境界線色",
+      "default": "#e5e7eb"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "リンク色",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "link_hover_color",
+      "label": "リンクホバー色",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "商品タイトル色",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "アクセント色",
+      "default": "#3b82f6",
+      "info": "フォーカス状態やアクティブ要素に使用"
+    },
+    {
+      "type": "header",
+      "content": "フォント設定"
+    },
+    {
+      "type": "range",
+      "id": "link_font_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "サイドバーリンクのフォントサイズ",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "min": 20,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "商品タイトルのフォントサイズ",
+      "default": 28
+    },
+    {
+      "type": "select",
+      "id": "title_font_weight",
+      "label": "商品タイトルの太さ",
+      "default": "600",
+      "options": [
+        { "value": "400", "label": "通常" },
+        { "value": "500", "label": "中程度" },
+        { "value": "600", "label": "セミボールド" },
+        { "value": "700", "label": "ボールド" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "レイアウト設定"
+    },
+    {
+      "type": "range",
+      "id": "sidebar_width",
+      "min": 160,
+      "max": 280,
+      "step": 20,
+      "unit": "px",
+      "label": "サイドバー幅",
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "min": 1,
+      "max": 4,
+      "step": 0.5,
+      "unit": "rem",
+      "label": "コンテンツ間隔",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "gallery_gap",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "unit": "rem",
+      "label": "ギャラリー間隔",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "thumbnail_column_width",
+      "min": 80,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "サムネイルカラム幅",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "サムネイル設定"
+    },
+    {
+      "type": "range",
+      "id": "max_thumbnails",
+      "min": 4,
+      "max": 15,
+      "step": 1,
+      "label": "表示する最大サムネイル数",
+      "default": 8,
+      "info": "商品画像が多い場合の表示制限"
+    },
+    {
+      "type": "range",
+      "id": "visible_thumbnails",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "label": "一度に表示するサムネイル数",
+      "default": 5,
+      "info": "縦スクロールで同時に見えるサムネイルの数"
+    },
+    {
+      "type": "range",
+      "id": "thumbnail_size",
+      "min": 40,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "サムネイルサイズ",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "thumbnail_gap",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "サムネイル間のスペース",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "thumbnail_border_active",
+      "label": "アクティブサムネイル境界線色",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "商品情報表示設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "ブランド名を表示",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sku",
+      "label": "SKUを表示",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_availability",
+      "label": "在庫状況を表示",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reviews",
+      "label": "レビュー表示を有効化",
+      "default": true,
+      "info": "商品メタフィールドのレビューデータが必要"
+    },
+    {
+      "type": "header",
+      "content": "モバイル設定"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "モバイルレイアウト",
+      "default": "stacked",
+      "options": [
+        { "value": "stacked", "label": "縦積み（標準）" },
+        { "value": "sidebar_bottom", "label": "サイドバー下部" },
+        { "value": "sidebar_hidden", "label": "サイドバー非表示" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_sticky_product_info",
+      "label": "モバイルで商品情報を固定",
+      "default": false,
+      "info": "スクロール時に購入ボタン等を画面下部に固定表示"
+    },
+    {
+      "type": "header",
+      "content": "インタラクション設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "keyboard_navigation",
+      "label": "キーボードナビゲーション強化",
+      "default": true,
+      "info": "矢印キーでのサムネイル操作など"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_scroll_animations",
+      "label": "スクロールアニメーション",
+      "default": true,
+      "info": "ページ読み込み時のフェードインアニメーション"
+    },
+    {
+      "type": "select",
+      "id": "animation_speed",
+      "label": "アニメーション速度",
+      "default": "normal",
+      "options": [
+        { "value": "slow", "label": "遅い" },
+        { "value": "normal", "label": "通常" },
+        { "value": "fast", "label": "早い" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "SEO設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_structured_data",
+      "label": "構造化データを有効化",
+      "default": true,
+      "info": "検索エンジン向けの商品情報構造化データ"
+    },
+    {
+      "type": "text",
+      "id": "meta_description_suffix",
+      "label": "メタディスクリプション追加文",
+      "placeholder": "例: 職人が丁寧に作った一点物",
+      "info": "商品説明に追加される文章"
+    },
+    {
+      "type": "header",
+      "content": "アクセシビリティ設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "high_contrast_mode",
+      "label": "高コントラストモード対応",
+      "default": true,
+      "info": "視覚障害者向けの高コントラスト表示"
+    },
+    {
+      "type": "header",
+      "content": "セクション余白"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "上部余白",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "下部余白",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 1200,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "最大コンテンツ幅",
+      "default": 1400
+    }
+  ],
+  "blocks": [
+    {
+      "type": "custom_link",
+      "name": "カスタムリンクセクション",
+      "settings": [
+        {
+          "type": "text",
+          "id": "link_title",
+          "label": "セクションタイトル",
+          "default": "カテゴリー",
+          "info": "サイドバー内でのセクション分けタイトル"
+        },
+        {
+          "type": "link_list",
+          "id": "custom_menu",
+          "label": "表示するメニュー",
+          "info": "このセクションで表示するShopifyメニューを選択"
+        }
+      ]
+    },
+    {
+      "type": "text_block",
+      "name": "テキストブロック",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text_title",
+          "label": "テキストタイトル",
+          "default": "お知らせ",
+          "info": "サイドバー内でのテキストブロックタイトル"
+        },
+        {
+          "type": "richtext",
+          "id": "text_content",
+          "label": "テキスト内容",
+          "default": "<p>こちらにお知らせやイベント情報などを記載できます。</p>",
+          "info": "HTMLタグを使用してリッチテキストを記載できます"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "カスタム商品詳細（メニュー対応）",
+      "settings": {
+        "sidebar_title": "Artists and Brands",
+        "navigation_menu": "main-menu",
+        "enable_sticky_sidebar": true,
+        "enable_sticky_info": true,
+        "enable_zoom": true,
+        "enable_lightbox": true,
+        "background_color": "#ffffff",
+        "text_color": "#333333",
+        "sidebar_background": "#f9fafb",
+        "link_color": "#333333",
+        "link_hover_color": "#000000",
+        "sidebar_width": 200,
+        "thumbnail_column_width": 100,
+        "gallery_gap": 1,
+        "mobile_layout": "stacked"
+      },
+      "blocks": [
+        {
+          "type": "custom_link",
+          "settings": {
+            "link_title": "作家カテゴリー",
+            "custom_menu": "artists"
+          }
+        },
+        {
+          "type": "text_block",
+          "settings": {
+            "text_title": "ギャラリー情報",
+            "text_content": "<p><strong>展示のご案内</strong></p><p>毎月第1土曜日に作家による実演を行っています。</p><p>詳細はお問い合わせください。</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

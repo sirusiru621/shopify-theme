@@ -1,0 +1,184 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumb_GgaMUf": {
+      "type": "breadcrumb",
+      "name": "パンくずリスト",
+      "settings": {
+        "home_text": "TOP",
+        "show_home_icon": false,
+        "separator_style": "arrow",
+        "enable_animations": false,
+        "background_color": "#e7eaf0",
+        "text_color": "#595757",
+        "link_color": "#333333",
+        "current_page_color": "#999999",
+        "font_size_desktop": 12,
+        "font_size_mobile": 12,
+        "padding_top": 4,
+        "padding_bottom": 4,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": false,
+        "show_collection_image": false,
+        "color_scheme": "background-1"
+      }
+    },
+    "sakka_collection_section_K6fJr7": {
+      "type": "sakka-collection-section",
+      "blocks": {
+        "banner_DNAXaA": {
+          "type": "banner",
+          "settings": {
+            "banner_image": "shopify://shop_images/C3734965-8FF3-4201-9E53-42732EE71572.jpg",
+            "banner_size": "full",
+            "show_overlay": true,
+            "banner_title": "工藤和彦",
+            "banner_subtitle": "Kudo Kazuhiko",
+            "banner_title_mobile": "森つくし",
+            "banner_subtitle_mobile": "Mori Tsukushi",
+            "banner_url": "shopify://collections/その他の商品-店頭受け取り",
+            "open_new_tab": false
+          }
+        },
+        "description_bambbF": {
+          "type": "description",
+          "settings": {
+            "show_header": true,
+            "description_title": "工藤和彦",
+            "description_subtitle": "Kudo Kazuhiko",
+            "description_text": "<p>北海道を代表する陶芸家</p><p>4万年の歳月をかけてシベリアから黄砂となって飛来した粘土は約一億年前の粘土と判明した。その北海道北部の大地に広がる粘土にこだわり挑戦し続ける陶芸家。</p><p>その粘土を自ら掘り、蹴轆轤（けろくろ）にて作る姿は、あまりにもかっこよく、唯一無二である。そして生み出される作品たちは力強さと柔和が同居する。</p><p>ダイナミックな地球の息吹が吹き込まれたうつわは、美しい景色のように載せるものを引き立たせる。</p><p>北海道だからこそ作ることができる「日本のやきもの」、それが工藤和彦の挑戦である。</p>",
+            "show_career": true,
+            "career_section_title": "経歴",
+            "career_items": "1970|神奈川県生まれ1986　陶芸を始める\n1988|信楽焼・神山清子に師事\n1993|北海道上川郡剣淵町に移住、北海道北部の粘土で制作を始める\n2002|東京・サボア・ヴィーブルにて個展開催、旭川市に移住\n2008|NHK総合にてドキュメンタリー放送\n2009|STV「Dアンビシャス」にてドキュメンタリー30分放送\n2011|旧旭川温泉を取得、アトリエや窯場としてリノベーション開始\n2013|フランス・リヨン「Tupiniers du Lyon」に日本人として初参加\n2015|登り窯を完成、薪窯焼成を開始\n2017|旭川市東山に直営店「ウラヤマクラシテル」を創設【受賞・その他】\n●料理研究家 栗原はるみさんが選ぶうつわ展で「栗原はるみ大賞」受賞\n●クラフトセンタージャパンにて「⽚口」が選定される"
+          }
+        }
+      },
+      "block_order": [
+        "banner_DNAXaA",
+        "description_bambbF"
+      ],
+      "name": "Artist Collection Template",
+      "settings": {
+        "sidebar_width": 280,
+        "content_gap": 20,
+        "sidebar_title": "作家",
+        "menu_handle": "sakka-menu",
+        "sidebar_bg_color": "rgba(0,0,0,0)",
+        "sidebar_border_color": "#e9ecef",
+        "sidebar_padding": 20,
+        "sidebar_border_radius": 0,
+        "sidebar_title_size": 16,
+        "sidebar_title_weight": "600",
+        "sidebar_title_color": "#212529",
+        "menu_link_size": 14,
+        "menu_link_weight": "400",
+        "menu_link_color": "#495057",
+        "menu_link_hover_color": "#000000",
+        "menu_link_hover_bg": "#b7cadc",
+        "menu_link_active_color": "#121212",
+        "menu_link_active_bg": "#f0f5f7",
+        "accent_color": "#121212",
+        "description_section_margin": 40,
+        "description_padding": 30,
+        "description_bg_color": "#f0f5f7",
+        "description_border_color": "#e9ecef",
+        "description_border_radius": 8,
+        "description_content_gap": 25,
+        "description_header_margin": 25,
+        "description_header_padding": 12,
+        "description_title_size": 28,
+        "description_title_weight": "600",
+        "description_title_color": "#212529",
+        "description_subtitle_size": 18,
+        "description_subtitle_weight": "400",
+        "description_subtitle_color": "#6c757d",
+        "description_text_size": 15,
+        "description_text_line_height": 1.7,
+        "description_text_color": "#495057",
+        "career_title_size": 20,
+        "career_title_weight": "600",
+        "career_title_color": "#212529",
+        "career_year_width": 80,
+        "career_year_size": 14,
+        "career_year_weight": "500",
+        "career_year_color": "#6c757d",
+        "career_content_size": 14,
+        "career_content_color": "#495057",
+        "career_border_color": "#f1f3f4",
+        "banner_height": 400,
+        "banner_height_mobile": 250,
+        "banner_border_radius": 0,
+        "banner_gap": 20,
+        "banner_section_margin": 40,
+        "overlay_direction": 180,
+        "overlay_opacity_start": 60,
+        "overlay_opacity_end": 20,
+        "banner_title_size": 24,
+        "banner_title_weight": "600",
+        "banner_subtitle_size": 16,
+        "banner_subtitle_weight": "400",
+        "products_per_page": 16,
+        "columns_desktop": 3,
+        "columns_mobile": "2",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "enable_quick_add": false,
+        "enable_filtering": false,
+        "filter_type": "horizontal",
+        "enable_sorting": false,
+        "mobile_sidebar_order": "1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 24,
+        "columns_desktop": 3,
+        "show_product_tags": false,
+        "tag_display_limit": 1,
+        "tag_background_color": "#000000",
+        "tag_text_color": "#ffffff",
+        "tag_font_size": "12px",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "enable_quick_add": false,
+        "enable_filtering": false,
+        "filter_type": "horizontal",
+        "enable_sorting": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "breadcrumb_GgaMUf",
+    "banner",
+    "sakka_collection_section_K6fJr7",
+    "product-grid"
+  ]
+}

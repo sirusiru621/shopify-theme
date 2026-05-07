@@ -1,0 +1,1746 @@
+
+<!-- 
+  ヒーローカルーセルセクション
+  Shopify Online Store 2.0対応
+  カルーセル機能・リンク設定・縦書き対応・レスポンシブ対応・アクセシビリティ準拠
+  動画対応機能追加（MP4・YouTube自動再生）
+-->
+
+<style>
+  /* セクション限定スコープのCSS */
+  .hero-carousel {
+    --section-height: {{ section.settings.section_height }}vh;
+    --mobile-height: {{ section.settings.mobile_height }}vh;
+    --text-color: {{ section.settings.text_color }};
+    --background-overlay: {{ section.settings.background_overlay }};
+    --accent-color: {{ section.settings.accent_color }};
+    --desktop-font-size: {{ section.settings.desktop_font_size }}px;
+    --mobile-font-size: {{ section.settings.mobile_font_size }}px;
+    
+    position: relative;
+    width: 100%;
+    height: var(--section-height);
+    min-height: 500px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* カルーセルコンテナ */
+  .carousel-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .carousel-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .carousel-slide {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 背景画像・動画 */
+  .hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .hero-image,
+  .hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.8s ease-out;
+    display: block;
+  }
+
+  /* 動画専用スタイル */
+  .hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.8s ease-out;
+    display: block;
+  }
+
+  /* YouTube iframe対応 */
+  .hero-youtube {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .youtube-player-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .youtube-player-container iframe {
+    border: 0;
+    pointer-events: none;
+  }
+
+  /* アスペクト比維持（YouTube用） - デスクトップ */
+  @media (min-aspect-ratio: 16/9) {
+    .youtube-player-container {
+      width: 100vw;
+      height: 56.25vw;
+    }
+    .youtube-player-container iframe {
+      width: 100vw;
+      height: 56.25vw;
+    }
+  }
+
+  @media (max-aspect-ratio: 16/9) {
+    .youtube-player-container {
+      width: 177.78vh;
+      height: 100vh;
+    }
+    .youtube-player-container iframe {
+      width: 177.78vh;
+      height: 100vh;
+    }
+  }
+
+  /* モバイル時のYouTube動画調整 */
+  @media (max-width: 768px) {
+    .hero-youtube {
+      width: 100%;
+      height: 100%;
+      min-width: auto;
+      min-height: auto;
+    }
+    
+    .youtube-player-container {
+      width: 100%;
+      height: 100%;
+      padding-bottom: 0;
+    }
+    
+    .youtube-player-container iframe {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    /* 縦向き端末対応 */
+    @media (max-aspect-ratio: 9/16) {
+      .youtube-player-container {
+        width: 177.78vh;
+        height: 100vh;
+      }
+      .youtube-player-container iframe {
+        width: 177.78vh;
+        height: 100vh;
+      }
+    }
+    
+    /* 横向き端末対応 */
+    @media (min-aspect-ratio: 16/9) {
+      .youtube-player-container {
+        width: 100vw;
+        height: 56.25vw;
+      }
+      .youtube-player-container iframe {
+        width: 100vw;
+        height: 56.25vw;
+      }
+    }
+  }
+
+  /* 動画ミュートインジケーター */
+  .video-mute-toggle {
+    position: absolute;
+    bottom: 80px;
+    left: 30px;
+    z-index: 5;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .video-mute-toggle:hover {
+    background: rgba(0, 0, 0, 0.7);
+    transform: scale(1.1);
+  }
+
+  .video-mute-toggle:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+
+  .hero-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    text-decoration: none;
+    display: block;
+  }
+
+  /* 背景オーバーレイ */
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--background-overlay);
+    z-index: 2;
+    transition: opacity 0.3s ease;
+  }
+
+  /* コンテンツエリア */
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    max-width: 1280px;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* 縦書きテキストエリア */
+  .hero-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: var(--desktop-font-size);
+    line-height: 1.8;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+    color: var(--text-color);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
+    padding: 40px 60px;
+    min-height: 300px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    pointer-events: auto;
+  }
+
+  /* テキスト位置設定 */
+  .hero-text.position-left {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+  }
+
+  .hero-text.position-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+  }
+
+  .hero-text.position-right {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+  }
+
+  .hero-text.position-top-left {
+    position: absolute;
+    left: 40px;
+    top: 40px;
+    z-index: 4;
+  }
+
+  .hero-text.position-top-center {
+    position: absolute;
+    left: 50%;
+    top: 40px;
+    transform: translateX(-50%);
+    z-index: 4;
+  }
+
+  .hero-text.position-top-right {
+    position: absolute;
+    right: 40px;
+    top: 40px;
+    z-index: 4;
+  }
+
+  .hero-text.position-bottom-left {
+    position: absolute;
+    left: 40px;
+    bottom: 40px;
+    z-index: 4;
+  }
+
+  .hero-text.position-bottom-center {
+    position: absolute;
+    left: 50%;
+    bottom: 40px;
+    transform: translateX(-50%);
+    z-index: 4;
+  }
+
+  .hero-text.position-bottom-right {
+    position: absolute;
+    right: 40px;
+    bottom: 40px;
+    z-index: 4;
+  }
+
+  .hero-text-content {
+    position: relative;
+    transform: translateX(50px);
+    opacity: 0;
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease;
+  }
+
+  /* ヒーロータイトル */
+  .hero-title {
+    font-size: calc(var(--desktop-font-size) * 1.4);
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--accent-color);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  /* カルーセルナビゲーション */
+  .carousel-nav {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .nav-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+  }
+
+  .nav-dot.active,
+  .nav-dot:hover {
+    background: var(--accent-color);
+    transform: scale(1.2);
+  }
+
+  .nav-dot:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+
+  /* カルーセル矢印 */
+  .carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    background: rgba(0, 0, 0, 0.3);
+    border: none;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .carousel-arrow:hover {
+    background: rgba(0, 0, 0, 0.6);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .carousel-arrow:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+
+  .carousel-arrow.prev {
+    left: 20px;
+        z-index: 1;
+  }
+
+  .carousel-arrow.next {
+    right: 20px;
+    z-index:1;
+  }
+
+  /* アニメーション効果 */
+  .hero-carousel.animate-in .hero-image,
+  .hero-carousel.animate-in .hero-video {
+    
+  }
+
+  .hero-carousel.animate-in .hero-text-content {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  /* スクロールインジケーター */
+  .scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-color);
+    opacity: 0.7;
+    animation: bounce 2s infinite;
+  }
+
+  .scroll-indicator span {
+    font-size: 12px;
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+  }
+
+  .scroll-indicator::after {
+    content: '';
+    width: 2px;
+    height: 20px;
+    background: currentColor;
+    border-radius: 1px;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-10px);
+    }
+    60% {
+      transform: translateY(-5px);
+    }
+  }
+
+  /* 自動再生インジケーター */
+  .autoplay-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent-color);
+    z-index: 6;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform linear;
+  }
+
+  .autoplay-progress.active {
+    animation: autoplayProgress linear;
+  }
+
+  @keyframes autoplayProgress {
+    0% { transform: scaleX(0); }
+    100% { transform: scaleX(1); }
+  }
+
+  /* タブレット対応 */
+  @media (max-width: 1024px) {
+    .hero-content {
+      padding: 0 30px;
+    }
+    
+    .hero-text {
+      font-size: calc(var(--desktop-font-size) * 0.9);
+      padding: 30px 40px;
+      min-height: 250px;
+    }
+
+    .hero-text.position-left,
+    .hero-text.position-top-left,
+    .hero-text.position-bottom-left {
+      left: 30px;
+    }
+
+    .hero-text.position-right,
+    .hero-text.position-top-right,
+    .hero-text.position-bottom-right {
+      right: 30px;
+    }
+
+    .hero-title {
+      font-size: calc(var(--desktop-font-size) * 1.2);
+    }
+
+    .carousel-arrow {
+      width: 45px;
+      height: 45px;
+      font-size: 16px;
+    }
+
+    .video-mute-toggle {
+      bottom: 70px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  /* モバイル対応（スクロール問題修正） */
+  @media (max-width: 768px) {
+    .hero-carousel {
+      height: var(--mobile-height);
+      min-height: 400px;
+      touch-action: pan-y pinch-zoom;
+    }
+
+    .carousel-container {
+      touch-action: pan-y;
+    }
+
+    .carousel-track {
+      touch-action: pan-y;
+    }
+
+    .hero-content {
+      padding: 0 20px;
+      justify-content: flex-end;
+    }
+
+    .hero-text {      
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: var(--mobile-font-size);
+      line-height: 1.7;
+      letter-spacing: 0.1em;
+      padding: 30px 20px;
+      min-height: auto;
+      justify-content: flex-start;
+      align-items: flex-start;
+      max-width: 400px;
+    }
+
+    .hero-text.position-left,
+    .hero-text.position-center,
+    .hero-text.position-right,
+    .hero-text.position-top-left,
+    .hero-text.position-top-center,
+    .hero-text.position-top-right,
+    .hero-text.position-bottom-left,
+    .hero-text.position-bottom-center,
+    .hero-text.position-bottom-right {
+      position: static;
+      transform: none;
+      right: auto;
+      left: auto;
+      top: auto;
+      bottom: auto;
+    }
+
+    .hero-title {
+      font-size: calc(var(--mobile-font-size) * 1.3);
+      margin-bottom: 15px;
+    }
+
+    .hero-text-content {
+      transform: translateY(30px);
+    }
+
+    .hero-carousel.animate-in .hero-text-content {
+      transform: translateY(0);
+    }
+
+    .carousel-nav {
+      bottom: 60px;
+      z-index:1;
+    }
+
+    .scroll-indicator {
+      bottom: 20px;
+      right: 20px;
+    }
+
+    .carousel-arrow {
+      width: 40px;
+      height: 40px;
+      font-size: 14px;
+    }
+
+    .carousel-arrow.prev {
+      left: 10px;
+    }
+
+    .carousel-arrow.next {
+      right: 10px;
+    }
+
+    .video-mute-toggle {
+      bottom: 60px;
+      left: 15px;
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-content {
+      padding: 0 16px;
+    }
+    
+    .hero-text {
+      font-size: calc(var(--mobile-font-size) * 0.95);
+      padding: 20px 15px;
+    }
+
+    .hero-title {
+      font-size: 28px;
+    }
+
+    .nav-dot {
+      width: 10px;
+      height: 10px;
+    }
+  }
+
+  /* 超高解像度ディスプレイ対応 */
+  @media (min-width: 1920px) {
+    .hero-content {
+      max-width: 1600px;
+    }
+  }
+
+  /* 高コントラストモード対応 */
+  @media (prefers-contrast: high) {
+    .hero-overlay {
+      background: rgba(0, 0, 0, 0.6) !important;
+    }
+    
+    .hero-text {
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+    }
+
+    .carousel-arrow,
+    .video-mute-toggle {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  }
+
+  /* モーション軽減設定 */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-image,
+    .hero-video,
+    .hero-text-content,
+    .carousel-track {
+      transition: none;
+    }
+    
+    .scroll-indicator {
+      animation: none;
+    }
+
+    .nav-dot,
+    .carousel-arrow,
+    .video-mute-toggle {
+      transition: none;
+    }
+  }
+
+  /* フォーカス表示 */
+  .hero-carousel:focus-within .hero-overlay {
+    outline: 3px solid var(--accent-color);
+    outline-offset: -3px;
+  }
+
+  
+  @media screen (min-width:769px) and (max-width:1024px) {
+  .collection-header__heading {
+        font-size: 21.6px;
+        color: white!important;
+  }
+  .collection-header__text p {
+    font-size: 14px;
+    color: white!important;
+}
+}
+
+</style>
+
+<section class="hero-carousel" 
+         role="banner" 
+         aria-label="{{ section.settings.hero_title | default: 'ヒーローカルーセル' }}"
+         data-section-id="{{ section.id }}"
+         data-section-type="hero-carousel"
+         data-autoplay="{{ section.settings.autoplay_enabled }}"
+         data-autoplay-duration="{{ section.settings.autoplay_duration }}">
+  
+  <div class="carousel-container">
+    <!-- 自動再生プログレスバー -->
+    {% if section.settings.autoplay_enabled %}
+      <div class="autoplay-progress" aria-hidden="true"></div>
+    {% endif %}
+
+    <!-- カルーセルトラック -->
+    <div class="carousel-track" role="group" aria-label="画像カルーセル">
+      {% for block in section.blocks %}
+        <div class="carousel-slide" 
+             data-slide-index="{{ forloop.index0 }}"
+             data-media-type="{% if block.settings.youtube_id != blank %}youtube{% elsif block.settings.video_url != blank %}video{% else %}image{% endif %}"
+             {% if forloop.first %}aria-current="true"{% endif %}>
+          
+          <!-- 背景メディア（画像・動画・YouTube） -->
+          <div class="hero-bg">
+            {% if block.settings.slide_link != blank %}
+              <a href="{{ block.settings.slide_link }}" 
+                 class="hero-link"
+                 aria-label="{{ block.settings.slide_title | default: 'リンクを開く' }}"
+                 {% if block.settings.link_target %}target="_blank" rel="noopener"{% endif %}>
+              </a>
+            {% endif %}
+
+            {% if block.settings.youtube_id != blank %}
+              <!-- YouTube動画 -->
+              <div class="hero-youtube" data-youtube-id="{{ block.settings.youtube_id }}">
+                <div id="youtube-player-{{ forloop.index0 }}" class="youtube-player-container"></div>
+              </div>
+            {% elsif block.settings.video_url != blank %}
+              <!-- MP4動画 -->
+              <video 
+                class="hero-video"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+                data-video-index="{{ forloop.index0 }}">
+                <source src="{{ block.settings.video_url }}" type="video/mp4">
+                お使いのブラウザは動画タグをサポートしていません。
+              </video>
+            {% elsif block.settings.slide_image %}
+              <!-- 静止画像 -->
+              <img 
+                class="hero-image"
+                src="{{ block.settings.slide_image | image_url: width: 1920 }}"
+                srcset="
+                  {{ block.settings.slide_image | image_url: width: 768 }} 768w,
+                  {{ block.settings.slide_image | image_url: width: 1024 }} 1024w,
+                  {{ block.settings.slide_image | image_url: width: 1280 }} 1280w,
+                  {{ block.settings.slide_image | image_url: width: 1600 }} 1600w,
+                  {{ block.settings.slide_image | image_url: width: 1920 }} 1920w,
+                  {{ block.settings.slide_image | image_url: width: 2400 }} 2400w
+                "
+                sizes="100vw"
+                alt="{{ block.settings.slide_image.alt | default: block.settings.slide_title }}"
+                loading="eager"
+                fetchpriority="high"
+                width="{{ block.settings.slide_image.width }}"
+                height="{{ block.settings.slide_image.height }}">
+            {% else %}
+              <!-- プレースホルダー背景 -->
+              <div class="hero-image" 
+                   style="background: linear-gradient(135deg, #f8f4f0 0%, #e8ddd4 50%, #d4c4b0 100%); display: flex; align-items: center; justify-content: center; color: #8b7355; font-size: 18px;">
+                画像・動画を選択してください
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- 背景オーバーレイ -->
+          <div class="hero-overlay"></div>
+
+          <!-- テキストコンテンツ -->
+          {% if block.settings.slide_title != blank or block.settings.slide_description != blank %}
+            <div class="hero-content">
+              <div class="hero-text {{ section.settings.text_position }}">
+                <div class="hero-text-content">
+                  {% if block.settings.slide_title != blank %}
+                    <h2 class="hero-title">{{ block.settings.slide_title }}</h2>
+                  {% endif %}
+                  
+                  {% if block.settings.slide_description != blank %}
+                    <div class="hero-description">
+                      {{ block.settings.slide_description }}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- カルーセルナビゲーション矢印 -->
+    {% if section.settings.show_arrows and section.blocks.size > 1 %}
+      <button class="carousel-arrow prev" 
+              type="button" 
+              aria-label="前のスライド"
+              data-direction="prev">
+        <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 2L2 10L10 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      
+      <button class="carousel-arrow next" 
+              type="button" 
+              aria-label="次のスライド"
+              data-direction="next">
+        <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 2L10 10L2 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    {% endif %}
+
+    <!-- 動画ミュートトグルボタン -->
+    <button class="video-mute-toggle" 
+            type="button"
+            aria-label="動画の音声切り替え"
+            style="display: none;">
+      <svg class="mute-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M11 5L6 9H2v6h4l5 4V5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <svg class="unmute-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <path d="M11 5L6 9H2v6h4l5 4V5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- カルーセルドットナビゲーション -->
+  {% if section.settings.show_dots and section.blocks.size > 1 %}
+    <div class="carousel-nav" role="tablist" aria-label="スライド選択">
+      {% for block in section.blocks %}
+        <button class="nav-dot{% if forloop.first %} active{% endif %}" 
+                type="button"
+                role="tab"
+                aria-label="スライド {{ forloop.index }} を表示"
+                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                data-slide="{{ forloop.index0 }}">
+        </button>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- スクロールインジケーター -->
+  {% if section.settings.show_scroll_indicator %}
+    <div class="scroll-indicator" aria-hidden="true">
+      <span>SCROLL</span>
+    </div>
+  {% endif %}
+
+</section>
+
+<script>
+// YouTube IFrame API読み込み
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+// YouTube APIの準備完了フラグ
+window.youtubeAPIReady = false;
+window.youtubePlayers = [];
+
+// YouTube API準備完了時のコールバック
+function onYouTubeIframeAPIReady() {
+  window.youtubeAPIReady = true;
+  console.log('YouTube API Ready');
+  
+  // 既に初期化が試みられていた場合は再試行
+  if (window.initHeroCarouselPending) {
+    window.initHeroCarouselPending();
+  }
+}
+
+(function() {
+  'use strict';
+  
+  // カルーセル初期化
+  function initHeroCarousel() {
+    const carousel = document.querySelector('[data-section-type="hero-carousel"]');
+    if (!carousel) return;
+
+    const track = carousel.querySelector('.carousel-track');
+    const slides = carousel.querySelectorAll('.carousel-slide');
+    const dots = carousel.querySelectorAll('.nav-dot');
+    const prevBtn = carousel.querySelector('.carousel-arrow.prev');
+    const nextBtn = carousel.querySelector('.carousel-arrow.next');
+    const progressBar = carousel.querySelector('.autoplay-progress');
+    const muteToggle = carousel.querySelector('.video-mute-toggle');
+    const videos = carousel.querySelectorAll('.hero-video');
+    const youtubeContainers = carousel.querySelectorAll('.hero-youtube');
+    
+    let currentSlide = 0;
+    let isAutoplayEnabled = carousel.dataset.autoplay === 'true';
+    let autoplayDuration = parseInt(carousel.dataset.autoplayDuration) * 1000 || 5000;
+    let autoplayTimer = null;
+    let isUserInteracting = false;
+    let isMuted = true;
+    let youtubePlayers = [];
+
+    // YouTube動画初期化
+    function initYouTubePlayers() {
+      if (!window.youtubeAPIReady || !window.YT) {
+        console.log('YouTube API not ready yet, waiting...');
+        window.initHeroCarouselPending = initYouTubePlayers;
+        return;
+      }
+
+      youtubeContainers.forEach((container, index) => {
+        const youtubeId = container.dataset.youtubeId;
+        const playerContainer = container.querySelector('.youtube-player-container');
+        
+        if (youtubeId && playerContainer) {
+          try {
+            const player = new YT.Player(playerContainer, {
+              videoId: youtubeId,
+              playerVars: {
+                autoplay: 0,
+                mute: 1,
+                loop: 1,
+                playlist: youtubeId,
+                controls: 0,
+                showinfo: 0,
+                rel: 0,
+                modestbranding: 1,
+                playsinline: 1,
+                enablejsapi: 1,
+                origin: window.location.origin
+              },
+              events: {
+                onReady: function(event) {
+                  console.log('YouTube player ready:', youtubeId);
+                  youtubePlayers[index] = event.target;
+                  
+                  // 最初のスライドのYouTube動画を再生
+                  if (index === 0) {
+                    setTimeout(() => {
+                      event.target.mute();
+                      event.target.playVideo();
+                    }, 500);
+                  }
+                },
+                onError: function(event) {
+                  console.error('YouTube player error:', event.data);
+                  // エラーメッセージを表示
+                  playerContainer.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: white; background: rgba(0,0,0,0.8); padding: 20px; text-align: center;">この動画は再生できません。<br>動画IDを確認するか、別の動画をお試しください。</div>';
+                }
+              }
+            });
+          } catch (error) {
+            console.error('YouTube player initialization error:', error);
+          }
+        }
+      });
+    }
+
+    // YouTube API準備待ち
+    if (window.youtubeAPIReady) {
+      initYouTubePlayers();
+    } else {
+      window.initHeroCarouselPending = initYouTubePlayers;
+    }
+
+    // 動画制御関数
+    function playVideo(video) {
+      if (video && video.tagName === 'VIDEO') {
+        video.currentTime = 0;
+        video.play().catch(e => console.log('Video autoplay prevented:', e));
+      }
+    }
+
+    function pauseVideo(video) {
+      if (video && video.tagName === 'VIDEO') {
+        video.pause();
+      }
+    }
+
+    function pauseAllVideos() {
+      videos.forEach(video => pauseVideo(video));
+    }
+
+    // YouTube動画制御
+    function playYouTubeVideo(slideIndex) {
+      if (youtubePlayers[slideIndex]) {
+        try {
+          youtubePlayers[slideIndex].playVideo();
+        } catch (e) {
+          console.log('YouTube play error:', e);
+        }
+      }
+    }
+
+    function pauseYouTubeVideo(slideIndex) {
+      if (youtubePlayers[slideIndex]) {
+        try {
+          youtubePlayers[slideIndex].pauseVideo();
+        } catch (e) {
+          console.log('YouTube pause error:', e);
+        }
+      }
+    }
+
+    function pauseAllYouTubeVideos() {
+      youtubePlayers.forEach((player, index) => {
+        if (player) {
+          pauseYouTubeVideo(index);
+        }
+      });
+    }
+
+    // ミュート切り替え
+    function toggleMute() {
+      isMuted = !isMuted;
+      
+      // MP4動画のミュート切り替え
+      videos.forEach(video => {
+        video.muted = isMuted;
+      });
+      
+      // YouTube動画のミュート切り替え
+      youtubePlayers.forEach(player => {
+        if (player) {
+          try {
+            if (isMuted) {
+              player.mute();
+            } else {
+              player.unMute();
+            }
+          } catch (e) {
+            console.log('YouTube mute error:', e);
+          }
+        }
+      });
+      
+      const muteIcon = muteToggle.querySelector('.mute-icon');
+      const unmuteIcon = muteToggle.querySelector('.unmute-icon');
+      
+      if (isMuted) {
+        muteIcon.style.display = 'block';
+        unmuteIcon.style.display = 'none';
+        muteToggle.setAttribute('aria-label', '動画の音声をオンにする');
+      } else {
+        muteIcon.style.display = 'none';
+        unmuteIcon.style.display = 'block';
+        muteToggle.setAttribute('aria-label', '動画の音声をオフにする');
+      }
+    }
+
+    // 動画スライドがあるかチェック
+    function checkForVideos() {
+      const hasVideo = Array.from(slides).some(slide => {
+        const mediaType = slide.dataset.mediaType;
+        return mediaType === 'video' || mediaType === 'youtube';
+      });
+      
+      if (hasVideo && muteToggle) {
+        muteToggle.style.display = 'flex';
+      }
+    }
+
+    // スライド移動関数
+    function goToSlide(index) {
+      if (index < 0 || index >= slides.length) return;
+      
+      // 現在の動画を停止
+      const currentSlideEl = slides[currentSlide];
+      const currentVideo = currentSlideEl.querySelector('.hero-video');
+      pauseVideo(currentVideo);
+      pauseYouTubeVideo(currentSlide);
+      
+      // トラック移動
+      track.style.transform = `translateX(-${index * 100}%)`;
+      
+      // aria-current更新
+      slides.forEach((slide, i) => {
+        slide.setAttribute('aria-current', i === index ? 'true' : 'false');
+      });
+      
+      // ドット更新
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+        dot.setAttribute('aria-selected', i === index ? 'true' : 'false');
+      });
+      
+      currentSlide = index;
+      
+      // 新しいスライドの動画を再生
+      const newSlideEl = slides[currentSlide];
+      const newVideo = newSlideEl.querySelector('.hero-video');
+      if (newVideo) {
+        playVideo(newVideo);
+      } else {
+        // YouTube動画の再生
+        playYouTubeVideo(currentSlide);
+      }
+      
+      // 自動再生プログレスバーリセット
+      if (progressBar) {
+        progressBar.style.animation = 'none';
+        progressBar.offsetHeight; // リフロー強制
+        if (isAutoplayEnabled && !isUserInteracting) {
+          progressBar.style.animationDuration = `${autoplayDuration}ms`;
+          progressBar.style.animation = 'autoplayProgress linear';
+        }
+      }
+    }
+
+    // 次のスライド
+    function nextSlide() {
+      const next = currentSlide + 1 >= slides.length ? 0 : currentSlide + 1;
+      goToSlide(next);
+    }
+
+    // 前のスライド
+    function prevSlide() {
+      const prev = currentSlide - 1 < 0 ? slides.length - 1 : currentSlide - 1;
+      goToSlide(prev);
+    }
+
+    // 自動再生制御
+    function startAutoplay() {
+      if (!isAutoplayEnabled || slides.length <= 1) return;
+      
+      autoplayTimer = setInterval(nextSlide, autoplayDuration);
+      
+      if (progressBar) {
+        progressBar.style.animationDuration = `${autoplayDuration}ms`;
+        progressBar.style.animation = 'autoplayProgress linear';
+      }
+    }
+
+    function stopAutoplay() {
+      if (autoplayTimer) {
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+      
+      if (progressBar) {
+        progressBar.style.animation = 'none';
+      }
+    }
+
+    function resetAutoplay() {
+      stopAutoplay();
+      if (!isUserInteracting) {
+        setTimeout(startAutoplay, 1000);
+      }
+    }
+
+    // イベントリスナー設定
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        isUserInteracting = true;
+        prevSlide();
+        resetAutoplay();
+        setTimeout(() => { isUserInteracting = false; }, 3000);
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        isUserInteracting = true;
+        nextSlide();
+        resetAutoplay();
+        setTimeout(() => { isUserInteracting = false; }, 3000);
+      });
+    }
+
+    // ドットナビゲーション
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        isUserInteracting = true;
+        goToSlide(index);
+        resetAutoplay();
+        setTimeout(() => { isUserInteracting = false; }, 3000);
+      });
+    });
+
+    // ミュートトグルボタン
+    if (muteToggle) {
+      muteToggle.addEventListener('click', toggleMute);
+    }
+
+    // キーボードナビゲーション
+    carousel.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        isUserInteracting = true;
+        prevSlide();
+        resetAutoplay();
+        setTimeout(() => { isUserInteracting = false; }, 3000);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        isUserInteracting = true;
+        nextSlide();
+        resetAutoplay();
+        setTimeout(() => { isUserInteracting = false; }, 3000);
+      }
+    });
+
+    // マウスホバーで自動再生停止
+    carousel.addEventListener('mouseenter', () => {
+      isUserInteracting = true;
+      stopAutoplay();
+    });
+
+    carousel.addEventListener('mouseleave', () => {
+      isUserInteracting = false;
+      if (isAutoplayEnabled) {
+        startAutoplay();
+      }
+    });
+
+    // タッチスワイプ対応（縦スクロール阻害防止・フリーズ修正）
+    let startX = 0;
+    let startY = 0;
+    let isDragging = false;
+    let isHorizontalSwipe = false;
+    let touchStartTime = 0;
+
+    carousel.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+      isDragging = true;
+      isHorizontalSwipe = false;
+    }, { passive: true });
+
+    carousel.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      
+      const currentX = e.touches[0].clientX;
+      const currentY = e.touches[0].clientY;
+      const diffX = Math.abs(currentX - startX);
+      const diffY = Math.abs(currentY - startY);
+      
+      // 水平スワイプの判定（水平移動が垂直移動より大きい場合）
+      if (diffX > diffY && diffX > 30) {
+        isHorizontalSwipe = true;
+        // 水平スワイプの場合のみpreventDefault
+        e.preventDefault();
+        
+        // 自動再生を一時停止
+        if (!isUserInteracting) {
+          isUserInteracting = true;
+          stopAutoplay();
+        }
+      } else if (diffY > diffX && diffY > 30) {
+        // 垂直スクロールの場合はスワイプ処理を完全停止
+        isDragging = false;
+        isHorizontalSwipe = false;
+      }
+    }, { passive: false });
+
+    carousel.addEventListener('touchend', (e) => {
+      const touchDuration = Date.now() - touchStartTime;
+      
+      // タップ（短時間のタッチ）の場合は何もしない
+      if (touchDuration < 200 && !isHorizontalSwipe) {
+        isDragging = false;
+        isHorizontalSwipe = false;
+        return;
+      }
+      
+      if (!isDragging || !isHorizontalSwipe) {
+        isDragging = false;
+        isHorizontalSwipe = false;
+        return;
+      }
+      
+      const endX = e.changedTouches[0].clientX;
+      const diffX = startX - endX;
+      
+      if (Math.abs(diffX) > 50) {
+        if (diffX > 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+      }
+      
+      isDragging = false;
+      isHorizontalSwipe = false;
+      
+      // 3秒後に自動再生を再開
+      setTimeout(() => { 
+        isUserInteracting = false;
+        if (isAutoplayEnabled) {
+          startAutoplay();
+        }
+      }, 3000);
+    }, { passive: true });
+
+    // touchcancel イベント処理（フリーズ防止）
+    carousel.addEventListener('touchcancel', () => {
+      isDragging = false;
+      isHorizontalSwipe = false;
+      isUserInteracting = false;
+    }, { passive: true });
+
+    // Intersection Observer for animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          carousel.classList.add('animate-in');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    observer.observe(carousel);
+
+    // 初期化
+    checkForVideos();
+    goToSlide(0);
+    
+    // すべての画像を即座に表示
+    slides.forEach((slide) => {
+      const img = slide.querySelector('.hero-image');
+      if (img && img.tagName === 'IMG') {
+        img.style.opacity = '1';
+        
+        if (!img.complete) {
+          img.addEventListener('load', () => {
+            img.style.opacity = '1';
+          });
+        }
+      }
+    });
+    
+    // 最初のスライドが動画の場合は再生
+    const firstSlide = slides[0];
+    const firstVideo = firstSlide.querySelector('.hero-video');
+    if (firstVideo) {
+      playVideo(firstVideo);
+    } else {
+      // YouTube動画は初期化時に自動再生される
+      setTimeout(() => playYouTubeVideo(0), 1000);
+    }
+    
+    // 自動再生開始
+    if (isAutoplayEnabled && slides.length > 1) {
+      setTimeout(startAutoplay, 1000);
+    }
+
+    // リサイズ対応
+    function handleResize() {
+      if (window.innerWidth <= 768) {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      }
+    }
+
+    window.addEventListener('resize', handleResize, { passive: true });
+    handleResize();
+
+    // ページの可視性変更時の制御
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAutoplay();
+        pauseAllVideos();
+        pauseAllYouTubeVideos();
+      } else {
+        if (isAutoplayEnabled && !isUserInteracting) {
+          startAutoplay();
+        }
+        const currentVideo = slides[currentSlide].querySelector('.hero-video');
+        if (currentVideo) {
+          playVideo(currentVideo);
+        } else {
+          playYouTubeVideo(currentSlide);
+        }
+      }
+    });
+
+    // 動画エラーハンドリング
+    videos.forEach(video => {
+      video.addEventListener('error', (e) => {
+        console.error('Video load error:', e);
+        video.style.display = 'none';
+      });
+      
+      // iOS対応：playsinline属性の確認
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
+    });
+  }
+
+  // DOM読み込み完了を待つ
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHeroCarousel);
+  } else {
+    initHeroCarousel();
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "ヒーローカルーセル",
+  "tag": "section",
+  "class": "hero-carousel-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "基本設定"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "セクションタイトル",
+      "default": "ヒーローカルーセル",
+      "info": "セクション識別用"
+    },
+    {
+      "type": "header",
+      "content": "セクションサイズ設定"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "label": "デスクトップ画面高さ",
+      "min": 60,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "default": 90,
+      "info": "PCタブレットでの画面に対する高さの割合"
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "label": "モバイル画面高さ",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "default": 80,
+      "info": "スマートフォンでの画面に対する高さの割合"
+    },
+    {
+      "type": "header",
+      "content": "テキスト設定"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "テキスト位置",
+      "options": [
+        {
+          "value": "position-left",
+          "label": "左中央"
+        },
+        {
+          "value": "position-center",
+          "label": "中央"
+        },
+        {
+          "value": "position-right",
+          "label": "右中央"
+        },
+        {
+          "value": "position-top-left",
+          "label": "左上"
+        },
+        {
+          "value": "position-top-center",
+          "label": "上中央"
+        },
+        {
+          "value": "position-top-right",
+          "label": "右上"
+        },
+        {
+          "value": "position-bottom-left",
+          "label": "左下"
+        },
+        {
+          "value": "position-bottom-center",
+          "label": "下中央"
+        },
+        {
+          "value": "position-bottom-right",
+          "label": "右下"
+        }
+      ],
+      "default": "position-right",
+      "info": "画像上のテキスト配置位置を選択"
+    },
+    {
+      "type": "range",
+      "id": "desktop_font_size",
+      "label": "デスクトップフォントサイズ",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "default": 20,
+      "info": "PCタブレット表示時のフォントサイズ"
+    },
+    {
+      "type": "range",
+      "id": "mobile_font_size",
+      "label": "モバイルフォントサイズ",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18,
+      "info": "スマートフォン表示時のフォントサイズ"
+    },
+    {
+      "type": "header",
+      "content": "カラー設定"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "テキスト色",
+      "default": "#ffffff",
+      "info": "ヒーロー説明文の色"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "アクセント色",
+      "default": "#f4e4bc",
+      "info": "タイトルとアクセント要素の色"
+    },
+    {
+      "type": "color_background",
+      "id": "background_overlay",
+      "label": "背景オーバーレイ",
+      "default": "linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 100%)",
+      "info": "画像の上に重ねる色やグラデーション"
+    },
+    {
+      "type": "header",
+      "content": "カルーセル設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay_enabled",
+      "label": "自動再生",
+      "default": true,
+      "info": "スライドの自動切り替えを有効にする"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_duration",
+      "label": "自動再生間隔",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "秒",
+      "default": 5,
+      "info": "次のスライドに切り替わるまでの秒数"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "矢印ナビゲーション表示",
+      "default": true,
+      "info": "左右の矢印ボタンを表示"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "ドットナビゲーション表示",
+      "default": true,
+      "info": "下部のドットナビゲーションを表示"
+    },
+    {
+      "type": "header",
+      "content": "表示オプション"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_scroll_indicator",
+      "label": "スクロールインジケーター表示",
+      "default": true,
+      "info": "画面右下にスクロールを促すアニメーション表示"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_mobile",
+      "label": "モバイルで表示",
+      "default": true,
+      "info": "スマートフォンでセクションを表示するかどうか"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "スライド",
+      "settings": [
+        {
+          "type": "header",
+          "content": "メディア選択"
+        },
+        {
+          "type": "paragraph",
+          "content": "画像MP4動画YouTube動画のいずれか1つを選択してください"
+        },
+        {
+          "type": "image_picker",
+          "id": "slide_image",
+          "label": "スライド画像",
+          "info": "推奨サイズ1920x1080px以上"
+        },
+        {
+          "type": "text",
+          "id": "video_url",
+          "label": "MP4動画URL",
+          "info": "Shopifyにアップロードした動画のURL"
+        },
+        {
+          "type": "text",
+          "id": "youtube_id",
+          "label": "YouTube動画ID",
+          "info": "YouTubeのURLから動画IDのみを入力",
+          "placeholder": "dQw4w9WgXcQ"
+        },
+        {
+          "type": "header",
+          "content": "スライドテキスト"
+        },
+        {
+          "type": "text",
+          "id": "slide_title",
+          "label": "スライドタイトル",
+          "default": "タイトル",
+          "info": "スライドのメインタイトル"
+        },
+        {
+          "type": "richtext",
+          "id": "slide_description",
+          "label": "スライド説明文",
+          "default": "<p>説明文をここに入力してください</p>",
+          "info": "縦書きで表示されます"
+        },
+        {
+          "type": "header",
+          "content": "リンク設定"
+        },
+        {
+          "type": "url",
+          "id": "slide_link",
+          "label": "リンクURL",
+          "info": "スライドをクリックした時のリンク先"
+        },
+        {
+          "type": "checkbox",
+          "id": "link_target",
+          "label": "新しいタブで開く",
+          "default": false,
+          "info": "リンクを新しいタブで開く"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ヒーローカルーセル",
+      "blocks": [
+        {
+          "type": "slide",
+          "settings": {
+            "slide_title": "メインタイトル",
+            "slide_description": "<p>美しい画像動画と共にメッセージを伝えましょう</p>"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "slide_title": "サブタイトル",
+            "slide_description": "<p>2枚目のスライドで詳細な情報を表示</p>"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "slide_title": "最終メッセージ",
+            "slide_description": "<p>行動を促すメッセージでコンバージョンを促進</p>"
+          }
+        }
+      ],
+      "settings": {
+        "text_position": "position-right",
+        "background_overlay": "linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 100%)",
+        "section_height": 90,
+        "mobile_height": 80,
+        "desktop_font_size": 20,
+        "mobile_font_size": 18,
+        "text_color": "#ffffff",
+        "accent_color": "#f4e4bc",
+        "autoplay_enabled": true,
+        "autoplay_duration": 5,
+        "show_arrows": true,
+        "show_dots": true,
+        "show_scroll_indicator": true,
+        "show_on_mobile": true
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,320 @@
+{% comment %}
+  商品予約機能セクション
+  - カレンダー表示による予約システム
+  - メタフィールドによる在庫管理
+  - レスポンシブ対応
+  
+  使用方法:
+  商品ページテンプレートに以下を追加
+  {% section 'product-reservation' %}
+{% endcomment %}
+
+{{ 'product-reservation.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign reservation_data = product.metafields.custom.reservation_data.value
+  assign section_id = section.id
+-%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="reservation-section section-{{ section.id }}-padding" data-section-id="{{ section.id }}">
+  <div class="page-width">
+    
+    {%- if section.settings.show_heading -%}
+      <div class="reservation-header">
+        <h2 class="reservation-title">
+          {{ section.settings.section_heading | default: '予約日時を選択' }}
+        </h2>
+        {%- if section.settings.section_description != blank -%}
+          <div class="reservation-description rte">
+            {{ section.settings.section_description }}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="reservation-container">
+      
+      {%- comment -%} カレンダー表示エリア {%- endcomment -%}
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <button type="button" class="calendar-nav calendar-prev" aria-label="前の月">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          
+          <h3 class="calendar-month-year"></h3>
+          
+          <button type="button" class="calendar-nav calendar-next" aria-label="次の月">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="calendar-grid">
+          <div class="calendar-weekdays">
+            <div class="calendar-weekday">日</div>
+            <div class="calendar-weekday">月</div>
+            <div class="calendar-weekday">火</div>
+            <div class="calendar-weekday">水</div>
+            <div class="calendar-weekday">木</div>
+            <div class="calendar-weekday">金</div>
+            <div class="calendar-weekday">土</div>
+          </div>
+          
+          <div class="calendar-days" id="calendar-days-{{ section.id }}">
+            {%- comment -%} JavaScriptで動的生成 {%- endcomment -%}
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} 時間選択エリア {%- endcomment -%}
+      <div class="time-selection-container" style="display: none;">
+        <h4 class="time-selection-title">時間を選択してください</h4>
+        <div class="time-slots" id="time-slots-{{ section.id }}">
+          {%- comment -%} JavaScriptで動的生成 {%- endcomment -%}
+        </div>
+      </div>
+
+      {%- comment -%} 選択結果表示 {%- endcomment -%}
+      <div class="reservation-summary" style="display: none;" id="reservation-summary-{{ section.id }}">
+        <div class="summary-content">
+          <h4 class="summary-title">選択された予約</h4>
+          <div class="summary-details">
+            <div class="summary-date"></div>
+            <div class="summary-time"></div>
+          </div>
+        </div>
+        
+        <button type="button" class="btn reservation-confirm-btn" id="add-reservation-{{ section.id }}">
+          {{ section.settings.add_to_cart_text | default: 'カートに追加' }}
+        </button>
+      </div>
+
+    </div>
+
+    {%- comment -%} 予約データをJavaScriptに渡す {%- endcomment -%}
+    {%- liquid
+      assign reservation_data_safe = reservation_data | default: blank
+      assign default_time_slots = section.settings.default_time_slots | default: '["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"]'
+    -%}
+    
+    <script type="application/json" id="reservation-data-{{ section.id }}">
+      {
+        "sectionId": "{{ section.id }}",
+        "productId": {{ product.id }},
+        "variantId": {{ current_variant.id }},
+        "reservationData": {% if reservation_data_safe %}{{ reservation_data_safe | json }}{% else %}{}{% endif %},
+        "settings": {
+          "dateFormat": "{{ section.settings.date_format | default: 'YYYY-MM-DD' }}",
+          "timeFormat": "{{ section.settings.time_format | default: 'HH:mm' }}",
+          "minDaysAdvance": {{ section.settings.min_days_advance | default: 0 }},
+          "maxDaysAdvance": {{ section.settings.max_days_advance | default: 90 }},
+          "showWeekends": {{ section.settings.show_weekends | default: true }},
+          "defaultTimeSlots": {{ default_time_slots | json }}
+        },
+        "translations": {
+          "selectDate": {{ '予約日を選択してください' | json }},
+          "selectTime": {{ '時間を選択してください' | json }},
+          "noSlotsAvailable": {{ 'この日は予約できません' | json }},
+          "confirmReservation": {{ '予約を確認' | json }},
+          "addingToCart": {{ 'カートに追加中...' | json }},
+          "reservationAdded": {{ '予約がカートに追加されました' | json }},
+          "monthNames": {{ '["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]' | json }}
+        }
+      }
+    </script>
+
+    {%- comment -%} 予約注意事項 {%- endcomment -%}
+    {%- if section.settings.show_reservation_notes -%}
+      <div class="reservation-notes">
+        <h4 class="notes-title">{{ section.settings.notes_title | default: 'ご予約について' }}</h4>
+        <div class="notes-content rte">
+          {{ section.settings.reservation_notes | default: '予約に関する注意事項をここに記載してください。' }}
+        </div>
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+{%- comment -%} 非同期でJavaScriptを読み込み {%- endcomment -%}
+<script src="{{ 'product-reservation.js' | asset_url }}" defer></script>
+
+{%- comment -%} スキーマ設定 {%- endcomment -%}
+{% schema %}
+{
+  "name": "商品予約機能",
+  "tag": "section",
+  "class": "section-reservation",
+  "settings": [
+    {
+      "type": "header",
+      "content": "セクション設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "label": "見出しを表示",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "セクション見出し",
+      "default": "予約日時を選択"
+    },
+    {
+      "type": "richtext",
+      "id": "section_description",
+      "label": "説明文"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_text",
+      "label": "カート追加ボタンテキスト",
+      "default": "カートに追加"
+    },
+    {
+      "type": "header",
+      "content": "予約設定"
+    },
+    {
+      "type": "select",
+      "id": "date_format",
+      "label": "日付表示形式",
+      "options": [
+        {
+          "value": "YYYY-MM-DD",
+          "label": "2024-03-15"
+        },
+        {
+          "value": "YYYY/MM/DD",
+          "label": "2024/03/15"
+        },
+        {
+          "value": "DD/MM/YYYY",
+          "label": "15/03/2024"
+        }
+      ],
+      "default": "YYYY-MM-DD"
+    },
+    {
+      "type": "select",
+      "id": "time_format",
+      "label": "時間表示形式",
+      "options": [
+        {
+          "value": "HH:mm",
+          "label": "24時間制 (14:30)"
+        },
+        {
+          "value": "hh:mm A",
+          "label": "12時間制 (2:30 PM)"
+        }
+      ],
+      "default": "HH:mm"
+    },
+    {
+      "type": "range",
+      "id": "min_days_advance",
+      "label": "最小予約日数（日後から）",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 1,
+      "info": "今日から何日後から予約可能にするか"
+    },
+    {
+      "type": "range",
+      "id": "max_days_advance",
+      "label": "最大予約日数（日後まで）",
+      "min": 30,
+      "max": 180,
+      "step": 5,
+      "default": 90,
+      "info": "今日から何日後まで予約可能にするか（5日単位）"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_weekends",
+      "label": "土日を予約可能にする",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "default_time_slots",
+      "label": "デフォルト時間枠（JSON形式）",
+      "default": "[\"09:00\", \"10:00\", \"11:00\", \"14:00\", \"15:00\", \"16:00\"]",
+      "info": "メタフィールドで個別設定がない場合のデフォルト時間"
+    },
+    {
+      "type": "header",
+      "content": "予約注意事項"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reservation_notes",
+      "label": "注意事項を表示",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "notes_title",
+      "label": "注意事項タイトル",
+      "default": "ご予約について"
+    },
+    {
+      "type": "richtext",
+      "id": "reservation_notes",
+      "label": "予約注意事項",
+      "default": "<p>・予約の変更・キャンセルは前日までにご連絡ください</p><p>・当日のキャンセルはキャンセル料が発生する場合があります</p>"
+    },
+    {
+      "type": "header",
+      "content": "セクション余白"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "上部余白",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "下部余白",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "商品予約機能"
+    }
+  ]
+}
+{% endschema %}

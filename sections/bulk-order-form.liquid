@@ -1,0 +1,1039 @@
+<!-- ファイル名: bulk-order-form.liquid -->
+<!-- まとまったご注文フォームセクション - 和菓子店向けカスタム注文フォーム（熨斗・見積もり機能付き） -->
+<!-- 機能説明: お客様が10個以上の商品を注文する際の専用フォーム + 熨斗選択 + リアルタイム見積もり -->
+
+{{ 'bulk-order-form.css' | asset_url | stylesheet_tag }}
+
+<style>
+  #bulk-order-{{ section.id }} {
+    --section-bg-color: {{ section.settings.section_bg_color }};
+    --section-text-color: {{ section.settings.text_color }};
+    --section-accent-color: {{ section.settings.accent_color }};
+    --section-border-color: {{ section.settings.border_color }};
+    --section-button-bg: {{ section.settings.button_bg_color }};
+    --section-button-text: {{ section.settings.button_text_color }};
+    --section-desktop-font-size: {{ section.settings.desktop_font_size }}px;
+    --section-mobile-font-size: {{ section.settings.mobile_font_size }}px;
+    --section-title-size: {{ section.settings.title_font_size }}px;
+    --section-section-padding-top: {{ section.settings.section_padding_top }}px;
+    --section-section-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+  }
+</style>
+
+<section class="bulk-order-section" id="bulk-order-{{ section.id }}">
+  <div class="bulk-order-container">
+    
+    <!-- セクションヘッダー -->
+    {% if section.settings.section_title != blank %}
+      <header class="bulk-order-header">
+        <h2 class="bulk-order-title">{{ section.settings.section_title }}</h2>
+        {% if section.settings.section_description != blank %}
+          <div class="bulk-order-description">
+            {{ section.settings.section_description }}
+          </div>
+        {% endif %}
+      </header>
+    {% endif %}
+
+    <!-- 注文説明テキスト -->
+    <div class="bulk-order-info">
+      <div class="bulk-order-info-content">
+        {{ section.settings.order_info_text }}
+      </div>
+      <!-- 改善版プロセスフロー -->
+<div class="process-flow" role="progressbar" aria-label="注文プロセス" aria-valuenow="3" aria-valuemin="1" aria-valuemax="4">
+  
+  <!-- ステップ1: お問合 -->
+  <div class="process-step" data-step="1" role="listitem">
+    <div class="process-circle" aria-label="お問合せ段階">
+      <span class="process-text">お問合</span>
+    </div>
+    <div class="process-text-container">
+      <div class="process-label">お問合せ</div>
+      <div class="process-sublabel">{{ section.settings.estimate_period | default: '通常営業日' }}</div>
+      {% if section.settings.quote_duration != blank %}
+        <div class="process-duration">{{ section.settings.quote_duration }}</div>
+      {% endif %}
+    </div>
+  </div>
+  
+  <!-- ステップ2: お見積 -->
+  <div class="process-step" data-step="2" role="listitem">
+    <div class="process-circle" aria-label="お見積もり段階">
+      <span class="process-text">お見積</span>
+    </div>
+    <div class="process-text-container">
+      <div class="process-label">お見積もり</div>
+      <div class="process-sublabel">金額確認</div>
+    </div>
+  </div>
+  
+  <!-- ステップ3: お振込（アクティブ） -->
+  <div class="process-step active" data-step="3" role="listitem" aria-current="step">
+    <div class="process-circle" aria-label="お振込み段階（現在）">
+      <span class="process-text">お振込</span>
+    </div>
+    <div class="process-text-container">
+      <div class="process-label">お振込み</div>
+      <div class="process-sublabel">お客様の工程</div>
+      {% if section.settings.payment_note != blank %}
+        <div class="process-note">{{ section.settings.payment_note }}</div>
+      {% endif %}
+    </div>
+  </div>
+  
+  <!-- ステップ4: 発送 -->
+  <div class="process-step" data-step="4" role="listitem">
+    <div class="process-circle" aria-label="商品発送段階">
+      <span class="process-text">発送</span>
+    </div>
+    <div class="process-text-container">
+      <div class="process-label">商品発送</div>
+      <div class="process-sublabel">{{ section.settings.shipping_period | default: '営業日以内' }}</div>
+      {% if section.settings.shipping_schedule != blank %}
+        <div class="process-schedule">{{ section.settings.shipping_schedule }}</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- プロセス説明（モバイル用補助情報） -->
+<div class="process-explanation" role="region" aria-labelledby="process-explanation-title">
+  <h4 id="process-explanation-title" class="process-explanation-title">ご注文の流れ</h4>
+  <div class="process-explanation-content">
+    <ol class="process-explanation-list">
+      <li><strong>お問合せ</strong>: フォームからご連絡いただきます</li>
+      <li><strong>お見積もり</strong>: {{ section.settings.quote_duration | default: '3日程度' }}でお見積もりをお送りします</li>
+      <li><strong>お振込み</strong>: {{ section.settings.payment_note | default: '発送の2日前まで' }}にお振込みをお願いします</li>
+      <li><strong>発送</strong>: {{ section.settings.shipping_schedule | default: '毎週木曜日' }}に発送いたします</li>
+    </ol>
+  </div>
+</div>
+
+<style>
+/* プロセス説明セクション（モバイルで補助表示） */
+.process-explanation {
+  display: none;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(248, 250, 252, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(220, 200, 180, 0.3);
+}
+
+.process-explanation-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--bulk-order-text, #5D4037);
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.process-explanation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.process-explanation-list li {
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--bulk-order-text, #6D4C41);
+  border-bottom: 1px solid rgba(220, 200, 180, 0.2);
+}
+
+.process-explanation-list li:last-child {
+  border-bottom: none;
+}
+
+.process-explanation-list strong {
+  color: var(--bulk-order-primary, #8B4513);
+  font-weight: 600;
+}
+
+/* モバイルでプロセス説明を表示 */
+@media (max-width: 767px) {
+  .process-explanation {
+    display: block;
+  }
+}
+
+/* 極小スマホでは非表示（スペース節約） */
+@media (max-width: 480px) {
+  .process-explanation {
+    display: none;
+  }
+}
+</style>
+      
+      <!-- 追加情報 -->
+      <div class="bulk-order-note">
+        {{ section.settings.additional_note }}
+      </div>
+    </div>
+
+    <!-- 注文フォーム -->
+    <form class="bulk-order-form" action="{{ routes.root_url }}contact" method="post" accept-charset="UTF-8" novalidate>
+      <input type="hidden" name="form_type" value="contact">
+      <input type="hidden" name="utf8" value="✓">
+      <input type="hidden" name="contact[tags]" value="bulk-order">
+
+      <!-- お客様情報セクション -->
+      <fieldset class="form-section customer-info">
+        <legend class="form-section-title">お客様情報</legend>
+        
+        <div class="form-row">
+          <div class="form-group required">
+            <label for="customer-name-{{ section.id }}" class="form-label">
+              お名前 <span class="required-mark">※必須</span>
+            </label>
+            <input 
+              type="text" 
+              id="customer-name-{{ section.id }}" 
+              name="contact[name]" 
+              class="form-input"
+              required
+              aria-describedby="name-error-{{ section.id }}"
+              autocomplete="name"
+            >
+            <div class="form-error" id="name-error-{{ section.id }}" role="alert" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="company-name-{{ section.id }}" class="form-label">会社名</label>
+            <input 
+              type="text" 
+              id="company-name-{{ section.id }}" 
+              name="contact[company]" 
+              class="form-input"
+              autocomplete="organization"
+            >
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group required">
+            <label for="customer-email-{{ section.id }}" class="form-label">
+              メールアドレス <span class="required-mark">※必須</span>
+            </label>
+            <input 
+              type="email" 
+              id="customer-email-{{ section.id }}" 
+              name="contact[email]" 
+              class="form-input"
+              required
+              aria-describedby="email-error-{{ section.id }}"
+              autocomplete="email"
+            >
+            <div class="form-error" id="email-error-{{ section.id }}" role="alert" aria-live="polite"></div>
+          </div>
+        </div>
+          
+        <div class="form-row">
+          <div class="form-group required">
+            <label for="customer-phone-{{ section.id }}" class="form-label">
+              電話番号 <span class="required-mark">※必須</span>
+            </label>
+            <input 
+              type="tel" 
+              id="customer-phone-{{ section.id }}" 
+              name="contact[phone]" 
+              class="form-input"
+              required
+              aria-describedby="phone-error-{{ section.id }}"
+              autocomplete="tel"
+            >
+            <div class="form-error" id="phone-error-{{ section.id }}" role="alert" aria-live="polite"></div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 配送・請求情報セクション -->
+      <fieldset class="form-section shipping-billing-info">
+        <legend class="form-section-title">配送・請求情報</legend>
+        
+        <!-- 配送先住所 -->
+        <div class="address-section">
+          <h4 class="address-section-title">配送先住所</h4>
+          
+          <div class="address-fields shipping-address">
+            <div class="form-row">
+              <div class="form-group required">
+                <label for="shipping-postal-{{ section.id }}" class="form-label">
+                  郵便番号 <span class="required-mark">※必須</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="shipping-postal-{{ section.id }}" 
+                  name="contact[shipping_postal_code]" 
+                  class="form-input"
+                  placeholder="123-4567"
+                  pattern="[0-9]{3}-[0-9]{4}"
+                  required
+                  aria-describedby="shipping-postal-error-{{ section.id }}"
+                >
+                <div class="form-error" id="shipping-postal-error-{{ section.id }}" role="alert" aria-live="polite"></div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group required">
+                <label for="shipping-prefecture-{{ section.id }}" class="form-label">
+                  都道府県 <span class="required-mark">※必須</span>
+                </label>
+                <select 
+                  id="shipping-prefecture-{{ section.id }}" 
+                  name="contact[shipping_prefecture]" 
+                  class="form-select"
+                  required
+                  aria-describedby="shipping-prefecture-error-{{ section.id }}"
+                >
+                  <option value="">都道府県を選択</option>
+                  <option value="北海道">北海道</option>
+                  <option value="青森県">青森県</option>
+                  <option value="岩手県">岩手県</option>
+                  <option value="宮城県">宮城県</option>
+                  <option value="秋田県">秋田県</option>
+                  <option value="山形県">山形県</option>
+                  <option value="福島県">福島県</option>
+                  <option value="茨城県">茨城県</option>
+                  <option value="栃木県">栃木県</option>
+                  <option value="群馬県">群馬県</option>
+                  <option value="埼玉県">埼玉県</option>
+                  <option value="千葉県">千葉県</option>
+                  <option value="東京都">東京都</option>
+                  <option value="神奈川県">神奈川県</option>
+                  <option value="新潟県">新潟県</option>
+                  <option value="富山県">富山県</option>
+                  <option value="石川県">石川県</option>
+                  <option value="福井県">福井県</option>
+                  <option value="山梨県">山梨県</option>
+                  <option value="長野県">長野県</option>
+                  <option value="岐阜県">岐阜県</option>
+                  <option value="静岡県">静岡県</option>
+                  <option value="愛知県">愛知県</option>
+                  <option value="三重県">三重県</option>
+                  <option value="滋賀県">滋賀県</option>
+                  <option value="京都府">京都府</option>
+                  <option value="大阪府">大阪府</option>
+                  <option value="兵庫県">兵庫県</option>
+                  <option value="奈良県">奈良県</option>
+                  <option value="和歌山県">和歌山県</option>
+                  <option value="鳥取県">鳥取県</option>
+                  <option value="島根県">島根県</option>
+                  <option value="岡山県">岡山県</option>
+                  <option value="広島県">広島県</option>
+                  <option value="山口県">山口県</option>
+                  <option value="徳島県">徳島県</option>
+                  <option value="香川県">香川県</option>
+                  <option value="愛媛県">愛媛県</option>
+                  <option value="高知県">高知県</option>
+                  <option value="福岡県">福岡県</option>
+                  <option value="佐賀県">佐賀県</option>
+                  <option value="長崎県">長崎県</option>
+                  <option value="熊本県">熊本県</option>
+                  <option value="大分県">大分県</option>
+                  <option value="宮崎県">宮崎県</option>
+                  <option value="鹿児島県">鹿児島県</option>
+                  <option value="沖縄県">沖縄県</option>
+                </select>
+                <div class="form-error" id="shipping-prefecture-error-{{ section.id }}" role="alert" aria-live="polite"></div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group required">
+                <label for="shipping-city-{{ section.id }}" class="form-label">
+                  市区町村 <span class="required-mark">※必須</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="shipping-city-{{ section.id }}" 
+                  name="contact[shipping_city]" 
+                  class="form-input"
+                  placeholder="例：渋谷区"
+                  required
+                  aria-describedby="shipping-city-error-{{ section.id }}"
+                >
+                <div class="form-error" id="shipping-city-error-{{ section.id }}" role="alert" aria-live="polite"></div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group required">
+                <label for="shipping-address1-{{ section.id }}" class="form-label">
+                  番地・建物名 <span class="required-mark">※必須</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="shipping-address1-{{ section.id }}" 
+                  name="contact[shipping_address]" 
+                  class="form-input"
+                  placeholder="例：1-2-3 ○○マンション 201号室"
+                  required
+                  aria-describedby="shipping-address1-error-{{ section.id }}"
+                >
+                <div class="form-error" id="shipping-address1-error-{{ section.id }}" role="alert" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 請求書住所 -->
+        <div class="address-section">
+          <h4 class="address-section-title">請求書送付先住所</h4>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="checkbox-wrapper">
+                <input 
+                  type="checkbox" 
+                  id="same-as-shipping-billing-{{ section.id }}" 
+                  name="contact[same_billing_address]" 
+                  value="true"
+                  class="address-sync-checkbox"
+                  data-target="billing"
+                >
+                <span class="checkbox-label">配送先住所と同じ</span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="address-fields billing-address">
+            <div class="form-row">
+              <div class="form-group required">
+                <label for="billing-postal-{{ section.id }}" class="form-label">
+                  郵便番号 <span class="required-mark">※必須</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="billing-postal-{{ section.id }}" 
+                  name="contact[billing_postal_code]" 
+                  class="form-input"
+                  placeholder="123-4567"
+                  pattern="[0-9]{3}-[0-9]{4}"
+                  required
+                  aria-describedby="billing-postal-error-{{ section.id }}"
+                >
+                <div class="form-error" id="billing-postal-error-{{ section.id }}" role="alert" aria-live="polite"></div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group required">
+                <label for="billing-prefecture-{{ section.id }}" class="form-label">
+                  都道府県 <span class="required-mark">※必須</span>
+                </label>
+                <select 
+                  id="billing-prefecture-{{ section.id }}" 
+                  name="contact[billing_prefecture]" 
+                  class="form-select"
+                  required
+                  aria-describedby="billing-prefecture-error-{{ section.id }}"
+                >
+                  <option value="">都道府県を選択</option>
+                  <option value="北海道">北海道</option>
+                  <option value="青森県">青森県</option>
+                  <option value="岩手県">岩手県</option>
+                  <option value="宮城県">宮城県</option>
+                  <option value="秋田県">秋田県</option>
+                  <option value="山形県">山形県</option>
+                  <option value="福島県">福島県</option>
+                  <option value="茨城県">茨城県</option>
+                  <option value="栃木県">栃木県</option>
+                  <option value="群馬県">群馬県</option>
+                  <option value="埼玉県">埼玉県</option>
+                  <option value="千葉県">千葉県</option>
+                  <option value="東京都">東京都</option>
+                  <option value="神奈川県">神奈川県</option>
+                  <option value="新潟県">新潟県</option>
+                  <option value="富山県">富山県</option>
+                  <option value="石川県">石川県</option>
+                  <option value="福井県">福井県</option>
+                  <option value="山梨県">山梨県</option>
+                  <option value="長野県">長野県</option>
+                  <option value="岐阜県">岐阜県</option>
+                  <option value="静岡県">静岡県</option>
+                  <option value="愛知県">愛知県</option>
+                  <option value="三重県">三重県</option>
+                  <option value="滋賀県">滋賀県</option>
+                  <option value="京都府">京都府</option>
+                  <option value="大阪府">大阪府</option>
+                  <option value="兵庫県">兵庫県</option>
+                  <option value="奈良県">奈良県</option>
+                  <option value="和歌山県">和歌山県</option>
+                  <option value="鳥取県">鳥取県</option>
+                  <option value="島根県">島根県</option>
+                  <option value="岡山県">岡山県</option>
+                  <option value="広島県">広島県</option>
+                  <option value="山口県">山口県</option>
+                  <option value="徳島県">徳島県</option>
+                  <option value="香川県">香川県</option>
+                  <option value="愛媛県">愛媛県</option>
+                  <option value="高知県">高知県</option>
+                  <option value="福岡県">福岡県</option>
+                  <option value="佐賀県">佐賀県</option>
+                  <option value="長崎県">長崎県</option>
+                  <option value="熊本県">熊本県</option>
+                  <option value="大分県">大分県</option>
+                  <option value="宮崎県">宮崎県</option>
+                  <option value="鹿児島県">鹿児島県</option>
+                  <option value="沖縄県">沖縄県</option>
+                </select>
+                <div class="form-error" id="billing-prefecture-error-{{ section.id }}" role="alert" aria-live="polite"></div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group required">
+                <label for="billing-city-{{ section.id }}" class="form-label">
+                  市区町村 <span class="required-mark">※必須</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="billing-city-{{ section.id }}" 
+                  name="contact[billing_city]" 
+                  class="form-input"
+                  placeholder="例：渋谷区"
+                  required
+                  aria-describedby="billing-city-error-{{ section.id }}"
+                >
+                <div class="form-error" id="billing-city-error-{{ section.id }}" role="alert" aria-live="polite"></div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group required">
+                <label for="billing-address1-{{ section.id }}" class="form-label">
+                  番地・建物名 <span class="required-mark">※必須</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="billing-address1-{{ section.id }}" 
+                  name="contact[billing_address]" 
+                  class="form-input"
+                  placeholder="例：1-2-3 ○○マンション 201号室"
+                  required
+                  aria-describedby="billing-address1-error-{{ section.id }}"
+                >
+                <div class="form-error" id="billing-address1-error-{{ section.id }}" role="alert" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 商品選択セクション --><!-- 商品選択セクション（修正版） -->
+<fieldset class="form-section product-selection">
+  <legend class="form-section-title">ご希望の商品</legend>
+  
+  {% for i in (1..3) %}
+    <div class="product-row" data-product-index="{{ i }}">
+      <h4 class="product-row-title">ご希望の商品{{ i }}</h4>
+      
+      <div class="product-row-content">
+        <!-- 商品選択フィールド -->
+        <div class="form-group">
+          <label for="product-{{ i }}-{{ section.id }}" class="form-label">
+            商品名
+            {% if i == 1 %}<span class="required-mark">※必須</span>{% endif %}
+          </label>
+          <select 
+            id="product-{{ i }}-{{ section.id }}" 
+            name="contact[product_{{ i }}]" 
+            class="form-select product-select"
+            data-product-index="{{ i }}"
+            {% if i == 1 %}required{% endif %}
+            aria-describedby="product-{{ i }}-description-{{ section.id }}"
+          >
+            <option value="">商品を選択してください</option>
+            
+            {% comment %} 商品コレクションから動的に取得 {% endcomment %}
+            {% if section.settings.product_collection != blank %}
+              {% assign collection = collections[section.settings.product_collection] %}
+              {% for product in collection.products limit: 50 %}
+                <option 
+                  value="{{ product.title | escape }}" 
+                  data-product-id="{{ product.id }}" 
+                  data-price="{{ product.price | divided_by: 100.0 }}"
+                >
+                  {{ product.title }}{% if product.price > 0 %} (¥{{ product.price | money_without_currency }}){% endif %}
+                </option>
+              {% endfor %}
+            {% else %}
+              {% comment %} フォールバック: 手動設定商品 {% endcomment %}
+              {% assign fallback_products = section.settings.fallback_products | newline_to_br | split: '<br />' %}
+              {% for product in fallback_products %}
+                {% unless product == blank %}
+                  <option value="{{ product | strip | escape }}" data-price="0">{{ product | strip }}</option>
+                {% endunless %}
+              {% endfor %}
+            {% endif %}
+          </select>
+          <div id="product-{{ i }}-description-{{ section.id }}" class="form-description">
+            上記リストから商品をお選びください
+          </div>
+        </div>
+        
+        <!-- 数量入力フィールド -->
+        <div class="form-group">
+          <label for="quantity-{{ i }}-{{ section.id }}" class="form-label">個数</label>
+          <input 
+            type="number" 
+            id="quantity-{{ i }}-{{ section.id }}" 
+            name="contact[quantity_{{ i }}]" 
+            class="form-input quantity-input"
+            data-product-index="{{ i }}"
+            min="1"
+            max="999"
+            step="1"
+            placeholder="数量を入力"
+            disabled
+            aria-describedby="quantity-{{ i }}-description-{{ section.id }}"
+          >
+          <div id="quantity-{{ i }}-description-{{ section.id }}" class="form-description">
+            商品を選択後に入力できます
+          </div>
+        </div>
+        
+        <!-- 熨斗選択フィールド -->
+        <div class="form-group">
+          <label for="noshi-{{ i }}-{{ section.id }}" class="form-label">熨斗</label>
+          <select 
+            id="noshi-{{ i }}-{{ section.id }}" 
+            name="contact[noshi_{{ i }}]" 
+            class="form-select noshi-select"
+            data-product-index="{{ i }}"
+            disabled
+            aria-describedby="noshi-{{ i }}-description-{{ section.id }}"
+          >
+            <option value="">選択してください</option>
+            <option value="なし">なし</option>
+            <option value="あり">あり（+50円）</option>
+          </select>
+          <div id="noshi-{{ i }}-description-{{ section.id }}" class="form-description">
+            商品を選択後に選択できます
+          </div>
+        </div>
+        
+        <!-- 熨斗イメージ表示エリア -->
+        <div class="noshi-image-display" id="noshi-image-{{ i }}-{{ section.id }}" style="display: none;" role="img" aria-labelledby="noshi-caption-{{ i }}-{{ section.id }}">
+          <div class="noshi-image-container">
+            {% if section.settings.noshi_sample_image != blank %}
+              <img class="noshi-preview-image" src="{{ section.settings.noshi_sample_image | image_url }}" alt="熨斗サンプル" loading="lazy" />
+            {% else %}
+              <div class="noshi-placeholder">熨斗サンプル画像</div>
+            {% endif %}
+            <div class="noshi-image-caption" id="noshi-caption-{{ i }}-{{ section.id }}">熨斗のサンプル</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  
+  <!-- 見積もり表示セクション -->
+  <div class="estimate-summary" id="estimate-summary-{{ section.id }}" role="region" aria-labelledby="estimate-title-{{ section.id }}">
+    <div class="estimate-header">
+      <h3 class="estimate-title" id="estimate-title-{{ section.id }}">概算お見積もり金額</h3>
+      <p class="estimate-note">※送料別・税込価格</p>
+    </div>
+    
+    <div class="estimate-content">
+      <div class="estimate-items" id="estimate-items-{{ section.id }}" role="list" aria-label="選択された商品一覧">
+        <div class="estimate-placeholder">
+          商品を選択すると、こちらに概算金額が表示されます
+        </div>
+      </div>
+      
+      <div class="estimate-total">
+        <div class="total-row">
+          <span class="total-label">小計（税込）</span>
+          <span class="total-amount" id="total-amount-{{ section.id }}" aria-live="polite">¥0</span>
+        </div>
+        <div class="shipping-note">
+          ※送料は配送先により異なります。お見積もり時にご案内いたします。
+        </div>
+      </div>
+    </div>
+  </div>
+</fieldset>
+
+<!-- 領収書情報セクション（修正版） -->
+<fieldset class="form-section receipt-info">
+  <legend class="form-section-title">領収書について</legend>
+  
+  <div class="form-row">
+    <div class="form-group">
+      <label for="receipt-required-{{ section.id }}" class="form-label">領収書の発行</label>
+      <select 
+        id="receipt-required-{{ section.id }}" 
+        name="contact[receipt_required]" 
+        class="form-select receipt-select"
+        aria-describedby="receipt-description-{{ section.id }}"
+        aria-controls="receipt-details-{{ section.id }}"
+      >
+        <option value="">選択してください</option>
+        <option value="必要">必要</option>
+        <option value="不要">不要</option>
+      </select>
+      <div id="receipt-description-{{ section.id }}" class="form-description">
+        領収書が必要な場合は「必要」を選択してください
+      </div>
+    </div>
+  </div>
+  
+  <!-- 領収書詳細（初期状態で非表示） -->
+  <div class="form-row receipt-details" id="receipt-details-{{ section.id }}" style="display: none;" aria-expanded="false">
+    <div class="form-group">
+      <label for="receipt-name-{{ section.id }}" class="form-label">
+        領収書の宛名
+      </label>
+      <input 
+        type="text" 
+        id="receipt-name-{{ section.id }}" 
+        name="contact[receipt_name]" 
+        class="form-input"
+        placeholder="例：株式会社○○ 又は ○○様"
+        aria-describedby="receipt-name-description-{{ section.id }}"
+      >
+      <div id="receipt-name-description-{{ section.id }}" class="form-description">
+        領収書に記載する宛名をご入力ください。空欄の場合はお名前が使用されます。
+      </div>
+    </div>
+  </div>
+</fieldset>
+
+      <!-- 追加オプション -->
+      <fieldset class="form-section additional-options">
+        <legend class="form-section-title">追加オプション</legend>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bag-option-{{ section.id }}" class="form-label">手提げの有無</label>
+            <select 
+              id="bag-option-{{ section.id }}" 
+              name="contact[bag_option]" 
+              class="form-select"
+            >
+              <option value="">選択してください</option>
+              <option value="あり">あり</option>
+              <option value="なし">なし</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- その他のご要望 -->
+      <fieldset class="form-section">
+        <legend class="form-section-title">その他のご要望</legend>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="additional-requests-{{ section.id }}" class="form-label">
+              その他のご要望
+            </label>
+            <textarea 
+              id="additional-requests-{{ section.id }}" 
+              name="contact[body]" 
+              class="form-textarea"
+              rows="6"
+              placeholder="ご要望やご質問がございましたら、こちらにご記入ください。"
+              aria-describedby="textarea-description-{{ section.id }}"
+            ></textarea>
+            <div id="textarea-description-{{ section.id }}" class="form-description">
+              {{ section.settings.form_note | default: '領収書は入金確認後にメールにてお送りいたします。発送日や但し書きはお気軽にご相談ください。' }}
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 送信ボタン -->
+      <div class="form-submit">
+        <button type="submit" class="submit-button" aria-describedby="submit-description-{{ section.id }}">
+          <span class="submit-text">{{ section.settings.submit_button_text | default: 'お問い合わせを送信' }}</span>
+          <span class="submit-spinner" aria-hidden="true"></span>
+        </button>
+        <div id="submit-description-{{ section.id }}" class="form-description">
+          送信後、3営業日以内にお見積もりをお送りいたします。
+        </div>
+      </div>
+
+      <!-- フォーム送信結果表示エリア -->
+      <div class="form-message" role="alert" aria-live="polite"></div>
+    </form>
+  </div>
+</section>
+
+<script src="{{ 'bulk-order-form.js' | asset_url }}" defer></script>
+{% schema %}
+{
+  "name": "まとまったご注文フォーム",
+  "tag": "section",
+  "class": "section-bulk-order",
+  "settings": [
+    {
+      "type": "header",
+      "content": "セクション設定"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "セクションタイトル",
+      "default": "まとまったご注文について"
+    },
+    {
+      "type": "richtext",
+      "id": "section_description",
+      "label": "セクション説明文",
+      "info": "セクションの概要説明（任意）"
+    },
+    {
+      "type": "header",
+      "content": "注文情報設定"
+    },
+    {
+      "type": "richtext",
+      "id": "order_info_text",
+      "label": "注文情報テキスト",
+      "default": "<p>アイテムを問わず10個を超えるまとまった注文をご希望の場合は、送料を特別料金にてご案内可能です。</p><p>商品の発送は毎週木曜日です。発送日から10日前までに下記フォームよりお気軽にお問合せください。</p>",
+      "info": "注文に関する基本情報を記載"
+    },
+    {
+      "type": "text",
+      "id": "quote_duration",
+      "label": "お見積もり期間",
+      "default": "3日程度",
+      "info": "お問い合わせからお見積もりまでの期間"
+    },
+    {
+      "type": "text",
+      "id": "payment_note",
+      "label": "お支払いに関する注意事項",
+      "default": "発送の2日前までにお振込願います。",
+      "info": "支払いタイミングの説明"
+    },
+    {
+      "type": "text",
+      "id": "shipping_schedule",
+      "label": "発送スケジュール",
+      "default": "毎週木曜日",
+      "info": "定期発送スケジュール"
+    },
+    {
+      "type": "richtext",
+      "id": "additional_note",
+      "label": "追加情報",
+      "default": "<p>3日程度で担当者よりご返信させていただきます。</p>",
+      "info": "プロセスフロー下部の補足情報"
+    },
+    {
+      "type": "header",
+      "content": "商品設定"
+    },
+    {
+      "type": "collection",
+      "id": "product_collection",
+      "label": "商品コレクション",
+      "info": "プルダウンに表示する商品のコレクションを選択してください。選択しない場合は下記の手動設定が使用されます。"
+    },
+    {
+      "type": "textarea",
+      "id": "fallback_products",
+      "label": "手動商品設定（フォールバック）",
+      "default": "雪もち\nどら焼き\nおはぎ\n季節のおもち\n流水羹\n雪景糖\n米粉のぼうろ\nお茶・珈琲\n贈り物",
+      "info": "商品コレクションが選択されていない場合に使用されます。1行につき1商品名を入力してください。"
+    },
+    {
+      "type": "header",
+      "content": "フォーム設定"
+    },
+    {
+      "type": "richtext",
+      "id": "form_note",
+      "label": "フォーム注意事項",
+      "default": "<p>領収書は入金確認後にメールにてお送りいたします。配送先・請求先住所は正確にご入力ください。発送日や但し書きはお気軽にご相談ください。変更のご希望がございましたらお手数をおかけしますが、「その他のご要望」にお書きください。</p>",
+      "info": "フォーム下部に表示される注意事項"
+    },
+    {
+      "type": "text",
+      "id": "submit_button_text",
+      "label": "送信ボタンテキスト",
+      "default": "お問い合わせを送信"
+    },
+    {
+      "type": "header",
+      "content": "デザイン設定"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "背景色",
+      "default": "#f8f9fa"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "テキスト色",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "アクセント色",
+      "default": "#e91e63",
+      "info": "ボタンやハイライト部分の色"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "送信ボタン背景色",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "送信ボタン文字色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "ボーダー色",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "header",
+      "content": "フォントサイズ設定"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "タイトルフォントサイズ",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32,
+      "info": "セクションタイトルのフォントサイズ"
+    },
+    {
+      "type": "range",
+      "id": "desktop_font_size",
+      "label": "デスクトップ本文フォントサイズ",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_font_size",
+      "label": "モバイル本文フォントサイズ",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "余白設定"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "上部余白",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "下部余白",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "noshi_option",
+      "name": "熨斗オプション",
+      "settings": [
+        {
+          "type": "text",
+          "id": "noshi_name",
+          "label": "熨斗の名前",
+          "default": "御祝",
+          "info": "プルダウンに表示される熨斗の名前"
+        },
+        {
+          "type": "image_picker",
+          "id": "noshi_image",
+          "label": "熨斗サンプル画像",
+          "info": "熨斗選択時に表示されるサンプル画像をアップロードしてください"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "まとまったご注文フォーム",
+      "settings": {
+        "section_title": "まとまったご注文について",
+        "order_info_text": "<p>アイテムを問わず10個を超えるまとまった注文をご希望の場合は、送料を特別料金にてご案内可能です。</p><p>商品の発送は毎週木曜日です。発送日から10日前までに下記フォームよりお気軽にお問合せください。</p>",
+        "additional_note": "<p>3日程度で担当者よりご返信させていただきます。</p>",
+        "fallback_products": "雪もち\nどら焼き\nおはぎ\n季節のおもち\n流水羹\n雪景糖\n米粉のぼうろ\nお茶・珈琲\n贈り物",
+        "form_note": "<p>領収書は入金確認後にメールにてお送りいたします。配送先・請求先住所は正確にご入力ください。発送日や但し書きはお気軽にご相談ください。変更のご希望がございましたらお手数をおかけしますが、「その他のご要望」にお書きください。</p>",
+        "button_bg_color": "#000000",
+        "button_text_color": "#ffffff",
+        "title_font_size": 32,
+        "desktop_font_size": 16,
+        "mobile_font_size": 14
+      },
+      "blocks": [
+        {
+          "type": "noshi_option",
+          "settings": {
+            "noshi_name": "御祝"
+          }
+        },
+        {
+          "type": "noshi_option",
+          "settings": {
+            "noshi_name": "御礼"
+          }
+        },
+        {
+          "type": "noshi_option",
+          "settings": {
+            "noshi_name": "内祝"
+          }
+        },
+        {
+          "type": "noshi_option",
+          "settings": {
+            "noshi_name": "御中元"
+          }
+        },
+        {
+          "type": "noshi_option",
+          "settings": {
+            "noshi_name": "御歳暮"
+          }
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

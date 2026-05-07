@@ -1,0 +1,88 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "0f395ed3-fa6a-42d2-99c6-20d57a80af82": {
+          "type": "announcement",
+          "settings": {
+            "text": "Welcome to our store",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "0f395ed3-fa6a-42d2-99c6-20d57a80af82"
+      ],
+      "disabled": true,
+      "settings": {
+        "color_scheme": "background-1",
+        "show_line_separator": true,
+        "auto_rotate": false,
+        "change_slides_speed": 5
+      }
+    },
+    "header": {
+      "type": "header",
+      "custom_css": [
+        ".japanese-menu-logo {display: none;}",
+        ".japanese-menu-close {font-size: 3.5rem;}",
+        "sticky-header.header-wrapper.color-background-2.gradient {z-index: 1;}"
+      ],
+      "settings": {
+        "logo_position": "top-center",
+        "menu": "header-menu",
+        "menu_type_desktop": "drawer",
+        "sticky_header_type": "on-scroll-up",
+        "show_line_separator": false,
+        "color_scheme": "background-2",
+        "enable_japanese_menu": true,
+        "menu_title": "",
+        "menu_bg_color": "#e7eaf0",
+        "menu_text_color": "#84858a",
+        "menu_accent_color": "#84858a",
+        "button_bg_color": "#b3b6bc",
+        "button_text_color": "#ffffff",
+        "heading_font": "zen_old_mincho_n4",
+        "body_font": "zen_old_mincho_n4",
+        "menu_title_size": 24,
+        "menu_text_size": 18,
+        "button_text_size": 16,
+        "enable_sakura_animation": true,
+        "animation_speed": 1,
+        "sakura_size": 10,
+        "sakura_opacity": 0.6,
+        "show_register_button": true,
+        "login_text": "ログイン",
+        "register_text": "新規会員登録",
+        "account_text": "マイアカウント",
+        "button_border_radius": 8,
+        "mobile_padding": 24,
+        "desktop_menu_width": 35,
+        "menu_item_height": 64,
+        "mobile_logo_position": "center",
+        "enable_country_selector": false,
+        "enable_language_selector": false,
+        "hide_search_modal": false,
+        "margin_bottom": 0,
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "header"
+  ]
+}

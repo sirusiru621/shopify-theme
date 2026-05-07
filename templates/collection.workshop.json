@@ -1,0 +1,275 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumb_GgaMUf": {
+      "type": "breadcrumb",
+      "name": "パンくずリスト",
+      "settings": {
+        "home_text": "TOP",
+        "show_home_icon": false,
+        "separator_style": "arrow",
+        "enable_animations": false,
+        "background_color": "#e7eaf0",
+        "text_color": "#595757",
+        "link_color": "#333333",
+        "current_page_color": "#999999",
+        "font_size_desktop": 12,
+        "font_size_mobile": 12,
+        "padding_top": 4,
+        "padding_bottom": 4,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "image_banner_HpQjwR": {
+      "type": "image-banner",
+      "disabled": true,
+      "name": "t:sections.image-banner.presets.name",
+      "settings": {
+        "image": "shopify://shop_images/instagram01.jpg",
+        "image_overlay_opacity": 0,
+        "image_height": "adapt",
+        "desktop_content_position": "middle-center",
+        "show_text_box": false,
+        "desktop_content_alignment": "center",
+        "color_scheme": "",
+        "image_behavior": "none",
+        "mobile_content_alignment": "center",
+        "stack_images_on_mobile": false,
+        "show_text_below": false
+      }
+    },
+    "multicolumn_y4PUWt": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_VqqYXB": {
+          "type": "column",
+          "settings": {
+            "title": "Column",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_Mefn6M": {
+          "type": "column",
+          "settings": {
+            "title": "Column",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_VqqYXB",
+        "column_Mefn6M"
+      ],
+      "disabled": true,
+      "name": "t:sections.multicolumn.presets.name",
+      "settings": {
+        "title": "",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "columns_desktop": 2,
+        "column_alignment": "left",
+        "background_style": "primary",
+        "button_label": "Button label",
+        "button_link": "",
+        "color_scheme": "",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": false,
+        "show_collection_image": false,
+        "color_scheme": "background-1"
+      }
+    },
+    "sakka_collection_section_K6fJr7": {
+      "type": "sakka-collection-section",
+      "blocks": {
+        "banner_DNAXaA": {
+          "type": "banner",
+          "settings": {
+            "banner_image": "shopify://shop_images/instagram01.jpg",
+            "banner_size": "full",
+            "show_overlay": false,
+            "banner_title": "",
+            "banner_subtitle": "",
+            "banner_title_mobile": "",
+            "banner_subtitle_mobile": "",
+            "banner_url": "",
+            "open_new_tab": false
+          }
+        },
+        "multi_column_a3QjJV": {
+          "type": "multi_column",
+          "settings": {
+            "column_image": "shopify://shop_images/1_2e36bf01-0edd-446b-841e-1d3b73bc9cb2.jpg",
+            "column_title": "祝亀をつくる会 お菓子とお茶付き",
+            "column_link": "shopify://products/ws1",
+            "open_new_tab": false
+          }
+        },
+        "multi_column_LjfJXG": {
+          "type": "multi_column",
+          "settings": {
+            "column_image": "shopify://shop_images/1_1.jpg",
+            "column_title": "玉飾りをつくる会 お菓子とお茶付き",
+            "column_link": "shopify://products/ws2",
+            "open_new_tab": false
+          }
+        },
+        "description_bambbF": {
+          "type": "description",
+          "settings": {
+            "show_header": true,
+            "description_title": "祈り、綯うとき内藤千鶴新年のしつらい飾り作家",
+            "description_subtitle": "WORKSHOP EVNET",
+            "description_text": "<h3><strong>歳神様を迎える家として年末に飾られるしめ縄<br/>厄払い、魔除けの役割を果たすと言われている。<br/><br/>藁、土　、植物 これらの素材と向き合い編 み 、結び 、祈りながら 手 を<br/>動かしその想いを形にする。日本人が古来から行ってきた <br/></strong></h3><h3><strong>しめ縄の文化「 祈 り 」は今を生きる私たちの生活の中にも確かに流れている。 </strong></h3><p>内藤さんの作品は物質的な美しさだけではない 、時代を通して受け継がれる日本人の静かな祈りが息づく。忙しない日々を過ごす中で一度自分の心と向き合い、来年はどんな年にしたいかとじっくり考えるとき 。そんな祈りのときにそっと寄り添い 、人の内側に静かに響く存在となる。 </p>",
+            "show_career": false,
+            "career_section_title": "経歴",
+            "career_items": "1979|札幌市生まれ\n2002|札幌市立高等専門学校　インダストリアル・デザイン学科　専攻科修了\n2005|金沢卯辰山工芸工房　修了\n現在　富山県南砺市にて制作"
+          }
+        }
+      },
+      "block_order": [
+        "banner_DNAXaA",
+        "multi_column_a3QjJV",
+        "multi_column_LjfJXG",
+        "description_bambbF"
+      ],
+      "custom_css": [
+        ".artist-menu__link {border-radius: 0px;}",
+        ".artist-menu__link {}",
+        "@media screen and (max-width: 768px) {.banner-item.size-full {height: 400px !important; }}",
+        ".banner-item.size-full {max-height: 100% !important; min-height: max-content;}"
+      ],
+      "name": "Artist Collection Template",
+      "settings": {
+        "sidebar_width": 280,
+        "content_gap": 20,
+        "sidebar_title": "作家",
+        "menu_handle": "sakka-menu",
+        "sidebar_bg_color": "rgba(0,0,0,0)",
+        "sidebar_border_color": "#e9ecef",
+        "sidebar_padding": 20,
+        "sidebar_border_radius": 0,
+        "sidebar_title_size": 16,
+        "sidebar_title_weight": "600",
+        "sidebar_title_color": "#212529",
+        "menu_link_size": 14,
+        "menu_link_weight": "400",
+        "menu_link_color": "#495057",
+        "menu_link_hover_color": "#000000",
+        "menu_link_hover_bg": "#b7cadc",
+        "menu_link_active_color": "#121212",
+        "menu_link_active_bg": "#f0f5f7",
+        "accent_color": "#121212",
+        "description_section_margin": 40,
+        "description_padding": 30,
+        "description_bg_color": "#f0f5f7",
+        "description_border_color": "#e9ecef",
+        "description_border_radius": 0,
+        "description_content_gap": 25,
+        "description_header_margin": 25,
+        "description_header_padding": 12,
+        "description_title_size": 28,
+        "description_title_weight": "600",
+        "description_title_color": "#212529",
+        "description_subtitle_size": 18,
+        "description_subtitle_weight": "400",
+        "description_subtitle_color": "#6c757d",
+        "description_text_size": 15,
+        "description_text_line_height": 1.7,
+        "description_text_color": "#495057",
+        "career_title_size": 20,
+        "career_title_weight": "600",
+        "career_title_color": "#212529",
+        "career_year_width": 80,
+        "career_year_size": 14,
+        "career_year_weight": "500",
+        "career_year_color": "#6c757d",
+        "career_content_size": 14,
+        "career_content_color": "#495057",
+        "career_border_color": "#f1f3f4",
+        "banner_height": 400,
+        "banner_height_mobile": 250,
+        "banner_border_radius": 0,
+        "banner_gap": 20,
+        "banner_section_margin": 40,
+        "overlay_direction": 180,
+        "overlay_opacity_start": 60,
+        "overlay_opacity_end": 20,
+        "banner_title_size": 24,
+        "banner_title_weight": "600",
+        "banner_subtitle_size": 16,
+        "banner_subtitle_weight": "400",
+        "products_per_page": 16,
+        "columns_desktop": 3,
+        "columns_mobile": "2",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "enable_quick_add": false,
+        "enable_filtering": false,
+        "filter_type": "horizontal",
+        "enable_sorting": false,
+        "mobile_sidebar_order": "1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 24,
+        "columns_desktop": 3,
+        "show_product_tags": false,
+        "tag_display_limit": 1,
+        "tag_background_color": "#000000",
+        "tag_text_color": "#ffffff",
+        "tag_font_size": "12px",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "enable_quick_add": false,
+        "enable_filtering": false,
+        "filter_type": "horizontal",
+        "enable_sorting": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "breadcrumb_GgaMUf",
+    "image_banner_HpQjwR",
+    "multicolumn_y4PUWt",
+    "banner",
+    "sakka_collection_section_K6fJr7",
+    "product-grid"
+  ]
+}

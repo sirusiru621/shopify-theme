@@ -1,0 +1,911 @@
+{% comment %}
+  Dedication Section - Japanese Style Food/Product Showcase
+  Features: Full-width image backgrounds with text overlay cards
+  Responsive: Mobile 375px, Tablet 768px, Desktop 1280px+
+{% endcomment %}
+
+{%- liquid
+  assign section_id = 'dedication-' | append: section.id
+  assign padding_top = section.settings.padding_top
+  assign padding_bottom = section.settings.padding_bottom
+  assign mobile_padding_top = section.settings.mobile_padding_top
+  assign mobile_padding_bottom = section.settings.mobile_padding_bottom
+-%}
+
+<style>
+  #{{ section_id }} {
+    padding-top: {{ mobile_padding_top }}px;
+    padding-bottom: {{ mobile_padding_bottom }}px;
+  }
+
+  @media (min-width: 768px) {
+    #{{ section_id }} {
+      padding-top: {{ padding_top }}px;
+      padding-bottom: {{ padding_bottom }}px;
+    }
+  }
+
+  /* Base Styles */
+  .dedication-container {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .dedication-item {
+    position: relative;
+    min-height: 400px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (min-width: 768px) {
+    .dedication-item {
+      min-height: 500px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .dedication-item {
+      min-height: 600px;
+    }
+  }
+
+  /* Background Image */
+  .dedication-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  .dedication-bg.lazy {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .dedication-bg.loaded {
+    opacity: 1;
+  }
+
+  /* Overlay */
+  .dedication-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 2;
+  }
+
+  /* Content Card */
+  .dedication-content {
+    position: relative;
+    z-index: 3;
+    padding: 2rem;
+    margin: 1rem;
+    max-width: 400px;
+    width: calc(100% - 2rem);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+  }
+
+  @media (min-width: 768px) {
+    .dedication-content {
+      padding: 2.5rem;
+      max-width: 450px;
+      margin: 2rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .dedication-content {
+      padding: 3rem;
+      max-width: 500px;
+    }
+  }
+
+  .dedication-content.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Typography - ブロック要素内のテキスト（既存の縦書きスタイルを維持） */
+  .dedication-title {
+    font-weight: 600;
+    color: #2c2c2c;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    float: right;
+  }
+
+  .dedication-text {
+    color: #4a4a4a;
+    margin-bottom: 0;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    clear: both;
+  }
+
+  /* Link Button Styles */
+  .dedication-link-button {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 4;
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background-color: #d4002a;
+    color: #ffffff;
+    text-decoration: none;
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    writing-mode: horizontal-tb;
+    text-align: center;
+    min-width: 120px;
+    box-shadow: 0 4px 12px rgba(212, 0, 42, 0.3);
+  }
+
+  .dedication-link-button:hover {
+    background-color: #b8001e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 0, 42, 0.4);
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .dedication-link-button.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Button positioning variants */
+  .dedication-item.align-left .dedication-link-button {
+    left: 2rem;
+    right: auto;
+  }
+
+  .dedication-item.align-center .dedication-link-button {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) translateY(20px);
+  }
+
+  .dedication-item.align-center .dedication-link-button.animate {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .dedication-item.align-center .dedication-link-button:hover {
+    transform: translateX(-50%) translateY(-2px);
+  }
+
+  /* Mobile responsiveness for buttons */
+  @media (max-width: 768px) {
+    .dedication-link-button {
+      bottom: 1rem;
+      right: 1rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.8rem;
+      min-width: 100px;
+    }
+
+    .dedication-item.align-left .dedication-link-button {
+      left: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .dedication-link-button {
+      position: relative;
+      bottom: auto;
+      right: auto;
+      left: auto;
+      margin: 1rem 0 0 0;
+      transform: none;
+      opacity: 1;
+      width: 100%;
+      text-align: center;
+    }
+
+    .dedication-item.align-center .dedication-link-button,
+    .dedication-item.align-left .dedication-link-button {
+      position: relative;
+      bottom: auto;
+      right: auto;
+      left: auto;
+      margin: 1rem 0 0 0;
+      transform: none;
+      width: 100%;
+    }
+  }
+
+  /* Alignment Variants */
+  .dedication-item.align-left .dedication-content {
+    margin-left: 2rem;
+    margin-right: auto;
+  }
+
+  .dedication-item.align-right .dedication-content {
+    margin-left: auto;
+    margin-right: 2rem;
+  }
+
+  .dedication-item.align-center .dedication-content {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (max-width: 767px) {
+    .dedication-item.align-left .dedication-content,
+    .dedication-item.align-right .dedication-content,
+    .dedication-item.align-center .dedication-content {
+      margin-left: 1rem;
+      margin-right: 1rem;
+    }
+  }
+
+  /* Section Header - 新しい縦書き+横書きスタイル */
+  .dedication-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3rem;
+    min-height: 200px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease;
+  }
+
+  .dedication-header.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* メインタイトル - 縦書きスタイル */
+  .dedication-main-title {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', 'Noto Sans JP', 'メイリオ', 'Meiryo', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: #2c2c2c;
+    margin: 0 0 1rem 0;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+    
+    /* 縦書き設定 */
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    height: 180px;
+    align-self: center;
+    
+    /* テキストレンダリング最適化 */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* サブタイトル - 横書きスタイル */
+  .dedication-subtitle {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 1rem;
+    color: #666;
+    font-style: italic;
+    letter-spacing: 0.05em;
+    margin: 0;
+    
+    /* 横書き設定 */
+    writing-mode: horizontal-tb;
+    text-align: center;
+    align-self: flex-end;
+    margin-bottom: 1rem;
+    
+    /* 欧文の最適化 */
+    font-feature-settings: "liga" 1, "kern" 1;
+  }
+
+  /* タブレット対応 */
+  @media (max-width: 1024px) {
+    .dedication-header {
+      min-height: 160px;
+      margin-bottom: 2rem;
+    }
+    
+    .dedication-main-title {
+      font-size: 2rem;
+      height: 140px;
+      margin-bottom: 1rem;
+    }
+    
+    .dedication-subtitle {
+      font-size: 0.9rem;
+      margin-bottom: 0.8rem;
+    }
+  }
+
+  /* モバイル対応 */
+  @media (max-width: 768px) {
+    .dedication-header {
+      min-height: 120px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .dedication-main-title {
+      font-size: 1.5rem;
+      height: 100px;
+      margin-bottom: 1rem;
+    }
+    
+    .dedication-subtitle {
+      font-size: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  /* 小さなモバイル画面対応 */
+  @media (max-width: 480px) {
+    .dedication-header {
+      min-height: auto;
+    }
+    
+    .dedication-main-title {
+      font-size: 1.3rem;
+      height: 80px;
+      margin-bottom: 1rem;
+    }
+    
+    .dedication-subtitle {
+      font-size: 0.75rem;
+      margin-bottom: 0;
+    }
+  }
+
+  /* ヘッダーレイアウトバリエーション */
+  .dedication-header.horizontal-layout {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dedication-header.horizontal-layout .dedication-main-title {
+    margin: 0 2rem 0 0;
+  }
+
+  .dedication-header.horizontal-layout .dedication-subtitle {
+    margin: 0;
+    align-self: flex-end;
+  }
+</style>
+
+<section id="{{ section_id }}" class="dedication-section">
+  <div class="dedication-container">
+    
+    {% comment %} Section Header {% endcomment %}
+    {% if section.settings.main_title != blank or section.settings.subtitle != blank %}
+      <div class="dedication-header">
+        {% if section.settings.main_title != blank %}
+          <h2 class="dedication-main-title">{{ section.settings.main_title }}</h2>
+        {% endif %}
+        {% if section.settings.subtitle != blank %}
+          <p class="dedication-subtitle">{{ section.settings.subtitle }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% comment %} Dedication Items {% endcomment %}
+    {% for block in section.blocks %}
+      {%- liquid
+        assign image = block.settings.image
+        assign title = block.settings.title
+        assign text = block.settings.text
+        assign alignment = block.settings.content_alignment
+        assign custom_bg_color = block.settings.background_color
+        assign custom_text_color = block.settings.text_color
+      -%}
+
+      <div class="dedication-item align-{{ alignment }}" {{ block.shopify_attributes }}>
+        
+        {% comment %} Background Image {% endcomment %}
+        {% if image != blank %}
+          <img 
+            class="dedication-bg lazy"
+            data-src="{{ image | img_url: '1920x1080' }}"
+            data-srcset="{{ image | img_url: '768x432' }} 768w,
+                         {{ image | img_url: '1024x576' }} 1024w,
+                         {{ image | img_url: '1920x1080' }} 1920w"
+            sizes="100vw"
+            alt="{{ image.alt | escape }}"
+            loading="lazy"
+            width="{{ image.width }}"
+            height="{{ image.height }}"
+          >
+        {% endif %}
+
+        {% comment %} Overlay {% endcomment %}
+        <div class="dedication-overlay" 
+             {% if custom_bg_color != blank %}
+               style="background: {{ custom_bg_color }};"
+             {% endif %}>
+        </div>
+
+        {% comment %} Content Card {% endcomment %}
+        <div class="dedication-content"
+             style="background: {{ block.settings.card_background_color | default: 'rgba(255, 255, 255, 0.95)' }};
+                    backdrop-filter: blur({{ block.settings.blur_intensity }}px);
+                    {% if custom_text_color != blank %}color: {{ custom_text_color }};{% endif %}">
+          
+          {% if title != blank %}
+            <h3 class="dedication-title"
+                style="font-size: {{ block.settings.title_font_size }}px;
+                       height: {{ block.settings.title_height }}px;
+                       {% if custom_text_color != blank %}color: {{ custom_text_color }};{% endif %}">
+              {{ title }}
+            </h3>
+          {% endif %}
+
+          {% if text != blank %}
+            <div class="dedication-text"
+                 style="font-size: {{ block.settings.text_font_size }}px;
+                        line-height: {{ block.settings.text_line_height }};
+                        height: {{ block.settings.text_height }}px;
+                        {% if custom_text_color != blank %}color: {{ custom_text_color }};{% endif %}">
+              {{ text }}
+            </div>
+          {% endif %}
+
+        </div>
+
+        {% comment %} Link Button {% endcomment %}
+        {% if block.settings.button_text != blank and block.settings.button_url != blank %}
+          <a href="{{ block.settings.button_url }}" 
+             class="dedication-link-button"
+             style="background-color: {{ block.settings.button_bg_color | default: '#d4002a' }};
+                    color: {{ block.settings.button_text_color | default: '#ffffff' }};"
+             {% if block.settings.button_url contains 'http' %}target="_blank" rel="noopener"{% endif %}>
+            {{ block.settings.button_text }}
+          </a>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+  </div>
+</section>
+
+<script>
+  (function() {
+    'use strict';
+
+    // Intersection Observer for animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Lazy loading for images
+    const imageObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          const src = img.dataset.src;
+          const srcset = img.dataset.srcset;
+          
+          if (src) {
+            img.src = src;
+          }
+          if (srcset) {
+            img.srcset = srcset;
+          }
+          
+          img.onload = () => {
+            img.classList.add('loaded');
+          };
+          
+          img.classList.remove('lazy');
+          imageObserver.unobserve(img);
+        }
+      });
+    });
+
+    // Initialize on DOM load
+    document.addEventListener('DOMContentLoaded', () => {
+      const sectionId = '{{ section_id }}';
+      const section = document.getElementById(sectionId);
+      
+      if (!section) return;
+
+      // Observe header for animation
+      const header = section.querySelector('.dedication-header');
+      if (header) {
+        observer.observe(header);
+      }
+
+      // Observe content cards for animation
+      const contents = section.querySelectorAll('.dedication-content');
+      contents.forEach(content => {
+        observer.observe(content);
+      });
+
+      // Observe link buttons for animation
+      const buttons = section.querySelectorAll('.dedication-link-button');
+      buttons.forEach(button => {
+        observer.observe(button);
+      });
+
+      // Observe images for lazy loading
+      const images = section.querySelectorAll('.dedication-bg.lazy');
+      images.forEach(img => {
+        imageObserver.observe(img);
+      });
+    });
+
+    // Handle theme editor updates
+    document.addEventListener('shopify:section:load', (event) => {
+      if (event.detail.sectionId === '{{ section.id }}') {
+        // Re-initialize observers for newly loaded content
+        setTimeout(() => {
+          const section = event.target;
+          const contents = section.querySelectorAll('.dedication-content');
+          const images = section.querySelectorAll('.dedication-bg.lazy');
+          const buttons = section.querySelectorAll('.dedication-link-button');
+          
+          contents.forEach(content => observer.observe(content));
+          images.forEach(img => imageObserver.observe(img));
+          buttons.forEach(button => observer.observe(button));
+        }, 100);
+      }
+    });
+
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "こだわりの品",
+  "tag": "section",
+  "class": "section dedication-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "セクション設定"
+    },
+    {
+      "type": "text",
+      "id": "main_title",
+      "label": "メインタイトル（縦書き表示）",
+      "default": "こだわりの品",
+      "info": "日本語タイトルが縦書きで表示されます"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "サブタイトル（横書き表示）",
+      "default": "Our Dedication",
+      "info": "英語サブタイトルが横書きで表示されます"
+    },
+    {
+      "type": "header",
+      "content": "余白設定"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "上部余白（デスクトップ）",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "下部余白（デスクトップ）",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "上部余白（モバイル）",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "下部余白（モバイル）",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "dedication_item",
+      "name": "こだわりアイテム",
+      "settings": [
+        {
+          "type": "header",
+          "content": "画像設定"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "背景画像",
+          "info": "推奨サイズ: 1920x1080px"
+        },
+        {
+          "type": "header",
+          "content": "コンテンツ設定"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "タイトル（縦書き表示）",
+          "default": "品質へのこだわり",
+          "info": "ブロック内のタイトルは縦書きで表示されます"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "説明文（縦書き表示）",
+          "default": "<p>私たちは素材選びから製造工程まで、すべてにおいて妥協を許しません。伝統的な技法を大切にしながら、現代のニーズに合わせた商品づくりを心がけています。</p>",
+          "info": "ブロック内の本文は縦書きで表示されます"
+        },
+        {
+          "type": "header",
+          "content": "縦書きテキスト設定"
+        },
+        {
+          "type": "range",
+          "id": "title_font_size",
+          "min": 12,
+          "max": 48,
+          "step": 1,
+          "unit": "px",
+          "label": "タイトル文字サイズ",
+          "default": 20,
+          "info": "縦書きタイトルの文字サイズを調整"
+        },
+        {
+          "type": "range",
+          "id": "title_height",
+          "min": 60,
+          "max": 300,
+          "step": 10,
+          "unit": "px",
+          "label": "タイトル縦書き範囲の高さ",
+          "default": 120,
+          "info": "縦書きタイトルの表示高さを調整"
+        },
+        {
+          "type": "range",
+          "id": "text_font_size",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "本文文字サイズ",
+          "default": 14,
+          "info": "縦書き本文の文字サイズを調整"
+        },
+        {
+          "type": "range",
+          "id": "text_line_height",
+          "min": 1.2,
+          "max": 2.5,
+          "step": 0.1,
+          "label": "本文行間",
+          "default": 1.8,
+          "info": "縦書き本文の行間を調整"
+        },
+        {
+          "type": "range",
+          "id": "text_height",
+          "min": 100,
+          "max": 400,
+          "step": 10,
+          "unit": "px",
+          "label": "本文縦書き範囲の高さ",
+          "default": 200,
+          "info": "縦書き本文の表示高さを調整"
+        },
+        {
+          "type": "header",
+          "content": "カードデザイン設定"
+        },
+        {
+          "type": "color_background",
+          "id": "card_background_color",
+          "label": "カード背景色",
+          "default": "rgba(255, 255, 255, 0.95)",
+          "info": "コンテンツカードの背景色と透明度"
+        },
+        {
+          "type": "range",
+          "id": "blur_intensity",
+          "min": 0,
+          "max": 30,
+          "step": 1,
+          "unit": "px",
+          "label": "ぼかし強度",
+          "default": 10,
+          "info": "カード背景のぼかし効果の強さ"
+        },
+        {
+          "type": "header",
+          "content": "リンクボタン設定"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "ボタンテキスト",
+          "info": "ボタンに表示するテキスト（空の場合はボタンを非表示）"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "リンク先URL",
+          "info": "ボタンをクリックした時の遷移先URL"
+        },
+        {
+          "type": "color",
+          "id": "button_bg_color",
+          "label": "ボタン背景色",
+          "default": "#d4002a"
+        },
+        {
+          "type": "color",
+          "id": "button_text_color",
+          "label": "ボタンテキスト色",
+          "default": "#ffffff"
+        },
+        {
+          "type": "header",
+          "content": "レイアウト設定"
+        },
+        {
+          "type": "select",
+          "id": "content_alignment",
+          "label": "コンテンツ配置",
+          "options": [
+            {
+              "value": "left",
+              "label": "左寄せ"
+            },
+            {
+              "value": "center",
+              "label": "中央"
+            },
+            {
+              "value": "right",
+              "label": "右寄せ"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "header",
+          "content": "カラー設定"
+        },
+        {
+          "type": "color_background",
+          "id": "background_color",
+          "label": "オーバーレイ色",
+          "default": "rgba(0,0,0,0.3)",
+          "info": "背景画像の上に重ねる色と透明度"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "テキスト色",
+          "default": "#2c2c2c",
+          "info": "タイトルと本文のテキスト色"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "こだわりの品",
+      "blocks": [
+        {
+          "type": "dedication_item",
+          "settings": {
+            "title": "素材へのこだわり",
+            "text": "<p>厳選された上質な素材のみを使用し、職人の技術と伝統を大切にした製品づくりを行っています。一つひとつに込められた想いをお届けします。</p>",
+            "content_alignment": "left",
+            "title_font_size": 20,
+            "title_height": 120,
+            "text_font_size": 14,
+            "text_line_height": 1.8,
+            "text_height": 200,
+            "blur_intensity": 10,
+            "button_text": "詳しく見る",
+            "button_url": "/pages/materials"
+          }
+        },
+        {
+          "type": "dedication_item",
+          "settings": {
+            "title": "伝統の味",
+            "text": "<p>代々受け継がれてきた製法を守り続け、変わらぬ美味しさを提供します。時代を超えて愛される味わいを大切にしています。</p>",
+            "content_alignment": "right",
+            "title_font_size": 22,
+            "title_height": 140,
+            "text_font_size": 13,
+            "text_line_height": 1.9,
+            "text_height": 180,
+            "blur_intensity": 15,
+            "button_text": "製法について",
+            "button_url": "/pages/tradition"
+          }
+        },
+        {
+          "type": "dedication_item",
+          "settings": {
+            "title": "手作りの温もり",
+            "text": "<p>機械では表現できない手作りならではの温もりと、職人の技が光る逸品をお届けします。ひとつひとつ心を込めて作り上げています。</p>",
+            "content_alignment": "center",
+            "title_font_size": 18,
+            "title_height": 100,
+            "text_font_size": 15,
+            "text_line_height": 1.7,
+            "text_height": 220,
+            "blur_intensity": 8,
+            "button_text": "職人紹介",
+            "button_url": "/pages/craftsman"
+          }
+        },
+        {
+          "type": "dedication_item",
+          "settings": {
+            "title": "品質保証",
+            "text": "<p>厳しい品質管理のもと、安心・安全な製品をお客様にお届けしています。お客様の笑顔が私たちの何よりの喜びです。</p>",
+            "content_alignment": "left",
+            "title_font_size": 24,
+            "title_height": 160,
+            "text_font_size": 12,
+            "text_line_height": 2.0,
+            "text_height": 240,
+            "blur_intensity": 12,
+            "button_text": "品質について",
+            "button_url": "/pages/quality"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

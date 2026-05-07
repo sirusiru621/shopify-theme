@@ -1,0 +1,130 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 52,
+        "padding_bottom": 28
+      }
+    },
+    "e1903705-ed89-4ba7-920a-28988ffb213b": {
+      "type": "rich-text",
+      "blocks": {
+        "template--21359485387035__e1903705-ed89-4ba7-920a-28988ffb213b-heading-1": {
+          "type": "heading",
+          "settings": {
+            "heading": "Coming Soon",
+            "heading_size": "h1"
+          }
+        },
+        "template--21359485387035__e1903705-ed89-4ba7-920a-28988ffb213b-text-1": {
+          "type": "text",
+          "settings": {
+            "text": "<p>現在準備中です。</p>"
+          }
+        },
+        "4f3e8402-385e-4934-907f-4edd7fb15904": {
+          "type": "button",
+          "disabled": true,
+          "settings": {
+            "button_label": "Button label",
+            "button_link": "",
+            "button_style_secondary": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        },
+        "template--21359485387035__e1903705-ed89-4ba7-920a-28988ffb213b-button-1": {
+          "type": "button",
+          "disabled": true,
+          "settings": {
+            "button_label": "Button label",
+            "button_link": "",
+            "button_style_secondary": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "template--21359485387035__e1903705-ed89-4ba7-920a-28988ffb213b-heading-1",
+        "template--21359485387035__e1903705-ed89-4ba7-920a-28988ffb213b-text-1",
+        "4f3e8402-385e-4934-907f-4edd7fb15904",
+        "template--21359485387035__e1903705-ed89-4ba7-920a-28988ffb213b-button-1"
+      ],
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "background-2",
+        "full_width": true,
+        "padding_top": 100,
+        "padding_bottom": 100
+      }
+    },
+    "1dfe2a1a-6272-4640-a732-1120ba72b3cf": {
+      "type": "image-banner",
+      "blocks": {
+        "template--21359485387035__1dfe2a1a-6272-4640-a732-1120ba72b3cf-heading-1": {
+          "type": "heading",
+          "settings": {
+            "heading": "Image banner",
+            "heading_size": "h1"
+          }
+        },
+        "template--21359485387035__1dfe2a1a-6272-4640-a732-1120ba72b3cf-text-1": {
+          "type": "text",
+          "settings": {
+            "text": "Give customers details about the banner image(s) or content on the template.",
+            "text_style": "body"
+          }
+        },
+        "template--21359485387035__1dfe2a1a-6272-4640-a732-1120ba72b3cf-buttons-1": {
+          "type": "buttons",
+          "settings": {
+            "button_label_1": "Button label",
+            "button_link_1": "",
+            "button_style_secondary_1": false,
+            "button_label_2": "Button label",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "template--21359485387035__1dfe2a1a-6272-4640-a732-1120ba72b3cf-heading-1",
+        "template--21359485387035__1dfe2a1a-6272-4640-a732-1120ba72b3cf-text-1",
+        "template--21359485387035__1dfe2a1a-6272-4640-a732-1120ba72b3cf-buttons-1"
+      ],
+      "disabled": true,
+      "settings": {
+        "image_overlay_opacity": 0,
+        "image_height": "medium",
+        "desktop_content_position": "middle-center",
+        "show_text_box": true,
+        "desktop_content_alignment": "center",
+        "color_scheme": "",
+        "image_behavior": "none",
+        "mobile_content_alignment": "center",
+        "stack_images_on_mobile": true,
+        "show_text_below": true
+      }
+    }
+  },
+  "order": [
+    "main",
+    "e1903705-ed89-4ba7-920a-28988ffb213b",
+    "1dfe2a1a-6272-4640-a732-1120ba72b3cf"
+  ]
+}

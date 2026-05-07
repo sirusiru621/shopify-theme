@@ -1,0 +1,72 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.footer.name",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "image_9eVz93": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/sisiri_LOGO_hp-02_4eab70e9-1098-4cdd-bb8a-bf224c3f2f28_430x_1.webp",
+            "image_width": 75,
+            "alignment": "center"
+          }
+        },
+        "link_list_mTdxat": {
+          "type": "link_list",
+          "settings": {
+            "heading": "",
+            "menu": "header-menu"
+          }
+        },
+        "link_list_YpTpxe": {
+          "type": "link_list",
+          "settings": {
+            "heading": "",
+            "menu": "link-list"
+          }
+        },
+        "link_list_H6p3d9": {
+          "type": "link_list",
+          "settings": {
+            "heading": "",
+            "menu": "footer-1"
+          }
+        }
+      },
+      "block_order": [
+        "image_9eVz93",
+        "link_list_mTdxat",
+        "link_list_YpTpxe",
+        "link_list_H6p3d9"
+      ],
+      "settings": {
+        "color_scheme": "background-2",
+        "newsletter_enable": false,
+        "newsletter_heading": "Subscribe to our emails",
+        "enable_follow_on_shop": false,
+        "show_social": true,
+        "enable_country_selector": true,
+        "enable_language_selector": true,
+        "payment_enable": false,
+        "show_policy": false,
+        "margin_top": 0,
+        "padding_top": 40,
+        "padding_bottom": 0
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

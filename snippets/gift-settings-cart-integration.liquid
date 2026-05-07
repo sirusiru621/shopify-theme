@@ -1,0 +1,242 @@
+<!-- ファイル名: gift-settings-cart-integration.liquid -->
+<!-- カート画面でのギフト設定表示スニペット -->
+<!-- 使用方法: {% render 'gift-settings-cart-integration', item: cart_item %} -->
+
+{%- comment -%}
+  このスニペットは、カート内のアイテムにギフト設定プロパティが
+  含まれている場合に、その内容を表示します。
+  
+  パラメータ:
+  - item: カートアイテム（必須）
+  - show_edit_link: 編集リンクを表示するか（オプション、デフォルト: false）
+{%- endcomment -%}
+
+{%- liquid
+  # ギフト設定プロパティの確認
+  assign gift_quantity = item.properties['ギフト設定_数量']
+  assign gift_purpose = item.properties['ギフト設定_用途']
+  assign gift_addressee = item.properties['ギフト設定_宛名書き']
+  assign gift_completed = item.properties['ギフト設定_完了']
+  assign gift_timestamp = item.properties['ギフト設定_タイムスタンプ']
+  assign gift_product_id = item.properties['ギフト設定_商品ID']
+  
+  # ギフト設定が存在するかチェック
+  assign has_gift_settings = false
+  if gift_completed == 'true' and gift_quantity != blank and gift_purpose != blank
+    assign has_gift_settings = true
+  endif
+-%}
+
+{%- if has_gift_settings -%}
+  <div class="cart-gift-settings" data-cart-item-id="{{ item.id }}">
+    
+    <!-- ギフト設定ヘッダー -->
+    <div class="cart-gift-header">
+      <h4 class="cart-gift-title">
+        <svg class="cart-gift-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 12v10H4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M22 7H2v5h20V7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 22V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        ギフト設定
+      </h4>
+      
+      {%- if show_edit_link and gift_product_id -%}
+        <a href="{{ routes.products_url }}/{{ all_products[gift_product_id].handle }}" 
+           class="cart-gift-edit-link"
+           aria-label="ギフト設定を編集">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          編集
+        </a>
+      {%- endif -%}
+    </div>
+
+    <!-- ギフト設定詳細 -->
+    <div class="cart-gift-details">
+      
+      <!-- 数量 -->
+      <div class="cart-gift-detail-item">
+        <span class="cart-gift-label">数量:</span>
+        <span class="cart-gift-value">{{ gift_quantity }}</span>
+      </div>
+
+      <!-- 用途 -->
+      <div class="cart-gift-detail-item">
+        <span class="cart-gift-label">用途:</span>
+        <span class="cart-gift-value">{{ gift_purpose }}</span>
+      </div>
+
+      <!-- 宛名書き（設定されている場合のみ） -->
+      {%- if gift_addressee != blank -%}
+        <div class="cart-gift-detail-item">
+          <span class="cart-gift-label">宛名書き:</span>
+          <span class="cart-gift-value">{{ gift_addressee }}</span>
+        </div>
+      {%- endif -%}
+
+      <!-- 設定日時（管理者用、設定で非表示にすることも可能） -->
+      {%- if gift_timestamp != blank and settings.show_gift_timestamp -%}
+        <div class="cart-gift-detail-item cart-gift-timestamp">
+          <span class="cart-gift-label">設定日時:</span>
+          <span class="cart-gift-value">
+            <time datetime="{{ gift_timestamp }}">
+              {{ gift_timestamp | date: '%Y年%m月%d日 %H:%M' }}
+            </time>
+          </span>
+        </div>
+      {%- endif -%}
+      
+    </div>
+
+    <!-- 注意書き -->
+    <div class="cart-gift-notice">
+      <p class="cart-gift-notice-text">
+        <svg class="cart-gift-notice-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 16v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        上記の設定でギフト梱包いたします
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ギフト設定専用CSS -->
+  <style>
+    .cart-gift-settings {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .cart-gift-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .cart-gift-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #007c89;
+    }
+
+    .cart-gift-icon {
+      color: #007c89;
+      flex-shrink: 0;
+    }
+
+    .cart-gift-edit-link {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      color: #007c89;
+      text-decoration: none;
+      font-size: 12px;
+      border: 1px solid #007c89;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .cart-gift-edit-link:hover {
+      background-color: #007c89;
+      color: white;
+    }
+
+    .cart-gift-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cart-gift-detail-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .cart-gift-label {
+      font-weight: 600;
+      color: #495057;
+      min-width: 80px;
+      flex-shrink: 0;
+    }
+
+    .cart-gift-value {
+      color: #212529;
+      word-break: break-all;
+    }
+
+    .cart-gift-timestamp {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .cart-gift-notice {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e9ecef;
+    }
+
+    .cart-gift-notice-text {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0;
+      font-size: 12px;
+      color: #6c757d;
+      font-style: italic;
+    }
+
+    .cart-gift-notice-icon {
+      color: #6c757d;
+      flex-shrink: 0;
+    }
+
+    /* レスポンシブ対応 */
+    @media (max-width: 768px) {
+      .cart-gift-settings {
+        padding: 12px;
+        margin: 8px 0;
+      }
+
+      .cart-gift-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .cart-gift-edit-link {
+        align-self: flex-end;
+      }
+
+      .cart-gift-detail-item {
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .cart-gift-label {
+        min-width: auto;
+      }
+    }
+  </style>
+
+{%- endif -%}

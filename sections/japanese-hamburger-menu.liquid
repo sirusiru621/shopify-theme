@@ -1,0 +1,1227 @@
+{% comment %}
+  Enhanced Header with Japanese-inspired hamburger menu
+  統合されたヘッダーセクション（日本風ハンバーガーメニュー付き）
+{% endcomment %}
+
+<link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-search.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-menu-drawer.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-cart-notification.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-cart-items.css' | asset_url }}" media="print" onload="this.media='all'">
+{%- if settings.predictive_search_enabled -%}
+  <link rel="stylesheet" href="{{ 'component-price.css' | asset_url }}" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="{{ 'component-loading-overlay.css' | asset_url }}" media="print" onload="this.media='all'">
+{%- endif -%}
+{%- if section.settings.menu_type_desktop == 'mega' -%}
+  <link rel="stylesheet" href="{{ 'component-mega-menu.css' | asset_url }}" media="print" onload="this.media='all'">
+  <noscript>{{ 'component-mega-menu.css' | asset_url | stylesheet_tag }}</noscript>
+{%- endif -%}
+{%- if section.settings.enable_country_selector or section.settings.enable_language_selector -%}
+  {{ 'component-localization-form.css' | asset_url | stylesheet_tag: preload: true }}
+{%- endif -%}
+
+{%- if settings.cart_type == "drawer" -%}
+  {{ 'component-cart-drawer.css' | asset_url | stylesheet_tag }}
+  {{ 'component-cart.css' | asset_url | stylesheet_tag }}
+  {{ 'component-totals.css' | asset_url | stylesheet_tag }}
+  {{ 'component-price.css' | asset_url | stylesheet_tag }}
+  {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+  {{ 'component-loading-overlay.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+<noscript>{{ 'component-list-menu.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>{{ 'component-search.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>{{ 'component-menu-drawer.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>{{ 'component-cart-notification.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>{{ 'component-cart-items.css' | asset_url | stylesheet_tag }}</noscript>
+
+<style>
+  header-drawer {
+    justify-self: start;
+    margin-left: -1.2rem;
+  }
+
+  {%- if section.settings.sticky_header_type == 'reduce-logo-size' -%}
+    .scrolled-past-header .header__heading-logo-wrapper {
+      width: 75%;
+    }
+  {%- endif -%}
+
+  {%- if section.settings.menu_type_desktop != "drawer" -%}
+    @media screen and (min-width: 990px) {
+      header-drawer {
+        display: none;
+      }
+    }
+  {%- endif -%}
+
+  .menu-drawer-container {
+    display: flex;
+  }
+
+  .list-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .list-menu--inline {
+    display: inline-flex;
+    flex-wrap: wrap;
+  }
+
+  summary.list-menu__item {
+    padding-right: 2.7rem;
+  }
+
+  .list-menu__item {
+    display: flex;
+    align-items: center;
+    line-height: calc(1 + 0.3 / var(--font-body-scale));
+  }
+
+  .list-menu__item--link {
+    text-decoration: none;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    line-height: calc(1 + 0.8 / var(--font-body-scale));
+  }
+
+  @media screen and (min-width: 750px) {
+    .list-menu__item--link {
+      padding-bottom: 0.5rem;
+      padding-top: 0.5rem;
+    }
+  }
+
+  /* Hamburger Menu Button Styles */
+  .japanese-menu-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: {{ section.settings.menu_text_color | default: '#333333' }};
+  }
+
+  .japanese-menu-trigger span {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .japanese-menu-trigger .icon {
+    width: 20px;
+    height: 20px;
+    transition: opacity 0.3s ease;
+  }
+
+  .japanese-menu-trigger .icon-close {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .japanese-menu-trigger .icon-hamburger {
+    opacity: 1;
+  }
+
+  /* Show close icon when menu is active */
+  .japanese-menu-overlay.active ~ header .japanese-menu-trigger .icon-hamburger {
+    opacity: 0;
+  }
+
+  .japanese-menu-overlay.active ~ header .japanese-menu-trigger .icon-close {
+    opacity: 1;
+  }
+
+  /* Responsive hamburger menu visibility */
+  @media screen and (min-width: 990px) {
+    .japanese-menu-trigger {
+      {%- if section.settings.menu_type_desktop != 'drawer' -%}
+        display: none;
+      {%- endif -%}
+    }
+  }
+  .japanese-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(
+      135deg,
+      rgba({{ section.settings.menu_bg_color | color_extract: 'red' }}, {{ section.settings.menu_bg_color | color_extract: 'green' }}, {{ section.settings.menu_bg_color | color_extract: 'blue' }}, 0.98) 0%,
+      rgba(255, 253, 250, 0.95) 100%
+    );
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    visibility: hidden;
+  }
+
+  .japanese-menu-overlay.active {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  .japanese-menu-container {
+    padding: {{ section.settings.mobile_padding | default: 24 }}px {{ section.settings.mobile_padding | default: 24 }}px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Header section */
+  .japanese-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba({{ section.settings.menu_text_color | color_extract: 'red' }}, {{ section.settings.menu_text_color | color_extract: 'green' }}, {{ section.settings.menu_text_color | color_extract: 'blue' }}, 0.1);
+  }
+
+
+  .japanese-menu-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: {{ section.settings.menu_text_color | default: '#333333' }};
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .japanese-menu-close:hover {
+    background: rgba({{ section.settings.menu_text_color | color_extract: 'red' }}, {{ section.settings.menu_text_color | color_extract: 'green' }}, {{ section.settings.menu_text_color | color_extract: 'blue' }}, 0.05);
+    transform: rotate(90deg);
+  }
+
+  /* Menu items */
+  .japanese-menu-items {
+    flex: 1;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .japanese-menu-item {
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideInLeft 0.6s ease forwards;
+  }
+
+  .japanese-menu-item:nth-child(1) { animation-delay: 0.1s; }
+  .japanese-menu-item:nth-child(2) { animation-delay: 0.2s; }
+  .japanese-menu-item:nth-child(3) { animation-delay: 0.3s; }
+  .japanese-menu-item:nth-child(4) { animation-delay: 0.4s; }
+  .japanese-menu-item:nth-child(5) { animation-delay: 0.5s; }
+  .japanese-menu-item:nth-child(6) { animation-delay: 0.6s; }
+  .japanese-menu-item:nth-child(7) { animation-delay: 0.7s; }
+
+  .japanese-menu-link {
+    display: block;
+    padding: {{ section.settings.menu_item_height | default: 64 | divided_by: 4 }}px 0;
+    font-family: {{ section.settings.body_font.family | default: 'assistant' }}, 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+    font-size: {{ section.settings.menu_text_size | default: 18 }}px;
+    font-weight: {{ section.settings.body_font.weight | default: 400 }};
+    color: {{ section.settings.menu_text_color | default: '#333333' }};
+    text-decoration: none;
+    border-bottom: 1px solid rgba({{ section.settings.menu_text_color | color_extract: 'red' }}, {{ section.settings.menu_text_color | color_extract: 'green' }}, {{ section.settings.menu_text_color | color_extract: 'blue' }}, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .japanese-menu-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba({{ section.settings.menu_accent_color | color_extract: 'red' }}, {{ section.settings.menu_accent_color | color_extract: 'green' }}, {{ section.settings.menu_accent_color | color_extract: 'blue' }}, 0.1),
+      transparent
+    );
+    transition: left {{ section.settings.animation_speed | default: 1.0 | times: 0.5 }}s ease;
+  }
+
+  .japanese-menu-link:hover::before {
+    left: 100%;
+  }
+
+  .japanese-menu-link:hover {
+    color: {{ section.settings.menu_accent_color | default: '#FFB7C5' }};
+    padding-left: 1rem;
+  }
+
+  .japanese-menu-link.has-submenu::after {
+    content: '+';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: {{ section.settings.menu_accent_color | default: '#FFB7C5' }};
+    transition: transform 0.3s ease;
+  }
+
+  .japanese-menu-link.has-submenu.active::after {
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  /* Expandable menu items */
+  .japanese-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    padding-left: 1rem;
+  }
+
+  .japanese-submenu.active {
+    max-height: 500px;
+  }
+
+  .japanese-submenu-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba({{ section.settings.menu_text_color | color_extract: 'red' }}, {{ section.settings.menu_text_color | color_extract: 'green' }}, {{ section.settings.menu_text_color | color_extract: 'blue' }}, 0.03);
+  }
+
+  .japanese-submenu-link {
+    font-size: {{ section.settings.menu_text_size | default: 18 | minus: 2 }}px;
+    color: rgba({{ section.settings.menu_text_color | color_extract: 'red' }}, {{ section.settings.menu_text_color | color_extract: 'green' }}, {{ section.settings.menu_text_color | color_extract: 'blue' }}, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .japanese-submenu-link:hover {
+    color: {{ section.settings.menu_accent_color | default: '#FFB7C5' }};
+  }
+
+  /* Footer section */
+  .japanese-menu-footer {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba({{ section.settings.menu_text_color | color_extract: 'red' }}, {{ section.settings.menu_text_color | color_extract: 'green' }}, {{ section.settings.menu_text_color | color_extract: 'blue' }}, 0.1);
+  }
+
+  .japanese-menu-auth {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .japanese-auth-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: {{ section.settings.button_bg_color | default: '#333333' }};
+    color: {{ section.settings.button_text_color | default: '#FFFFFF' }};
+    text-decoration: none;
+    border-radius: {{ section.settings.button_border_radius | default: 8 }}px;
+    font-weight: 500;
+    font-size: {{ section.settings.button_text_size | default: 16 }}px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .japanese-auth-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+  }
+
+  .japanese-auth-button:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  .japanese-auth-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Floating sakura animation */
+  {%- if section.settings.enable_sakura_animation -%}
+    .sakura-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .sakura {
+      position: absolute;
+      width: {{ section.settings.sakura_size | default: 10 }}px;
+      height: {{ section.settings.sakura_size | default: 10 }}px;
+      background: radial-gradient(circle, {{ section.settings.menu_accent_color | default: '#FFB7C5' }} 0%, transparent 70%);
+      border-radius: 50% 0 50% 0;
+      opacity: {{ section.settings.sakura_opacity | default: 0.6 }};
+      animation: sakuraFall {{ section.settings.animation_speed | default: 1.0 | times: 8 }}s linear infinite;
+    }
+
+    .sakura:nth-child(odd) {
+      animation-duration: {{ section.settings.animation_speed | default: 1.0 | times: 10 }}s;
+      animation-delay: {{ section.settings.animation_speed | default: 1.0 | times: -2 }}s;
+    }
+
+    .sakura:nth-child(even) {
+      animation-duration: {{ section.settings.animation_speed | default: 1.0 | times: 12 }}s;
+      animation-delay: {{ section.settings.animation_speed | default: 1.0 | times: -4 }}s;
+    }
+  {%- endif -%}
+
+  /* Hide search modal if disabled */
+  {%- if section.settings.hide_search_modal -%}
+    details-modal.header__search {
+      display: none !important;
+    }
+  {%- endif -%}
+
+  /* Animations */
+  @keyframes slideInLeft {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  {%- if section.settings.enable_sakura_animation -%}
+    @keyframes sakuraFall {
+      0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: {{ section.settings.sakura_opacity | default: 0.6 }};
+      }
+      90% {
+        opacity: {{ section.settings.sakura_opacity | default: 0.6 }};
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  {%- endif -%}
+
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .japanese-menu-container {
+      padding: {{ section.settings.mobile_padding | default: 24 | minus: 8 }}px {{ section.settings.mobile_padding | default: 24 | minus: 8 }}px;
+    }
+    
+    .japanese-menu-link {
+      font-size: {{ section.settings.menu_text_size | default: 18 | minus: 2 }}px;
+    }
+
+  }
+</style>
+
+{%- style -%}
+  .header {
+    padding-top: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px;
+  }
+  
+  .section-header {
+    margin-bottom: {{ section.settings.margin_bottom | times: 0.5 | round: 0 }}px!important;
+  }
+
+  .section-header {
+    position: sticky; /* This is for fixing a Safari z-index issue. PR #2147 */
+    margin-bottom: {{ section.settings.margin_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-header {
+      margin-bottom: {{ section.settings.margin_bottom }}px;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .header {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<script src="{{ 'details-disclosure.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'details-modal.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'search-form.js' | asset_url }}" defer="defer"></script>
+{%- if settings.cart_type == "drawer" -%}
+  <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+{%- if section.settings.enable_country_selector or section.settings.enable_language_selector -%}
+  <script src="{{ 'localization-form.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+<svg xmlns="http://www.w3.org/2000/svg" class="hidden">
+  <symbol id="icon-search" viewbox="0 0 18 19" fill="none">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.03 11.68A5.784 5.784 0 112.85 3.5a5.784 5.784 0 018.18 8.18zm.26 1.12a6.78 6.78 0 11.72-.7l5.4 5.4a.5.5 0 11-.71.7l-5.41-5.4z" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="icon-reset" class="icon icon-close"  fill="none" viewBox="0 0 18 18" stroke="currentColor">
+    <circle r="8.5" cy="9" cx="9" stroke-opacity="0.2"/>
+    <path d="M6.82972 6.82915L1.17193 1.17097" stroke-linecap="round" stroke-linejoin="round" transform="translate(5 5)"/>
+    <path d="M1.22896 6.88502L6.77288 1.11523" stroke-linecap="round" stroke-linejoin="round" transform="translate(5 5)"/>
+  </symbol>
+
+  <symbol id="icon-close" class="icon icon-close" fill="none" viewBox="0 0 18 17">
+    <path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor">
+  </symbol>
+</svg>
+
+{%- liquid
+  for block in section.blocks
+    if block.type == '@app'
+      assign has_app_block = true
+    endif
+  endfor
+-%}
+
+<{% if section.settings.sticky_header_type != 'none' %}sticky-header data-sticky-type="{{ section.settings.sticky_header_type }}"{% else %}div{% endif %} class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}">
+  {%- liquid
+    assign social_links = false
+    assign localization_forms = false
+
+    if settings.social_twitter_link != blank or settings.social_facebook_link != blank or settings.social_pinterest_link != blank or settings.social_instagram_link != blank or settings.social_youtube_link != blank or settings.social_vimeo_link != blank or settings.social_tiktok_link != blank or settings.social_tumblr_link != blank or settings.social_snapchat_link != blank
+      assign social_links = true
+    endif
+
+    if localization.available_countries.size > 1 and section.settings.enable_country_selector or section.settings.enable_language_selector and localization.available_languages.size > 1
+      assign localization_forms = true
+    endif
+  -%}
+  
+  <header class="header header--{{ section.settings.logo_position }} header--mobile-{{ section.settings.mobile_logo_position }} page-width{% if section.settings.menu_type_desktop == 'drawer' %} drawer-menu{% endif %}{% if section.settings.menu != blank %} header--has-menu{% endif %}{% if has_app_block %} header--has-app{% endif %}{% if social_links %} header--has-social{% endif %}{% if shop.customer_accounts_enabled %} header--has-account{% endif %}{% if localization_forms %} header--has-localizations{% endif %}">
+    
+    {%- comment -%} Japanese Menu Integration {%- endcomment -%}
+    {%- if section.settings.enable_japanese_menu -%}
+      <!-- Japanese Hamburger Menu Button -->
+      <header-drawer data-breakpoint="{% if section.settings.menu_type_desktop == 'drawer' %}desktop{% else %}tablet{% endif %}">
+        <details id="Details-japanese-menu-container" class="menu-drawer-container">
+          <summary
+            class="header__icon header__icon--menu header__icon--summary link focus-inset japanese-menu-trigger"
+            aria-label="{{ 'sections.header.menu' | t }}"
+            id="japanese-hamburger-trigger"
+          >
+            <span>
+              {% comment %} Hamburger Icon {% endcomment %}
+              <svg class="icon icon-hamburger" aria-hidden="true" focusable="false" viewBox="0 0 18 16">
+                <path d="M0 1h18v2H0V1zm0 6h18v2H0V7zm0 6h18v2H0v-2z" fill="currentColor"/>
+              </svg>
+              {% comment %} Close Icon {% endcomment %}
+              <svg class="icon icon-close" aria-hidden="true" focusable="false" viewBox="0 0 18 17">
+                <path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor"/>
+              </svg>
+            </span>
+          </summary>
+        </details>
+      </header-drawer>
+    {%- else -%}
+      {%- liquid
+        if section.settings.menu != blank
+          render 'header-drawer'
+        endif
+
+        if section.settings.logo_position == 'top-center' or section.settings.menu == blank
+          render 'header-search', input_id: 'Search-In-Modal-1'
+        endif
+      -%}
+    {%- endif -%}
+
+    {%- if section.settings.logo_position != 'middle-center' -%}
+      {%- if request.page_type == 'index' -%}
+        <h1 class="header__heading">
+      {%- endif -%}
+          <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
+            {%- if settings.logo != blank -%}
+              <div class="header__heading-logo-wrapper">
+                {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+                {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
+                {% capture sizes %}(max-width: {{ settings.logo_width | times: 2 }}px) 50vw, {{ settings.logo_width }}px{% endcapture %}
+                {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
+                {{ settings.logo | image_url: width: 600 | image_tag:
+                  class: 'header__heading-logo motion-reduce',
+                  widths: widths,
+                  height: logo_height,
+                  width: settings.logo_width,
+                  alt: logo_alt,
+                  sizes: sizes,
+                  preload: true
+                }}
+              </div>
+            {%- else -%}
+              <span class="h2">{{ shop.name }}</span>
+            {%- endif -%}
+          </a>
+      {%- if request.page_type == 'index' -%}
+        </h1>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- liquid
+      if section.settings.menu != blank and section.settings.enable_japanese_menu == false
+        if section.settings.menu_type_desktop == 'dropdown'
+          render 'header-dropdown-menu'
+        elsif section.settings.menu_type_desktop != 'drawer'
+          render 'header-mega-menu'
+        endif
+      endif
+    %}
+
+    {%- if section.settings.logo_position == 'middle-center' -%}
+      {%- if request.page_type == 'index' -%}
+        <h1 class="header__heading">
+      {%- endif -%}
+          <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
+            {%- if settings.logo != blank -%}
+              <div class="header__heading-logo-wrapper">
+                {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+                {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
+                {% capture sizes %}(min-width: 750px) {{ settings.logo_width }}px, 50vw{% endcapture %}
+                {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
+                {{ settings.logo | image_url: width: 600 | image_tag:
+                  class: 'header__heading-logo',
+                  widths: widths,
+                  height: logo_height,
+                  width: settings.logo_width,
+                  alt: logo_alt,
+                  sizes: sizes,
+                  preload: true
+                }}
+              </div>
+            {%- else -%}
+              <span class="h2">{{ shop.name }}</span>
+            {%- endif -%}
+          </a>
+      {%- if request.page_type == 'index' -%}
+        </h1>
+      {%- endif -%}
+    {%- endif -%}
+
+    <div class="header__icons{% if section.settings.enable_country_selector or section.settings.enable_language_selector %} header__icons--localization header__localization{% endif %}">
+      <div class="desktop-localization-wrapper">
+        {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
+          <noscript class="small-hide medium-hide">
+            {%- form 'localization', id: 'HeaderCountryMobileFormNoScript', class: 'localization-form' -%}
+              <div class="localization-form__select">
+                <h2 class="visually-hidden" id="HeaderCountryMobileLabelNoScript">{{ 'localization.country_label' | t }}</h2>
+                <select class="localization-selector link" name="country_code" aria-labelledby="HeaderCountryMobileLabelNoScript">
+                  {%- for country in localization.available_countries -%}
+                    <option value="{{ country.iso_code }}" {%- if country.iso_code == localization.country.iso_code %} selected{% endif %}>
+                      {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+                    </option>
+                  {%- endfor -%}
+                </select>
+                {% render 'icon-caret' %}
+              </div>
+              <button class="button button--tertiary">{{ 'localization.update_country' | t }}</button>
+            {%- endform -%}
+          </noscript>
+
+          <localization-form class="small-hide medium-hide no-js-hidden">
+            {%- form 'localization', id: 'HeaderCountryForm', class: 'localization-form' -%}
+              <div>
+                <h2 class="visually-hidden" id="HeaderCountryLabel">{{ 'localization.country_label' | t }}</h2>
+                {%- render 'country-localization', localPosition: 'HeaderCountry' -%}
+              </div>
+            {%- endform -%}
+          </localization-form>
+        {% endif %}
+
+        {%- if section.settings.enable_language_selector and localization.available_languages.size > 1 -%}
+          <noscript class="small-hide medium-hide">
+            {%- form 'localization', id: 'HeaderLanguageMobileFormNoScript', class: 'localization-form' -%}
+              <div class="localization-form__select">
+                <h2 class="visually-hidden" id="HeaderLanguageMobileLabelNoScript">{{ 'localization.language_label' | t }}</h2>
+                <select class="localization-selector link" name="locale_code" aria-labelledby="HeaderLanguageMobileLabelNoScript">
+                  {%- for language in localization.available_languages -%}
+                    <option value="{{ language.iso_code }}" lang="{{ language.iso_code }}" {%- if language.iso_code == localization.language.iso_code %} selected{% endif %}>
+                      {{ language.endonym_name | capitalize }}
+                    </option>
+                  {%- endfor -%}
+                </select>
+                {% render 'icon-caret' %}
+              </div>
+              <button class="button button--tertiary">{{ 'localization.update_language' | t }}</button>
+            {%- endform -%}
+          </noscript>
+
+          <localization-form class="small-hide medium-hide no-js-hidden">
+            {%- form 'localization', id: 'HeaderLanguageForm', class: 'localization-form' -%}
+              <div>
+                <h2 class="visually-hidden" id="HeaderLanguageLabel">{{ 'localization.language_label' | t }}</h2>
+                {%- render 'language-localization', localPosition: 'HeaderLanguage' -%}
+              </div>
+            {%- endform -%}
+          </localization-form>
+        {%- endif -%}
+      </div>
+      {% render 'header-search', input_id: 'Search-In-Modal' %}
+
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="header__icon header__icon--account link focus-inset{% if section.settings.menu != blank %} small-hide{% endif %}">
+          {% render 'icon-account' %}
+          <span class="visually-hidden">
+            {%- liquid
+              if customer
+                echo 'customer.account_fallback' | t
+              else
+                echo 'customer.log_in' | t
+              endif
+            -%}
+          </span>
+        </a>
+      {%- endif -%}
+
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when '@app' -%}
+            {% render block %}
+        {%- endcase -%}
+      {%- endfor -%}
+
+      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
+        {%- liquid
+          if cart == empty
+            render 'icon-cart-empty'
+          else
+            render 'icon-cart'
+          endif
+        -%}
+        <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
+        {%- if cart != empty -%}
+          <div class="cart-count-bubble">
+            {%- if cart.item_count < 100 -%}
+              <span aria-hidden="true">{{ cart.item_count }}</span>
+            {%- endif -%}
+            <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+          </div>
+        {%- endif -%}
+      </a>
+    </div>
+  </header>
+</{% if section.settings.sticky_header_type != 'none' %}sticky-header{% else %}div{% endif %}>
+
+{%- comment -%} Japanese Menu HTML {%- endcomment -%}
+{%- if section.settings.enable_japanese_menu -%}
+  <!-- Japanese Menu Overlay -->
+  <div class="japanese-menu-overlay" id="japanese-menu-overlay">
+    <!-- Floating Sakura Animation -->
+    {%- if section.settings.enable_sakura_animation -%}
+      <div class="sakura-container">
+        <div class="sakura" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="sakura" style="left: 20%; animation-delay: -1s;"></div>
+        <div class="sakura" style="left: 30%; animation-delay: -2s;"></div>
+        <div class="sakura" style="left: 40%; animation-delay: -3s;"></div>
+        <div class="sakura" style="left: 50%; animation-delay: -4s;"></div>
+        <div class="sakura" style="left: 60%; animation-delay: -5s;"></div>
+        <div class="sakura" style="left: 70%; animation-delay: -6s;"></div>
+        <div class="sakura" style="left: 80%; animation-delay: -7s;"></div>
+        <div class="sakura" style="left: 90%; animation-delay: -8s;"></div>
+      </div>
+    {%- endif -%}
+
+    <div class="japanese-menu-container">
+      <!-- Header -->
+      <div class="japanese-menu-header">
+        <button class="japanese-menu-close" id="japanese-menu-close" aria-label="Close menu">
+          ×
+        </button>
+      </div>
+
+      <!-- Menu Items -->
+      <ul class="japanese-menu-items">
+        {%- for link in linklists[section.settings.main_menu].links -%}
+          <li class="japanese-menu-item">
+            {%- if link.links != blank -%}
+              <a href="#" 
+                 class="japanese-menu-link has-submenu" 
+                 data-submenu="submenu-{{ forloop.index }}"
+                 onclick="event.preventDefault();">
+                {{ link.title | escape }}
+              </a>
+              <ul class="japanese-submenu" id="submenu-{{ forloop.index }}">
+                {%- for childlink in link.links -%}
+                  <li class="japanese-submenu-item">
+                    <a href="{{ childlink.url }}" class="japanese-submenu-link">
+                      {{ childlink.title | escape }}
+                    </a>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- else -%}
+              <a href="{{ link.url }}" class="japanese-menu-link">
+                {{ link.title | escape }}
+              </a>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <!-- Footer -->
+      <div class="japanese-menu-footer">
+        <div class="japanese-menu-auth">
+          {%- if shop.customer_accounts_enabled -%}
+            {%- if customer -%}
+              <a href="{{ routes.account_url }}" class="japanese-auth-button">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 8C10.2091 8 12 6.20914 12 4C12 1.79086 10.2091 0 8 0C5.79086 0 4 1.79086 4 4C4 6.20914 5.79086 8 8 8Z" fill="currentColor"/>
+                  <path d="M8 10C3.58172 10 0 13.5817 0 18H16C16 13.5817 12.4183 10 8 10Z" fill="currentColor"/>
+                </svg>
+                {{ section.settings.account_text | default: 'マイアカウント' }}
+              </a>
+            {%- else -%}
+              <a href="{{ routes.account_login_url }}" class="japanese-auth-button">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 0L6.59 1.41L12.17 7H0V9H12.17L6.59 14.59L8 16L16 8L8 0Z" fill="currentColor"/>
+                </svg>
+                {{ section.settings.login_text | default: 'ログイン' }}
+              </a>
+              {%- if section.settings.show_register_button -%}
+                <a href="{{ routes.account_register_url }}" class="japanese-auth-button">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z" fill="currentColor"/>
+                    <path d="M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.3431 2 12V15H14V12Z" fill="currentColor"/>
+                    <path d="M12.5 3.5H15.5V4.5H12.5V7.5H11.5V4.5H8.5V3.5H11.5V0.5H12.5V3.5Z" fill="currentColor"/>
+                  </svg>
+                  {{ section.settings.register_text | default: '新規会員登録' }}
+                </a>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{%- if settings.cart_type == "notification" -%}
+  {%- render 'cart-notification', color_scheme: section.settings.color_scheme, desktop_menu_type: section.settings.menu_type_desktop -%}
+{%- endif -%}
+
+{% javascript %}
+  class StickyHeader extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      this.header = document.querySelector('.section-header');
+      this.headerIsAlwaysSticky = this.getAttribute('data-sticky-type') === 'always' || this.getAttribute('data-sticky-type') === 'reduce-logo-size';
+      this.headerBounds = {};
+
+      this.setHeaderHeight();
+
+      window.matchMedia('(max-width: 990px)').addEventListener('change', this.setHeaderHeight.bind(this));
+
+      if (this.headerIsAlwaysSticky) {
+        this.header.classList.add('shopify-section-header-sticky');
+      };
+
+      this.currentScrollTop = 0;
+      this.preventReveal = false;
+      this.predictiveSearch = this.querySelector('predictive-search');
+
+      this.onScrollHandler = this.onScroll.bind(this);
+      this.hideHeaderOnScrollUp = () => this.preventReveal = true;
+
+      this.addEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
+      window.addEventListener('scroll', this.onScrollHandler, false);
+
+      this.createObserver();
+    }
+
+    setHeaderHeight() {
+      document.documentElement.style.setProperty('--header-height', `${this.header.offsetHeight}px`);
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
+      window.removeEventListener('scroll', this.onScrollHandler);
+    }
+
+    createObserver() {
+      let observer = new IntersectionObserver((entries, observer) => {
+        this.headerBounds = entries[0].intersectionRect;
+        observer.disconnect();
+      });
+
+      observer.observe(this.header);
+    }
+
+    onScroll() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (this.predictiveSearch && this.predictiveSearch.isOpen) return;
+
+      if (scrollTop > this.currentScrollTop && scrollTop > this.headerBounds.bottom) {
+        this.header.classList.add('scrolled-past-header');
+        if (this.preventHide) return;
+        requestAnimationFrame(this.hide.bind(this));
+      } else if (scrollTop < this.currentScrollTop && scrollTop > this.headerBounds.bottom) {
+        this.header.classList.add('scrolled-past-header');
+        if (!this.preventReveal) {
+          requestAnimationFrame(this.reveal.bind(this));
+        } else {
+          window.clearTimeout(this.isScrolling);
+
+          this.isScrolling = setTimeout(() => {
+            this.preventReveal = false;
+          }, 66);
+
+          requestAnimationFrame(this.hide.bind(this));
+        }
+      } else if (scrollTop <= this.headerBounds.top) {
+        this.header.classList.remove('scrolled-past-header');
+        requestAnimationFrame(this.reset.bind(this));
+      }
+
+      this.currentScrollTop = scrollTop;
+    }
+
+    hide() {
+      if (this.headerIsAlwaysSticky) return;
+      this.header.classList.add('shopify-section-header-hidden', 'shopify-section-header-sticky');
+      this.closeMenuDisclosure();
+      this.closeSearchModal();
+    }
+
+    reveal() {
+      if (this.headerIsAlwaysSticky) return;
+      this.header.classList.add('shopify-section-header-sticky', 'animate');
+      this.header.classList.remove('shopify-section-header-hidden');
+    }
+
+    reset() {
+      if (this.headerIsAlwaysSticky) return;
+      this.header.classList.remove('shopify-section-header-hidden', 'shopify-section-header-sticky', 'animate');
+    }
+
+    closeMenuDisclosure() {
+      this.disclosures = this.disclosures || this.header.querySelectorAll('header-menu');
+      this.disclosures.forEach(disclosure => disclosure.close());
+    }
+
+    closeSearchModal() {
+      this.searchModal = this.searchModal || this.header.querySelector('details-modal');
+      this.searchModal.close(false);
+    }
+  }
+
+  customElements.define('sticky-header', StickyHeader);
+
+  // Japanese Menu Functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const menuOverlay = document.getElementById('japanese-menu-overlay');
+    const menuClose = document.getElementById('japanese-menu-close');
+    const hamburgerButton = document.getElementById('japanese-hamburger-trigger');
+    const submenuLinks = document.querySelectorAll('.has-submenu');
+
+    // Open menu
+    if (hamburgerButton) {
+      hamburgerButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (menuOverlay) {
+          menuOverlay.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        }
+      });
+    }
+
+    // Close menu
+    function closeMenu() {
+      if (menuOverlay) {
+        menuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+        
+        // Reset all submenus
+        submenuLinks.forEach(link => {
+          link.classList.remove('active');
+          const submenuId = link.getAttribute('data-submenu');
+          if (submenuId) {
+            const submenu = document.getElementById(submenuId);
+            if (submenu) {
+              submenu.classList.remove('active');
+            }
+          }
+        });
+      }
+    }
+
+    if (menuClose) {
+      menuClose.addEventListener('click', closeMenu);
+    }
+
+    // Close menu when clicking outside
+    if (menuOverlay) {
+      menuOverlay.addEventListener('click', function(e) {
+        if (e.target === menuOverlay) {
+          closeMenu();
+        }
+      });
+    }
+
+    // Handle submenu toggles
+    submenuLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const submenuId = this.getAttribute('data-submenu');
+        const submenu = document.getElementById(submenuId);
+        
+        if (submenu) {
+          this.classList.toggle('active');
+          submenu.classList.toggle('active');
+        }
+      });
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && menuOverlay && menuOverlay.classList.contains('active')) {
+        closeMenu();
+      }
+    });
+  });
+{% endjavascript %}
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    {% if settings.logo %}
+      "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
+    {% endif %}
+    "sameAs": [
+      {{ settings.social_twitter_link | json }},
+      {{ settings.social_facebook_link | json }},
+      {{ settings.social_pinterest_link | json }},
+      {{ settings.social_instagram_link | json }},
+      {{ settings.social_tiktok_link | json }},
+      {{ settings.social_tumblr_link | json }},
+      {{ settings.social_snapchat_link | json }},
+      {{ settings.social_youtube_link | json }},
+      {{ settings.social_vimeo_link | json }}
+    ],
+    "url": {{ request.origin | append: page.url | json }}
+  }
+</script>
+
+{%- if request.page_type == 'index' -%}
+  {% assign potential_action_target = request.origin | append: routes.search_url | append: "?q={search_term_string}" %}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "name": {{ shop.name | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {{ potential_action_target | json }},
+        "query-input": "required name=search_term_string"
+      },
+      "url": {{ request.origin | append: page.url | json }}
+    }
+  </script>
+{%- endif -%}
+{% schema %}
+{
+  "name": "Japanese Hamburger Menu",
+  "tag": "section",
+  "class": "japanese-hamburger-menu-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "メニュー設定"
+    },
+    {
+      "type": "text",
+      "id": "menu_title",
+      "label": "メニュータイトル",
+      "default": "BAKE the ONLINE",
+      "info": "メニュー上部に表示されるタイトル"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "ナビゲーションメニュー",
+      "default": "main-menu",
+      "info": "表示するメニューを選択してください"
+    },
+    {
+      "type": "header",
+      "content": "認証ボタン設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_register_button",
+      "label": "新規登録ボタンを表示",
+      "default": true,
+      "info": "新規会員登録ボタンの表示/非表示"
+    },
+    {
+      "type": "text",
+      "id": "login_text",
+      "label": "ログインボタンテキスト",
+      "default": "ログイン",
+      "info": "ログインボタンに表示するテキスト"
+    },
+    {
+      "type": "text",
+      "id": "register_text",
+      "label": "新規登録ボタンテキスト",
+      "default": "新規会員登録",
+      "info": "新規登録ボタンに表示するテキスト"
+    },
+    {
+      "type": "text",
+      "id": "account_text",
+      "label": "アカウントボタンテキスト",
+      "default": "マイアカウント",
+      "info": "ログイン済みユーザーに表示するテキスト"
+    },
+    {
+      "type": "header",
+      "content": "カラー設定"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "テキストカラー",
+      "default": "#333333",
+      "info": "メニューテキストの色"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "アクセントカラー",
+      "default": "#FFB7C5",
+      "info": "ホバー時やアクセント部分の色（桜色推奨）"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "ボタン背景色",
+      "default": "#333333",
+      "info": "認証ボタンの背景色"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "ボタンテキスト色",
+      "default": "#FFFFFF",
+      "info": "認証ボタンのテキスト色"
+    },
+    {
+      "type": "header",
+      "content": "タイポグラフィ設定"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "見出しフォント",
+      "default": "assistant_n4",
+      "info": "メニュータイトルに使用するフォント"
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "本文フォント",
+      "default": "assistant_n4",
+      "info": "メニューアイテムに使用するフォント"
+    },
+    {
+      "type": "header",
+      "content": "アニメーション設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sakura_animation",
+      "label": "桜のアニメーションを有効化",
+      "default": true,
+      "info": "背景に舞い散る桜のアニメーション"
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "min": 0.5,
+      "max": 2.0,
+      "step": 0.1,
+      "unit": "x",
+      "label": "アニメーション速度",
+      "default": 1.0,
+      "info": "アニメーションの再生速度（1.0が標準速度）"
+    },
+    {
+      "type": "header",
+      "content": "レスポンシブ設定"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "モバイル余白",
+      "default": 24,
+      "info": "モバイル表示時の左右の余白"
+    },
+    {
+      "type": "range",
+      "id": "menu_item_height",
+      "min": 48,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "メニューアイテムの高さ",
+      "default": 64,
+      "info": "各メニューアイテムの最小高さ"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Japanese Hamburger Menu",
+      "category": "Navigation"
+    }
+  ]
+}
+{% endschema %}

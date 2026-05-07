@@ -1,0 +1,80 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "904a1b62-89ad-4035-9ed0-abecc19555bb": {
+      "type": "rich-text",
+      "blocks": {
+        "template--21359471362331__904a1b62-89ad-4035-9ed0-abecc19555bb-heading-1": {
+          "type": "heading",
+          "settings": {
+            "heading": "Coming Soon",
+            "heading_size": "h1"
+          }
+        },
+        "template--21359471362331__904a1b62-89ad-4035-9ed0-abecc19555bb-text-1": {
+          "type": "text",
+          "settings": {
+            "text": "<p>現在準備中です</p>"
+          }
+        }
+      },
+      "block_order": [
+        "template--21359471362331__904a1b62-89ad-4035-9ed0-abecc19555bb-heading-1",
+        "template--21359471362331__904a1b62-89ad-4035-9ed0-abecc19555bb-text-1"
+      ],
+      "disabled": true,
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 100,
+        "padding_bottom": 100
+      }
+    },
+    "e9f8568d-e1dd-4142-9d1f-83ed760a846c": {
+      "type": "rich-text",
+      "blocks": {
+        "template--21584816865563__e9f8568d-e1dd-4142-9d1f-83ed760a846c-heading-1": {
+          "type": "heading",
+          "settings": {
+            "heading": "只今イベントはございません。",
+            "heading_size": "h2"
+          }
+        }
+      },
+      "block_order": [
+        "template--21584816865563__e9f8568d-e1dd-4142-9d1f-83ed760a846c-heading-1"
+      ],
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "background-2",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
+    }
+  },
+  "order": [
+    "main",
+    "904a1b62-89ad-4035-9ed0-abecc19555bb",
+    "e9f8568d-e1dd-4142-9d1f-83ed760a846c"
+  ]
+}

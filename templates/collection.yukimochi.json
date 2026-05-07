@@ -1,0 +1,310 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumb_q3mFQM": {
+      "type": "breadcrumb",
+      "name": "パンくずリスト",
+      "settings": {
+        "home_text": "TOP",
+        "show_home_icon": false,
+        "separator_style": "arrow",
+        "enable_animations": false,
+        "background_color": "",
+        "text_color": "#666666",
+        "link_color": "#333333",
+        "current_page_color": "#999999",
+        "font_size_desktop": 12,
+        "font_size_mobile": 12,
+        "padding_top": 4,
+        "padding_bottom": 4,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "collection_header_section_TpNAad": {
+      "type": "collection-header-section",
+      "blocks": {
+        "heading_zGtDGA": {
+          "type": "heading",
+          "settings": {
+            "heading": "雪もち"
+          }
+        },
+        "text_dpijqB": {
+          "type": "text",
+          "settings": {
+            "text": "<p>じっくりと炊き上げた有機栽培のえりも<br/>小豆のつぶあんと北海道の草原から届いた<br/>グラスフェッドミルクで作ったクリームを<br/>北海道の粉雪のようにふわふわのお餅で包みました。</p>"
+          }
+        },
+        "buttons_F8NBNQ": {
+          "type": "buttons",
+          "settings": {
+            "button_label_1": "雪もちのこだわりを読む",
+            "button_link_1": "shopify://pages/coming-soon",
+            "button_style_secondary_1": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": true
+          }
+        }
+      },
+      "block_order": [
+        "heading_zGtDGA",
+        "text_dpijqB",
+        "buttons_F8NBNQ"
+      ],
+      "name": "雪もちコレクションヘッダー",
+      "settings": {
+        "image": "shopify://shop_images/visual_sisiri_04.jpg",
+        "image_overlay_opacity": 0,
+        "image_height": "large",
+        "section_height": 80,
+        "mobile_height": 70,
+        "desktop_content_position": "middle-right",
+        "desktop_content_alignment": "right",
+        "mobile_content_alignment": "left",
+        "mobile_layout_style": "standard",
+        "mobile_text_direction": "horizontal",
+        "show_text_below": true,
+        "heading_font_size": 24,
+        "heading_color": "#ffffff",
+        "text_font_size": 18,
+        "text_color": "#ffffff",
+        "button_font_size": 16,
+        "mobile_heading_font_size": 22,
+        "mobile_text_font_size": 14,
+        "mobile_button_font_size": 14,
+        "button_primary_bg": "#ffffff",
+        "button_primary_text": "#121212",
+        "button_primary_hover": "#ffffff",
+        "button_secondary_text": "#ffffff"
+      }
+    },
+    "image_banner_MzMEaq": {
+      "type": "image-banner",
+      "blocks": {
+        "heading_JPJwVX": {
+          "type": "heading",
+          "settings": {
+            "heading": "雪もち",
+            "heading_size": "h2"
+          }
+        },
+        "text_LiepB8": {
+          "type": "text",
+          "settings": {
+            "text": "絹のようになめらかな求肥と、上品な甘さの餡が織りなす、冬の静寂を思わせる逸品。",
+            "text_style": "body"
+          }
+        },
+        "buttons_N6hRFR": {
+          "type": "buttons",
+          "settings": {
+            "button_label_1": "雪もちのこだわりを読む",
+            "button_link_1": "#",
+            "button_style_secondary_1": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_JPJwVX",
+        "text_LiepB8",
+        "buttons_N6hRFR"
+      ],
+      "disabled": true,
+      "name": "t:sections.image-banner.presets.name",
+      "settings": {
+        "image": "shopify://shop_images/EC_N_yukimochi4_178665b5-6198-42e0-a6e6-4960f0307668.jpg",
+        "image_overlay_opacity": 0,
+        "image_height": "medium",
+        "desktop_content_position": "bottom-left",
+        "show_text_box": false,
+        "desktop_content_alignment": "left",
+        "color_scheme": "background-1",
+        "image_behavior": "none",
+        "mobile_content_alignment": "left",
+        "stack_images_on_mobile": true,
+        "show_text_below": true
+      }
+    },
+    "custom_liquid_D9WUUp": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "",
+        "color_scheme": "",
+        "padding_top": 40,
+        "padding_bottom": 0
+      }
+    },
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": false,
+        "show_collection_image": false,
+        "color_scheme": "background-1"
+      }
+    },
+    "artisanal_hero_section_GBpEjV": {
+      "type": "artisanal-hero-section",
+      "disabled": true,
+      "name": "Artisanal Hero",
+      "settings": {
+        "hero_image": "shopify://shop_images/EC_yukimochi_image_049791dd-7430-4aff-a171-bb24226b3515.jpg",
+        "show_overlay": true,
+        "overlay_opacity": 65,
+        "heading_jp": "雪もち",
+        "heading_en": "Artisanal work",
+        "description": "",
+        "cta_text": "Explore Collection",
+        "cta_url": "",
+        "show_decorative_line": true,
+        "accent_color": "#ff4757",
+        "jp_heading_color": "#ffffff",
+        "jp_heading_size_desktop": 56,
+        "jp_heading_size_mobile": 32,
+        "en_heading_color": "#ffffff",
+        "en_heading_size_desktop": 18,
+        "en_heading_size_mobile": 14,
+        "description_color": "#ffffff",
+        "description_size_desktop": 16,
+        "description_size_mobile": 14,
+        "text_color": "#ffffff",
+        "hero_height_desktop": 100,
+        "hero_height_mobile": 70,
+        "padding_top_desktop": 80,
+        "padding_bottom_desktop": 80,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
+      }
+    },
+    "rich_text_bBKbg4": {
+      "type": "rich-text",
+      "blocks": {
+        "text_TU3Edr": {
+          "type": "text",
+          "settings": {
+            "text": "<h6><strong>・配送販売分は毎週水曜日9:00にカートをオープン致します。<br/>・店頭受取予約は毎週土曜日9:00にカートをオープン致します。</strong><br/><strong>・</strong>カート投入時点では在庫は確保されません。ご決済完了をもってご購入確定となります。</h6>"
+          }
+        }
+      },
+      "block_order": [
+        "text_TU3Edr"
+      ],
+      "custom_css": [
+        ".rich-text__text.rte.scroll-trigger.animate--slide-in.scroll-trigger--design-mode {margin-left: 170px;}",
+        "@media screen and (max-width: 768px) {.rich-text__text.rte.scroll-trigger.animate--slide-in.scroll-trigger--design-mode {margin-left: 0px; }}"
+      ],
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "left",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "rich_text_4DjVX6": {
+      "type": "rich-text",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "settings": {
+        "products_per_page": 24,
+        "columns_desktop": 3,
+        "show_product_tags": true,
+        "tag_display_limit": 1,
+        "tag_background_color": "#000000",
+        "tag_text_color": "#ffffff",
+        "tag_font_size": "14px",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "enable_quick_add": false,
+        "enable_filtering": false,
+        "filter_type": "vertical",
+        "enable_sorting": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "ebbb57bb-955d-4309-a54d-de783de33707": {
+      "type": "rich-text",
+      "blocks": {
+        "template--19650934735131__ebbb57bb-955d-4309-a54d-de783de33707-heading-1": {
+          "type": "heading",
+          "settings": {
+            "heading": "",
+            "heading_size": "h1"
+          }
+        },
+        "template--19650934735131__ebbb57bb-955d-4309-a54d-de783de33707-text-1": {
+          "type": "text",
+          "settings": {
+            "text": "<h6>※[オンラインストア]商品と[店舗受け取り予約]商品は、別々の決済をお願いしております。</h6>"
+          }
+        },
+        "template--19650934735131__ebbb57bb-955d-4309-a54d-de783de33707-button-1": {
+          "type": "button",
+          "settings": {
+            "button_label": "",
+            "button_link": "",
+            "button_style_secondary": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "template--19650934735131__ebbb57bb-955d-4309-a54d-de783de33707-heading-1",
+        "template--19650934735131__ebbb57bb-955d-4309-a54d-de783de33707-text-1",
+        "template--19650934735131__ebbb57bb-955d-4309-a54d-de783de33707-button-1"
+      ],
+      "disabled": true,
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 4,
+        "padding_bottom": 16
+      }
+    }
+  },
+  "order": [
+    "breadcrumb_q3mFQM",
+    "collection_header_section_TpNAad",
+    "image_banner_MzMEaq",
+    "custom_liquid_D9WUUp",
+    "banner",
+    "artisanal_hero_section_GBpEjV",
+    "rich_text_bBKbg4",
+    "rich_text_4DjVX6",
+    "product-grid",
+    "ebbb57bb-955d-4309-a54d-de783de33707"
+  ]
+}

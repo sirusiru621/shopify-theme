@@ -1,0 +1,719 @@
+<!-- ファイル名: sections/cross-sell-popup.liquid -->
+<!-- 機能説明: カート追加時に表示されるクロスセル商品ポップアップシステム -->
+<!-- 対応機能: Ajax カート追加、リアルタイム更新、レスポンシブ対応 -->
+
+{{ 'cross-sell-popup.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  # コレクション設定の取得
+  assign cross_sell_collection = collections[section.settings.cross_sell_collection]
+  assign max_products = section.settings.max_products | default: 3
+  assign current_product = product
+  
+  # 商品フィルタリング（現在の商品を除外）
+  assign filtered_products = cross_sell_collection.products | where: 'available', true
+  assign cross_sell_products = filtered_products | where: 'id', '!=', current_product.id
+-%}
+
+<!-- クロスセル ポップアップ モーダル -->
+<div id="cross-sell-popup" class="cross-sell-popup" style="display: none;" aria-hidden="true" role="dialog" aria-labelledby="cross-sell-title" aria-modal="true">
+  
+  <!-- オーバーレイ背景 -->
+  <div class="cross-sell-overlay" data-close-popup></div>
+  
+  <!-- ポップアップ コンテンツ -->
+  <div class="cross-sell-content">
+    
+    <!-- ヘッダー部分 -->
+    <div class="cross-sell-header">
+      <button type="button" class="cross-sell-close" data-close-popup aria-label="{{ 'general.accessibility.close' | t }}">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 追加された商品情報 -->
+    <div class="cross-sell-added-product">
+      <div class="added-product-image">
+        <div class="product-image-placeholder"></div>
+      </div>
+      <div class="added-product-info">
+        <h3 class="added-product-title"></h3>
+        <div class="added-product-price"></div>
+      </div>
+    </div>
+
+    <!-- カート概要 -->
+    <div class="cross-sell-cart-summary">
+      <div class="cart-summary-content">
+        <span class="cart-subtitle">{{ section.settings.cart_subtitle | default: 'Cart subtotal:' }}</span>
+        <span class="cart-total" id="cart-total-display">{{ cart.total_price | money }}</span>
+      </div>
+      <div class="cart-items-count">
+        <span class="cart-items-text">
+          (<span id="cart-items-count">{{ cart.item_count }}</span> 
+          {%- if cart.item_count == 1 -%}
+            {{ section.settings.item_text | default: 'Item' }}
+          {%- else -%}
+            {{ section.settings.items_text | default: 'Items' }}
+          {%- endif -%})
+        </span>
+      </div>
+    </div>
+
+    <!-- アクションボタン -->
+    <div class="cross-sell-actions">
+      <button type="button" class="checkout-btn" onclick="window.location.href='/checkout'">
+        {{ section.settings.checkout_text | default: 'Checkout' }}
+      </button>
+      <button type="button" class="view-cart-btn" data-close-popup onclick="window.location.href='/cart'">
+        {{ section.settings.view_cart_text | default: 'View Cart' }}
+      </button>
+    </div>
+
+    <!-- クロスセル商品セクション -->
+    {%- if cross_sell_products.size > 0 -%}
+    <div class="cross-sell-products-section">
+      <h4 class="cross-sell-products-title" id="cross-sell-title">
+        {{ section.settings.cross_sell_title | default: 'Customers Also Bought' }}
+      </h4>
+      
+      <div class="cross-sell-products-grid">
+        {%- for cross_sell_product in cross_sell_products limit: max_products -%}
+          {%- liquid
+            assign product_variant = cross_sell_product.selected_or_first_available_variant
+            assign product_price = product_variant.price
+            assign compare_price = product_variant.compare_at_price
+            assign product_available = product_variant.available
+          -%}
+          
+          <div class="cross-sell-product-card" data-product-id="{{ cross_sell_product.id }}">
+            
+            <!-- 商品画像 -->
+            <div class="product-card-image">
+              {%- if cross_sell_product.featured_image -%}
+                <img 
+                  src="{{ cross_sell_product.featured_image | image_url: width: 300 }}"
+                  srcset="
+                    {{ cross_sell_product.featured_image | image_url: width: 150 }} 150w,
+                    {{ cross_sell_product.featured_image | image_url: width: 300 }} 300w,
+                    {{ cross_sell_product.featured_image | image_url: width: 450 }} 450w
+                  "
+                  sizes="(max-width: 767px) 150px, 200px"
+                  alt="{{ cross_sell_product.featured_image.alt | default: cross_sell_product.title | escape }}"
+                  class="product-image"
+                  loading="lazy"
+                  width="300"
+                  height="300"
+                >
+              {%- else -%}
+                <div class="product-image-placeholder">
+                  <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21,15 16,10 5,21"/>
+                  </svg>
+                </div>
+              {%- endif -%}
+            </div>
+
+            <!-- 商品情報 -->
+            <div class="product-card-info">
+              <h5 class="product-card-title">{{ cross_sell_product.title | escape }}</h5>
+              
+              <!-- 価格表示 -->
+              <div class="product-card-price">
+                {%- if compare_price > product_price -%}
+                  <span class="price-compare">{{ compare_price | money }}</span>
+                {%- endif -%}
+                <span class="price-current">
+                  {%- if cross_sell_product.price_varies -%}
+                    {{ cross_sell_product.price_min | money }}+
+                  {%- else -%}
+                    {{ product_price | money }}
+                  {%- endif -%}
+                </span>
+              </div>
+
+              <!-- バリエーション選択 -->
+              {%- if cross_sell_product.variants.size > 1 and section.settings.show_variants -%}
+                <div class="product-variants">
+                  <select class="variant-selector" data-product-id="{{ cross_sell_product.id }}">
+                    {%- for variant in cross_sell_product.variants -%}
+                      {%- if variant.available -%}
+                        <option value="{{ variant.id }}" data-price="{{ variant.price | money }}">
+                          {{ variant.title }} - {{ variant.price | money }}
+                        </option>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </select>
+                </div>
+              {%- endif -%}
+
+              <!-- カート追加ボタン -->
+              {%- if product_available -%}
+                <button 
+                  type="button" 
+                  class="add-to-cart-btn" 
+                  data-variant-id="{{ product_variant.id }}"
+                  data-product-title="{{ cross_sell_product.title | escape }}"
+                  data-product-price="{{ product_price | money }}"
+                  data-product-image="{{ cross_sell_product.featured_image | image_url: width: 150 }}"
+                >
+                  <span class="btn-text">{{ section.settings.add_to_cart_text | default: 'Add to cart' }}</span>
+                  <span class="btn-loading" style="display: none;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                    </svg>
+                  </span>
+                  <span class="btn-success" style="display: none;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="20,6 9,17 4,12"/>
+                    </svg>
+                  </span>
+                </button>
+              {%- else -%}
+                <button type="button" class="add-to-cart-btn sold-out" disabled>
+                  {{ section.settings.sold_out_text | default: 'Sold out' }}
+                </button>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+    {%- endif -%}
+  </div>
+</div>
+
+<!-- 設定データをJavaScriptに渡す -->
+<script type="application/json" id="cross-sell-config">
+  {
+    "enabled": {{ section.settings.enable_popup | json }},
+    "delay": {{ section.settings.popup_delay | default: 500 | json }},
+    "autoClose": {{ section.settings.auto_close_delay | default: 0 | json }},
+    "showOnMobile": {{ section.settings.show_on_mobile | json }},
+    "cartUrl": {{ routes.cart_url | json }},
+    "cartAddUrl": {{ routes.cart_add_url | json }},
+    "moneyFormat": {{ shop.money_format | json }},
+    "debug": {{ section.settings.enable_debug_mode | default: false | json }},
+    "messages": {
+      "addedToCart": {{ section.settings.added_message | default: 'Added to cart!' | json }},
+      "error": {{ section.settings.error_message | default: 'Sorry, something went wrong.' | json }}
+    }
+  }
+</script>
+
+<script src="{{ 'cross-sell-popup.js' | asset_url }}" defer></script>
+{% schema %}
+  {
+  "name": "クロスセル ポップアップ",
+  "class": "cross-sell-popup-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🛍️ 基本設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_popup",
+      "label": "ポップアップを有効化",
+      "default": true,
+      "info": "カート追加時にクロスセル ポップアップを表示します"
+    },
+    {
+      "type": "collection",
+      "id": "cross_sell_collection",
+      "label": "クロスセル商品コレクション",
+      "info": "おすすめ商品として表示するコレクションを選択してください"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "最大表示商品数",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "info": "ポップアップに表示するクロスセル商品の最大数"
+    },
+    {
+      "type": "range",
+      "id": "popup_delay",
+      "label": "ポップアップ表示遅延（ミリ秒）",
+      "min": 0,
+      "max": 2000,
+      "step": 100,
+      "default": 500,
+      "info": "カート追加後、ポップアップが表示されるまでの時間"
+    },
+    {
+      "type": "range",
+      "id": "auto_close_delay",
+      "label": "自動閉じる時間（秒）",
+      "min": 0,
+      "max": 30,
+      "step": 5,
+      "default": 0,
+      "info": "0で無効。設定した時間（秒）後に自動でポップアップを閉じます"
+    },
+    
+    {
+      "type": "header",
+      "content": "📱 表示設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_mobile",
+      "label": "モバイルで表示",
+      "default": true,
+      "info": "モバイルデバイスでもポップアップを表示します"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_variants",
+      "label": "バリエーション選択を表示",
+      "default": true,
+      "info": "複数バリエーションがある商品で選択肢を表示します"
+    },
+    
+    {
+      "type": "header",
+      "content": "🛒 カート表示設定"
+    },
+    {
+      "type": "text",
+      "id": "cart_subtitle",
+      "label": "カート小計ラベル",
+      "default": "Cart subtotal:",
+      "info": "カート合計金額の前に表示されるテキスト"
+    },
+    {
+      "type": "text",
+      "id": "item_text",
+      "label": "アイテム単数形",
+      "default": "Item",
+      "info": "カート内アイテムが1個の場合の表示テキスト"
+    },
+    {
+      "type": "text",
+      "id": "items_text",
+      "label": "アイテム複数形",
+      "default": "Items",
+      "info": "カート内アイテムが複数の場合の表示テキスト"
+    },
+    
+    {
+      "type": "header",
+      "content": "🎯 ボタン設定"
+    },
+    {
+      "type": "text",
+      "id": "checkout_text",
+      "label": "チェックアウトボタンテキスト",
+      "default": "Checkout",
+      "info": "チェックアウトページに進むボタンのテキスト"
+    },
+    {
+      "type": "text",
+      "id": "view_cart_text",
+      "label": "カート表示ボタンテキスト",
+      "default": "View Cart",
+      "info": "カートページに移動するボタンのテキスト"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_text",
+      "label": "カート追加ボタンテキスト",
+      "default": "Add to cart",
+      "info": "クロスセル商品をカートに追加するボタンのテキスト"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_text",
+      "label": "売り切れボタンテキスト",
+      "default": "Sold out",
+      "info": "商品が売り切れの場合のボタンテキスト"
+    },
+    
+    {
+      "type": "header",
+      "content": "📝 テキスト設定"
+    },
+    {
+      "type": "text",
+      "id": "cross_sell_title",
+      "label": "クロスセル見出し",
+      "default": "Customers Also Bought",
+      "info": "おすすめ商品セクションの見出しテキスト"
+    },
+    {
+      "type": "text",
+      "id": "added_message",
+      "label": "追加成功メッセージ",
+      "default": "Added to cart!",
+      "info": "商品がカートに追加された時のメッセージ"
+    },
+    {
+      "type": "text",
+      "id": "error_message",
+      "label": "エラーメッセージ",
+      "default": "Sorry, something went wrong.",
+      "info": "エラーが発生した場合のメッセージ"
+    },
+    
+    {
+      "type": "header",
+      "content": "🎨 デザイン設定"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "オーバーレイ背景色",
+      "default": "rgba(0, 0, 0, 0.6)",
+      "info": "ポップアップ背景のオーバーレイ色"
+    },
+    {
+      "type": "color",
+      "id": "popup_background",
+      "label": "ポップアップ背景色",
+      "default": "#ffffff",
+      "info": "ポップアップ本体の背景色"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_color",
+      "label": "プライマリボタン色",
+      "default": "#1f2937",
+      "info": "チェックアウトボタンなどの主要ボタンの色"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_color",
+      "label": "セカンダリボタン色",
+      "default": "#4f46e5",
+      "info": "カート表示ボタンなどの補助ボタンの色"
+    },
+    
+    {
+      "type": "header",
+      "content": "📏 サイズ設定"
+    },
+    {
+      "type": "select",
+      "id": "popup_size",
+      "label": "ポップアップサイズ",
+      "options": [
+        {
+          "value": "small",
+          "label": "小（最大幅: 400px）"
+        },
+        {
+          "value": "medium",
+          "label": "中（最大幅: 500px）"
+        },
+        {
+          "value": "large",
+          "label": "大（最大幅: 700px）"
+        }
+      ],
+      "default": "medium",
+      "info": "ポップアップの最大幅を選択"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "角丸の大きさ",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12,
+      "info": "ポップアップと商品カードの角丸の大きさ"
+    },
+    
+    {
+      "type": "header",
+      "content": "🔧 高度な設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_blur_effect",
+      "label": "背景ぼかし効果を有効化",
+      "default": true,
+      "info": "オーバーレイ背景にぼかし効果を適用します"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_animations",
+      "label": "アニメーションを有効化",
+      "default": true,
+      "info": "ポップアップの表示・非表示アニメーションを有効にします"
+    },
+    {
+      "type": "checkbox",
+      "id": "close_on_overlay_click",
+      "label": "オーバーレイクリックで閉じる",
+      "default": true,
+      "info": "背景をクリックした時にポップアップを閉じます"
+    },
+    {
+      "type": "checkbox",
+      "id": "prevent_body_scroll",
+      "label": "背景スクロール防止",
+      "default": true,
+      "info": "ポップアップ表示中の背景スクロールを防止します"
+    },
+    
+    {
+      "type": "header",
+      "content": "♿ アクセシビリティ設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_focus_management",
+      "label": "フォーカス管理を有効化",
+      "default": true,
+      "info": "キーボードナビゲーションとフォーカス管理を有効にします"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_escape_key",
+      "label": "ESCキーで閉じる",
+      "default": true,
+      "info": "ESCキーでポップアップを閉じることができます"
+    },
+    {
+      "type": "checkbox",
+      "id": "announce_cart_updates",
+      "label": "カート更新をアナウンス",
+      "default": true,
+      "info": "スクリーンリーダー向けにカート更新を音声アナウンスします"
+    },
+    
+    {
+      "type": "header",
+      "content": "📊 分析・トラッキング設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_analytics",
+      "label": "アナリティクス追跡を有効化",
+      "default": false,
+      "info": "Google Analytics等でポップアップイベントを追跡します"
+    },
+    {
+      "type": "text",
+      "id": "analytics_event_name",
+      "label": "アナリティクスイベント名",
+      "default": "cross_sell_popup_interaction",
+      "info": "アナリティクスで使用するイベント名"
+    },
+    
+    {
+      "type": "header",
+      "content": "🎯 A/Bテスト設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_ab_testing",
+      "label": "A/Bテストモードを有効化",
+      "default": false,
+      "info": "訪問者の50%にのみポップアップを表示してテストします"
+    },
+    {
+      "type": "range",
+      "id": "ab_test_percentage",
+      "label": "A/Bテスト表示割合（%）",
+      "min": 10,
+      "max": 90,
+      "step": 10,
+      "default": 50,
+      "info": "ポップアップを表示する訪問者の割合"
+    },
+    
+    {
+      "type": "header",
+      "content": "🚀 パフォーマンス設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "lazy_load_images",
+      "label": "画像の遅延読み込み",
+      "default": true,
+      "info": "商品画像を遅延読み込みしてパフォーマンスを向上させます"
+    },
+    {
+      "type": "range",
+      "id": "image_quality",
+      "label": "画像品質",
+      "min": 50,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "default": 80,
+      "info": "商品画像の圧縮品質（高い値ほど高品質）"
+    },
+    {
+      "type": "checkbox",
+      "id": "preload_popup_resources",
+      "label": "ポップアップリソースをプリロード",
+      "default": false,
+      "info": "CSS・JSファイルを事前読み込みして表示速度を向上させます"
+    },
+    
+    {
+      "type": "header",
+      "content": "🔧 開発者向け設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_debug_mode",
+      "label": "デバッグモードを有効化",
+      "default": false,
+      "info": "コンソールに詳細なログを出力します（本番環境では無効推奨）"
+    },
+    {
+      "type": "text",
+      "id": "custom_css_class",
+      "label": "カスタムCSSクラス",
+      "placeholder": "my-custom-popup-style",
+      "info": "ポップアップに追加するカスタムCSSクラス名"
+    },
+    {
+      "type": "textarea",
+      "id": "custom_javascript",
+      "label": "カスタムJavaScript",
+      "placeholder": "// カスタムコードをここに記述",
+      "info": "ポップアップ動作をカスタマイズするJavaScriptコード"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "custom_product",
+      "name": "カスタム商品",
+      "settings": [
+        {
+          "type": "product",
+          "id": "featured_product", 
+          "label": "特別推奨商品",
+          "info": "コレクション設定に関係なく、この商品を優先表示します"
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "カスタム商品タイトル",
+          "info": "商品の表示名をカスタマイズ（空欄で商品名を使用）"
+        },
+        {
+          "type": "text",
+          "id": "custom_price",
+          "label": "カスタム価格表示",
+          "info": "価格の表示をカスタマイズ（空欄で通常価格を使用）"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "カスタム商品画像",
+          "info": "商品画像を差し替え（空欄で商品標準画像を使用）"
+        },
+        {
+          "type": "text",
+          "id": "custom_button_text",
+          "label": "カスタムボタンテキスト",
+          "placeholder": "今すぐ購入",
+          "info": "この商品専用のボタンテキスト"
+        },
+        {
+          "type": "range",
+          "id": "display_priority",
+          "label": "表示優先度",
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "default": 1,
+          "info": "数値が小さいほど優先的に表示されます"
+        }
+      ]
+    },
+    {
+      "type": "promotion_banner",
+      "name": "プロモーションバナー",
+      "settings": [
+        {
+          "type": "text",
+          "id": "banner_title",
+          "label": "バナータイトル",
+          "default": "特別オファー！",
+          "info": "プロモーションバナーのタイトル"
+        },
+        {
+          "type": "textarea",
+          "id": "banner_description",
+          "label": "バナー説明文",
+          "default": "今だけ特別価格でご提供中！",
+          "info": "プロモーション内容の説明"
+        },
+        {
+          "type": "url",
+          "id": "banner_link",
+          "label": "バナーリンク先",
+          "info": "バナーをクリックした時の移動先URL"
+        },
+        {
+          "type": "color",
+          "id": "banner_background_color",
+          "label": "バナー背景色",
+          "default": "#ff6b6b",
+          "info": "プロモーションバナーの背景色"
+        },
+        {
+          "type": "color",
+          "id": "banner_text_color",
+          "label": "バナー文字色",
+          "default": "#ffffff",
+          "info": "バナー内テキストの色"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_banner",
+          "label": "バナーを表示",
+          "default": false,
+          "info": "ポップアップ内にプロモーションバナーを表示します"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "クロスセル ポップアップ",
+      "settings": {
+        "enable_popup": true,
+        "max_products": 3,
+        "popup_delay": 500,
+        "show_on_mobile": true,
+        "show_variants": true,
+        "cart_subtitle": "Cart subtotal:",
+        "cross_sell_title": "Customers Also Bought",
+        "checkout_text": "Checkout",
+        "view_cart_text": "View Cart",
+        "add_to_cart_text": "Add to cart",
+        "sold_out_text": "Sold out",
+        "added_message": "Added to cart!",
+        "error_message": "Sorry, something went wrong.",
+        "popup_size": "medium",
+        "border_radius": 12,
+        "enable_animations": true,
+        "close_on_overlay_click": true,
+        "prevent_body_scroll": true,
+        "enable_focus_management": true,
+        "enable_escape_key": true,
+        "lazy_load_images": true,
+        "image_quality": 80
+      }
+    }
+  ]
+}
+{% endschema %}

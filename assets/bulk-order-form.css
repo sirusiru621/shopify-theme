@@ -1,0 +1,1746 @@
+/* ファイル名: bulk-order-form.css */
+/* まとまったご注文フォーム - レスポンシブ対応スタイルシート（熨斗・見積もり機能修正版） */
+/* スタイル説明: 和菓子店向けカスタム注文フォームの包括的スタイリング + 熨斗イメージ表示 + 見積もり表示 */
+
+/* ==========================================================================
+   CSS Variables and Custom Properties
+   ========================================================================== */
+
+:root {
+  --bulk-order-bg: #f8f9fa;
+  --bulk-order-text: #333333;
+  --bulk-order-accent: #e91e63;
+  --bulk-order-border: #e0e0e0;
+  --bulk-order-white: #ffffff;
+  --bulk-order-error: #dc3545;
+  --bulk-order-success: #28a745;
+  --bulk-order-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --bulk-order-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --bulk-order-radius: 8px;
+  --bulk-order-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --bulk-order-font-size-desktop: 16px;
+  --bulk-order-font-size-mobile: 14px;
+  --bulk-order-title-size: 32px;
+  --bulk-order-line-height: 1.6;
+  --bulk-order-letter-spacing: 0.5px;
+  --bulk-order-button-bg: #000000;
+  --bulk-order-button-text: #ffffff;
+  --bulk-order-estimate-bg: #f0f8ff;
+  --bulk-order-estimate-border: #b8d4f0;
+}
+
+/* セクション個別の色設定適用 */
+.bulk-order-section {
+  --bulk-order-bg: var(--section-bg-color, #f8f9fa);
+  --bulk-order-text: var(--section-text-color, #333333);
+  --bulk-order-accent: var(--section-accent-color, #e91e63);
+  --bulk-order-border: var(--section-border-color, #e0e0e0);
+  --bulk-order-button-bg: var(--section-button-bg, #000000);
+  --bulk-order-button-text: var(--section-button-text, #ffffff);
+  --bulk-order-font-size-desktop: var(--section-desktop-font-size, 16px);
+  --bulk-order-font-size-mobile: var(--section-mobile-font-size, 14px);
+  --bulk-order-title-size: var(--section-title-size, 32px);
+}
+
+/* ==========================================================================
+   Base Section Styles
+   ========================================================================== */
+
+.bulk-order-section {
+  background-color: var(--bulk-order-bg);
+  color: var(--bulk-order-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: var(--bulk-order-font-size-desktop);
+  line-height: var(--bulk-order-line-height);
+  letter-spacing: var(--bulk-order-letter-spacing);
+  padding: var(--section-section-padding-top, 60px) 0 var(--section-section-padding-bottom, 60px);
+  position: relative;
+  overflow: hidden;
+}
+
+.bulk-order-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
+
+.bulk-order-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.bulk-order-title {
+  font-size: var(--bulk-order-title-size);
+  font-weight: 700;
+  color: var(--bulk-order-text);
+  margin: 0 0 1rem 0;
+  letter-spacing: 0.05em;
+}
+
+.bulk-order-description {
+  font-size: 1.125rem;
+  color: var(--bulk-order-text);
+  opacity: 0.8;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   Order Information Section
+   ========================================================================== */
+
+.bulk-order-info {
+  background: var(--bulk-order-white);
+  border-radius: 0;
+  box-shadow: var(--bulk-order-shadow);
+  padding: 2.5rem;
+  margin-bottom: 3rem;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.8s ease-out 0.2s forwards;
+}
+
+.bulk-order-info-content {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.bulk-order-info-content p {
+  margin: 0 0 1rem 0;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+
+.bulk-order-info-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Estimate Summary Styles (見積もり表示セクション) - 商品選択セクション内に配置
+   ========================================================================== */
+
+.estimate-summary {
+  background: var(--bulk-order-estimate-bg);
+  border: 2px solid var(--bulk-order-estimate-border);
+  border-radius: 0;
+  padding: 2rem;
+  margin-top: 2rem;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out 0.5s forwards;
+}
+
+.estimate-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--bulk-order-estimate-border);
+}
+
+.estimate-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--bulk-order-text);
+  margin: 0 0 0.5rem 0;
+}
+
+.estimate-note {
+  font-size: 0.875rem;
+  color: var(--bulk-order-accent);
+  margin: 0;
+  font-weight: 600;
+}
+
+.estimate-content {
+  min-height: 120px;
+}
+
+.estimate-items {
+  margin-bottom: 1.5rem;
+}
+
+.estimate-placeholder {
+  text-align: center;
+  color: var(--bulk-order-text);
+  opacity: 0.6;
+  font-style: italic;
+  padding: 2rem 1rem;
+  border: 2px dashed var(--bulk-order-border);
+  border-radius: 0;
+  background: var(--bulk-order-white);
+}
+
+.estimate-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background: var(--bulk-order-white);
+  border: 1px solid var(--bulk-order-border);
+  border-radius: 4px;
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: slideInRight 0.4s ease-out forwards;
+}
+
+.estimate-item:last-child {
+  margin-bottom: 0;
+}
+
+.estimate-item-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.estimate-item-name {
+  font-weight: 600;
+  font-size:13px;
+  color: var(--bulk-order-text);
+  margin-bottom: 0.25rem;
+}
+
+.estimate-item-details {
+  font-size: 0.875rem;
+  color: var(--bulk-order-text);
+  opacity: 0.7;
+}
+
+.estimate-item-price {
+  font-weight: 700;
+  color: var(--bulk-order-accent);
+  font-size: 1.125rem;
+  white-space: nowrap;
+  margin-left: 1rem;
+}
+
+.estimate-total {
+  border-top: 2px solid var(--bulk-order-estimate-border);
+  padding-top: 1rem;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.total-label {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--bulk-order-text);
+}
+
+.total-amount {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--bulk-order-accent);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.shipping-note {
+  font-size: 0.8125rem;
+  color: var(--bulk-order-text);
+  opacity: 0.7;
+  text-align: center;
+  font-style: italic;
+}
+/* ==========================================================================
+   Process Flow Styles - 改善版（UI/UX最適化）
+   ========================================================================== */
+
+.process-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin: 3rem 0;
+  padding: 2.5rem 2rem;
+  background:#FFF;
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.process-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  max-width: 160px;
+  min-height: 140px;
+  z-index: 1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.process-step:hover {
+  transform: translateY(-4px);
+}
+
+/* プロセス間の接続線（デスクトップ） */
+.process-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 35px;
+  right: -50%;
+  width: 100%;
+  height: 3px;
+  background:#B3B6BC ;
+  border-radius: 0;
+  z-index: 0;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.process-step:hover::after {
+  opacity: 1;
+  height: 4px;
+  top: 34px;
+}
+
+/* プロセス円（改善版） */
+.process-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+    background: #B3B6BC;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 12px;
+  box-shadow: 
+    0 6px 20px rgba(139, 69, 19, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.05em;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+}
+
+.process-circle:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 8px 25px rgba(139, 69, 19, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* アクティブステップ（現在の段階） */
+.process-step.active .process-circle {
+  background: #B3B6BC;
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 1);
+}
+
+@keyframes activePulse {
+  0%, 100% { 
+    transform: scale(1.1); 
+    box-shadow: 
+      0 0 0 4px rgba(139, 69, 19, 0.2),
+      0 8px 24px rgba(139, 69, 19, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+  50% { 
+    transform: scale(1.12); 
+    box-shadow: 
+      0 0 0 6px rgba(139, 69, 19, 0.3),
+      0 10px 30px rgba(139, 69, 19, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* プロセスラベル */
+.process-label {
+  font-size: 14px;
+  color: var(--bulk-order-text, #5D4037);
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  white-space: nowrap;
+  min-height: 17px;
+}
+
+.process-sublabel {
+  font-size: 11px;
+  color: var(--bulk-order-text, #5D4037);
+  opacity: 0.8;
+  text-align: center;
+  line-height: 1.3;
+  min-height: 14px;
+  white-space: nowrap;
+}
+
+/* プロセス注釈（期間・注意事項） */
+.process-duration,
+.process-note {
+  position: absolute;
+  top: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: #84858A;
+  font-weight: 600;
+  white-space: nowrap;
+  background:#FFF;
+  padding: 6px 12px;
+  border-radius: 12px;
+  z-index: 3;
+  opacity: 0;
+  transform: translateX(-50%) translateY(-10px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.process-step:hover .process-duration,
+.process-step:hover .process-note {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.process-schedule {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #84858A ;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+  min-height: 13px;
+}
+
+/* ==========================================================================
+   タブレット対応（768px - 1023px）
+   ========================================================================== */
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  .process-flow {
+    gap: 1.5rem;
+    padding: 2rem 1.5rem;
+    margin: 2.5rem 0;
+  }
+  
+  .process-step {
+    max-width: 140px;
+    min-height: 130px;
+  }
+  
+  .process-circle {
+    width: 65px;
+    height: 65px;
+    font-size: 12px;
+  }
+  
+  .process-step.active .process-circle {
+    transform: scale(1.08);
+  }
+  
+  .process-label {
+    font-size: 13px;
+  }
+  
+  .process-sublabel,
+  .process-schedule {
+    font-size: 10px;
+  }
+  
+  .process-duration,
+  .process-note {
+    font-size: 10px;
+    top: -40px;
+  }
+  
+  .process-step:not(:last-child)::after {
+    top: 32px;
+    height: 2px;
+  }
+  
+  .process-step:hover::after {
+    height: 3px;
+    top: 31px;
+  }
+}
+
+/* ==========================================================================
+   モバイル対応（767px以下） - 縦型フロー
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  .process-flow {
+    flex-direction: column;
+    gap: 0;
+    padding: 2rem 1.5rem;
+    margin: 2rem 0;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .process-step {
+    width: 100%;
+    max-width: 280px;
+    min-height: auto;
+    margin-bottom: 2rem;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(220, 200, 180, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .process-step:last-child {
+    margin-bottom: 0;
+  }
+  
+  .process-step:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+  
+  /* 縦型フローでの接続線を削除 */
+  .process-step::after {
+    display: none;
+  }
+  
+  /* 代わりに縦の接続線を追加 */
+  .process-step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    bottom: -1rem;
+    left: 35px; /* 円の中心に合わせる */
+    width: 3px;
+    height: 1rem;
+    background: #B3B6BC;
+    border-radius: 0;
+    z-index: 1;
+  }
+  
+  /* モバイル用プロセス円 */
+  .process-circle {
+    width: 60px;
+    height: 60px;
+    font-size: 11px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+    border-width: 2px;
+  }
+  
+  .process-step.active .process-circle {
+    transform: scale(1.05);
+  }
+  
+  @keyframes activePulse {
+    0%, 100% { 
+      transform: scale(1.05); 
+    }
+    50% { 
+      transform: scale(1.08); 
+    }
+  }
+  
+  /* モバイル用テキストコンテナ */
+  .process-text-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    min-width: 0; /* テキストの溢れを防ぐ */
+  }
+  
+  .process-label {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    white-space: normal;
+    text-align: left;
+    line-height: 1.3;
+    color:#84858A!important;
+  }
+  
+  .process-sublabel {
+    font-size: 12px;
+    margin-bottom: 2px;
+    white-space: normal;
+    text-align: left;
+    line-height: 1.2;
+    color: #84858A;
+    font-weight: 500;
+  }
+  
+  .process-schedule {
+    font-size: 12px;
+    margin-top: 2px;
+    text-align: left;
+    color:#84858A;
+    font-weight: 600;
+  }
+  
+  /* モバイルでは注釈を常時表示 */
+  .process-duration,
+  .process-note {
+    position: static;
+    transform: none;
+    opacity: 1;
+    background:#FFF;
+    color:#84858A;
+    font-size: 12px;
+    padding: 4px 8px;
+    white-space: normal;
+    text-align: left;
+    max-width: 100%;
+    margin-top: 4px;
+    line-height: 1.3;
+  }
+  
+  /* アクティブステップの特別表示 */
+  .process-step.active {
+  }
+  
+  .process-step.active .process-label {
+    color: var(--bulk-order-primary, #8B4513);
+    font-weight: 800;
+  }
+  
+  .process-step.active .process-duration,
+  .process-step.active .process-note {
+    color:#84858A;
+    font-weight: 600;
+  }
+}
+
+/* ==========================================================================
+   極小スマホ対応（480px以下）
+   ========================================================================== */
+
+@media (max-width: 480px) {
+  .process-flow {
+    padding: 1.5rem 1rem;
+    margin: 1.5rem 0;
+    max-width: 100%;
+  }
+  
+  .process-step {
+    max-width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1.5rem;
+    gap: 0.75rem;
+  }
+  
+  .process-circle {
+    width: 50px;
+    height: 50px;
+    font-size: 10px;
+  }
+  
+  .process-label {
+    font-size: 14px;
+  }
+  
+  .process-sublabel,
+  .process-schedule {
+    font-size: 11px;
+  }
+  
+  .process-duration,
+  .process-note {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+  
+  .process-step:not(:last-child)::before {
+    bottom: -0.75rem;
+    height: 0.75rem;
+    left: 25px;
+  }
+}
+
+/* ==========================================================================
+   アクセシビリティ対応
+   ========================================================================== */
+
+/* 高コントラストモード */
+@media (prefers-contrast: high) {
+  .process-circle {
+    border-width: 3px;
+    border-color: #000000;
+  }
+  
+  .process-step.active .process-circle {
+    border-color: #000000;
+    box-shadow: 
+      0 0 0 6px rgba(0, 0, 0, 0.3),
+      0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+  
+  .process-label,
+  .process-sublabel,
+  .process-schedule {
+    color: #000000;
+    text-shadow: none;
+  }
+}
+
+/* 動きを減らす設定 */
+@media (prefers-reduced-motion: reduce) {
+  .process-circle,
+  .process-step,
+  .process-duration,
+  .process-note {
+    transition: none;
+    animation: none;
+  }
+  
+  .process-step.active .process-circle {
+    animation: none;
+    transform: scale(1.1);
+  }
+  
+  .process-flow::before {
+    animation: none;
+  }
+}
+/* ==========================================================================
+   Form Styles
+   ========================================================================== */
+
+.bulk-order-form {
+  background: var(--bulk-order-white);
+  border-radius: 0;
+  box-shadow: var(--bulk-order-shadow);
+  padding: 2.5rem;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.8s ease-out 0.4s forwards;
+}
+
+.form-section {
+  border: none;
+  margin: 0 0 2.5rem 0;
+  padding: 0;
+  position: relative;
+}
+
+.form-section:last-of-type {
+  margin-bottom: 2rem;
+}
+
+.form-section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--bulk-order-text);
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--bulk-order-border);
+  position: relative;
+}
+
+.form-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: var(--bulk-order-accent);
+}
+
+/* ==========================================================================
+   Address and Shipping Styles
+   ========================================================================== */
+
+.shipping-billing-info {
+  background: #fafbfc;
+  border: 1px solid var(--bulk-order-border);
+  border-radius:0;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.address-section {
+  margin-bottom: 2rem;
+}
+
+.address-section:last-child {
+  margin-bottom: 0;
+}
+
+.address-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--bulk-order-text);
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--bulk-order-border);
+}
+
+.address-fields {
+  margin-top: 1rem;
+  transition: all 0.3s ease-out;
+  opacity: 1;
+  transform: translateY(0);
+  overflow: hidden;
+}
+
+/* 請求書住所の初期表示設定 */
+.billing-address {
+  display: block;
+  opacity: 1;
+  max-height: 1000px;
+}
+
+/* 非表示時のアニメーション */
+.billing-address.hiding {
+  opacity: 0;
+  transform: translateY(-20px);
+  max-height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* 表示時のアニメーション */
+.billing-address.showing {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 1000px;
+}
+
+/* ==========================================================================
+   Checkbox Styles
+   ========================================================================== */
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--bulk-order-text);
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--bulk-order-accent);
+  cursor: pointer;
+}
+
+.checkbox-label {
+  user-select: none;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.checkbox-wrapper:hover .checkbox-label {
+  color: var(--bulk-order-accent);
+}
+
+/* ==========================================================================
+   Receipt Information Styles
+   ========================================================================== */
+
+.receipt-info {
+  border: 1px solid #f0d0a0;
+  border-radius: 0;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.receipt-details {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--bulk-order-border);
+  transition: all 0.3s ease-out;
+  display: none;
+  opacity: 0;
+  transform: translateY(-10px);
+  max-height: 0;
+  overflow: hidden;
+}
+
+/* 領収書詳細が表示される時のスタイル */
+.receipt-details.showing {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 200px;
+  padding-top: 1rem;
+}
+
+/* 領収書詳細が非表示になる時のスタイル */
+.receipt-details.hiding {
+  opacity: 0;
+  transform: translateY(-10px);
+  max-height: 0;
+  padding-top: 0;
+}
+
+/* ==========================================================================
+   Noshi Image Display Styles (熨斗イメージ表示)
+   ========================================================================== */
+
+.noshi-image-display {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #fafafa;
+  border: 1px solid var(--bulk-order-border);
+  border-radius: 0;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.4s ease-out;
+}
+
+.noshi-image-display.showing {
+  opacity: 1;
+  transform: translateY(0);
+  display: block;
+}
+
+.noshi-image-display.hiding {
+  opacity: 0;
+  transform: translateY(-10px);
+  max-height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.noshi-image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.noshi-preview-image {
+  max-width: 200px;
+  max-height: 150px;
+  width: auto;
+  height: auto;
+  border: 2px solid var(--bulk-order-border);
+  border-radius: 0;
+  box-shadow: var(--bulk-order-shadow);
+  transition: var(--bulk-order-transition);
+  object-fit: contain;
+  background: var(--bulk-order-white);
+}
+
+.noshi-preview-image:hover {
+  transform: scale(1.05);
+  box-shadow: var(--bulk-order-shadow-hover);
+}
+
+.noshi-image-caption {
+  font-size: 0.875rem;
+  color: var(--bulk-order-text);
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Form Rows and Groups
+   ========================================================================== */
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-row-split {
+  flex-wrap: wrap;
+}
+
+.form-row-split .form-group {
+  flex: 1;
+  min-width: 280px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.form-group.required .form-label::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background:#84858A;
+  border-radius: 0;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+/* ==========================================================================
+   Form Labels and Inputs
+   ========================================================================== */
+
+.form-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--bulk-order-text);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.required-mark {
+  font-size: 0.8125rem;
+  color:#84858A;
+  font-weight: 500;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--bulk-order-border);
+  border-radius: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--bulk-order-text);
+  background: var(--bulk-order-white);
+  transition: var(--bulk-order-transition);
+  font-family: inherit;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--bulk-order-accent);
+  box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+}
+
+.form-input:hover,
+.form-select:hover {
+  border-color: var(--bulk-order-accent);
+}
+
+.form-input[aria-invalid="true"],
+.form-select[aria-invalid="true"] {
+  border-color: var(--bulk-order-error);
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--bulk-order-border);
+  border-radius: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--bulk-order-text);
+  background: var(--bulk-order-white);
+  resize: vertical;
+  min-height: 120px;
+  transition: var(--bulk-order-transition);
+  font-family: inherit;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--bulk-order-accent);
+  box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+}
+
+.form-textarea:hover {
+  border-color: var(--bulk-order-accent);
+}
+
+.quantity-input {
+  max-width: 120px;
+}
+
+/* ==========================================================================
+   Product Row Styles
+   ========================================================================== */
+
+.product-row {
+  background: #fafbfc;
+  border: 1px solid var(--bulk-order-border);
+  border-radius: 0;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: var(--bulk-order-transition);
+}
+
+.product-row:hover {
+  box-shadow: var(--bulk-order-shadow);
+  border-color: var(--bulk-order-accent);
+}
+
+.product-row:last-child {
+  margin-bottom: 0;
+}
+
+.product-row-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--bulk-order-text);
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--bulk-order-border);
+}
+
+.product-row-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+/* フォームグループの基本スタイル */
+.product-row-content .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+
+/* 商品選択フィールドを最初に配置 */
+.product-row-content .form-group:first-child {
+  order: 1;
+}
+
+/* 個数フィールドを2番目に配置 */
+.product-row-content .form-group:nth-child(2) {
+  order: 2;
+}
+
+/* 熨斗フィールドを3番目に配置 */
+.product-row-content .form-group:nth-child(3) {
+  order: 3;
+}
+
+/* 熨斗イメージ表示を4番目に配置 */
+.noshi-image-display {
+  order: 4;
+}
+
+/* 商品情報表示スタイル */
+.product-info {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: #f0f8ff;
+  border: 1px solid var(--bulk-order-border);
+  border-radius: 0;
+  display: none;
+  order: 5;
+}
+
+.product-price {
+  color: var(--bulk-order-accent);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.product-note {
+  color: var(--bulk-order-text);
+  font-style: italic;
+  font-size: 0.875rem;
+}
+
+/* 商品未選択時の個数・熨斗フィールドスタイル */
+.form-input[disabled],
+.form-select[disabled] {
+  background-color: #f5f5f5;
+  color: #999999;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* ==========================================================================
+   Error and Description Styles
+   ========================================================================== */
+
+.form-error {
+  font-size: 0.8125rem;
+  color: var(--bulk-order-error);
+  margin-top: 0.25rem;
+  display: none;
+  animation: slideDown 0.3s ease-out;
+}
+
+.form-error.visible {
+  display: block;
+}
+
+.form-description {
+  font-size: 0.8125rem;
+  color: var(--bulk-order-text);
+  opacity: 0.7;
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   Submit Button and Message Styles
+   ========================================================================== */
+
+.form-submit {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.submit-button {
+  background: var(--bulk-order-button-bg);
+  color: var(--bulk-order-button-text);
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  border-radius: 0;
+  cursor: pointer;
+  transition: var(--bulk-order-transition);
+  position: relative;
+  overflow: hidden;
+  min-width: 200px;
+  font-family: inherit;
+  letter-spacing: 0.5px;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--bulk-order-shadow-hover);
+  opacity: 0.9;
+}
+
+.submit-button:active {
+  transform: translateY(0);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+.submit-spinner {
+  display: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--bulk-order-button-text);
+  border-radius: 0;
+  animation: spin 1s linear infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.submit-button.loading .submit-text {
+  opacity: 0;
+}
+
+.submit-button.loading .submit-spinner {
+  display: block;
+}
+
+.form-message {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 0;
+  display: none;
+  text-align: center;
+  font-weight: 500;
+}
+
+.form-message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  display: block;
+}
+
+.form-message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  display: block;
+}
+
+/* ==========================================================================
+   Keyframe Animations
+   ========================================================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 50px;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   Tablet Responsive Design (768px - 1023px)
+   ========================================================================== */
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  .bulk-order-container {
+    padding: 0 30px;
+  }
+  
+  .bulk-order-info,
+  .bulk-order-form {
+    padding: 2rem;
+  }
+  
+  .estimate-summary {
+    padding: 1.5rem;
+  }
+  
+  .process-flow {
+    gap: 0.75rem;
+  }
+  
+  .process-circle {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .process-text {
+    font-size: 0.8rem;
+  }
+  
+  .process-arrow {
+    min-width: 50px;
+  }
+  
+  .product-row-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .form-row-split {
+    flex-direction: column;
+  }
+  
+  .form-row-split .form-group {
+    min-width: auto;
+  }
+  
+  .noshi-preview-image {
+    max-width: 100%;
+    max-height: 500px;
+  }
+}
+
+/* ==========================================================================
+   Mobile Responsive Design (375px - 767px)
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  .bulk-order-section {
+    font-size: var(--bulk-order-font-size-mobile);
+    padding: var(--section-section-padding-top-mobile, 40px) 0 var(--section-section-padding-bottom-mobile, 40px);
+  }
+  
+  .bulk-order-container {
+    padding: 0 16px;
+  }
+  
+  .bulk-order-header {
+    margin-bottom: 2rem;
+  }
+  
+  .bulk-order-title {
+    font-size: calc(var(--bulk-order-title-size) * 0.8);
+  }
+  
+  .bulk-order-description {
+    font-size: 1rem;
+  }
+  
+  .bulk-order-info,
+  .bulk-order-form {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .estimate-summary {
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  
+  .estimate-title {
+    font-size: 1.25rem;
+  }
+  
+  .total-amount {
+    font-size: 1.5rem;
+  }
+  
+  .estimate-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .estimate-item-price {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+  
+  /* モバイルでのプロセスフロー調整 */
+  .process-flow {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .process-step {
+    width: 100%;
+    max-width: 225px;
+  }
+  
+  .process-circle {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .process-text {
+    font-size: 0.75rem;
+  }
+  
+  .process-arrow {
+    transform: rotate(90deg);
+    min-width: 40px;
+    margin: 0.5rem 0;
+  }
+  
+  .process-arrow::after {
+    right: -3px;
+    top: -3px;
+    border-left: 6px solid var(--bulk-order-accent);
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+  }
+  
+  .process-duration,
+  .process-note {
+    position: static;
+    transform: none;
+    margin-top: 0.5rem;
+    font-size: 0.7rem;
+  }
+  
+  /* モバイルでのフォーム調整 */
+  .form-section {
+    margin-bottom: 2rem;
+  }
+  
+  .form-section-title {
+    font-size: 1.125rem;
+  }
+  
+  .shipping-billing-info,
+  .receipt-info {
+    padding: 1rem;
+  }
+  
+  .address-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .address-section-title {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .checkbox-wrapper {
+    margin-bottom: 1rem;
+  }
+  
+  .checkbox-wrapper input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .checkbox-label {
+    font-size: 0.9rem;
+  }
+  
+  /* モバイルでの熨斗イメージ調整 */
+  .noshi-preview-image {
+    max-width: 100%;
+    max-height: 500px;
+  }
+  
+  .noshi-image-caption {
+    font-size: 0.8125rem;
+  }
+  
+  /* モバイルでのアニメーション制御 */
+  .billing-address,
+  .receipt-details,
+  .noshi-image-display {
+    transition: all 0.2s ease-out;
+  }
+  
+  .billing-address.showing,
+  .receipt-details.showing,
+  .noshi-image-display.showing {
+    animation-duration: 0.2s;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .form-row-split {
+    flex-direction: column;
+  }
+  
+  .form-row-split .form-group {
+    min-width: auto;
+  }
+  
+  .product-row {
+    padding: 1rem;
+  }
+  
+  .product-row-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .quantity-input {
+    max-width: 120px;
+  }
+  
+  .submit-button {
+    width: 100%;
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+  }
+}
+
+/* ==========================================================================
+   Large Desktop (1280px+)
+   ========================================================================== */
+
+@media (min-width: 1280px) {
+  .bulk-order-container {
+    max-width: 1400px;
+    padding: 0 40px;
+  }
+  
+  .bulk-order-info,
+  .bulk-order-form {
+    padding: 3rem;
+  }
+  
+  .estimate-summary {
+    padding: 2.5rem;
+  }
+  
+  .process-circle {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .process-text {
+    font-size: 1rem;
+  }
+  
+  .process-arrow {
+    min-width: 80px;
+  }
+  
+  .product-row-content {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .noshi-preview-image {
+    max-width: 100%;
+    max-height: 500px;
+  }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+  .process-flow {
+    background: white;
+    border: 2px solid #ccc;
+    box-shadow: none;
+    padding: 1rem;
+  }
+  
+  .process-flow::before {
+    display: none;
+  }
+  
+  .process-circle {
+    background: white !important;
+    color: black !important;
+    border: 2px solid black !important;
+    box-shadow: none !important;
+  }
+  
+  .process-duration,
+  .process-note {
+    opacity: 1 !important;
+    position: static !important;
+    transform: none !important;
+    background: white !important;
+    border: 1px solid black !important;
+  }
+}
+
+/* ==========================================================================
+   High Contrast Mode Support
+   ========================================================================== */
+
+@media (prefers-contrast: high) {
+  .bulk-order-section {
+    --bulk-order-border: #000000;
+    --bulk-order-accent: #0066cc;
+    --bulk-order-estimate-border: #000000;
+  }
+  
+  .form-input,
+  .form-select,
+  .form-textarea {
+    border-width: 3px;
+  }
+  
+  .submit-button {
+    background: #0066cc;
+    border: 2px solid #000000;
+  }
+  
+  .noshi-preview-image {
+    border-width: 3px;
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion Support
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .process-arrow {
+    background: var(--bulk-order-border);
+  }
+  
+  /* アニメーションを無効化してシンプルな表示切り替えにする */
+  .billing-address,
+  .receipt-details,
+  .noshi-image-display,
+  .estimate-item {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .billing-address.showing,
+  .receipt-details.showing,
+  .noshi-image-display.showing {
+    opacity: 1 !important;
+    transform: none !important;
+    max-height: none !important;
+  }
+  
+  .billing-address.hiding,
+  .receipt-details.hiding,
+  .noshi-image-display.hiding {
+    opacity: 0 !important;
+    transform: none !important;
+    max-height: 0 !important;
+  }
+}

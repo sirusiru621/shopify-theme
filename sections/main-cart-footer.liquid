@@ -1,0 +1,1337 @@
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+{{ 'component-totals.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+
+<div class="page-width{% if cart == empty %} is-empty{% endif %}" id="main-cart-footer" data-id="{{ section.id }}">
+  <div>
+    <div class="cart__footer">
+      {%- if settings.show_cart_note -%}
+        <cart-note class="cart__note field">
+          <label for="Cart-note">{{ 'sections.cart.note' | t }}</label>
+          <textarea
+            class="text-area field__input"
+            name="note"
+            form="cart"
+            id="Cart-note"
+            placeholder="{{ 'sections.cart.note' | t }}"
+          >{{ cart.note }}</textarea>
+        </cart-note>
+      {%- endif -%}
+
+      <div class="cart__blocks">
+        {% for block in section.blocks %}
+          {%- case block.type -%}
+            {%- when '@app' -%}
+              {% render block %}
+
+
+{%- when 'delivery-options' -%}
+  {%- liquid
+    assign unique_id = 'cart-delivery-' | append: block.id
+    assign bg_color = block.settings.bg_color
+    assign text_color = block.settings.text_color
+    assign border_color = block.settings.border_color
+    
+    capture delivery_block_style
+      if bg_color != 'rgba(0,0,0,0)' and bg_color != blank
+        echo '--delivery-bg: ' | append: bg_color | append: ';'
+      endif
+      if text_color != 'rgba(0,0,0,0)' and text_color != blank
+        echo '--delivery-text: ' | append: text_color | append: ';'
+      endif
+      if border_color != 'rgba(0,0,0,0)' and border_color != blank
+        echo '--delivery-border: ' | append: border_color | append: ';'
+      endif
+    endcapture
+    
+    if delivery_block_style != blank
+      assign delivery_block_style = 'style="' | append: delivery_block_style | append: '"'
+    endif
+  -%}
+
+  <div class="cart-delivery-options" 
+       data-cart-delivery-options="{{ unique_id }}"
+       {{ delivery_block_style }}>
+    
+    <div class="cart-delivery-options__container">
+      {%- if block.settings.show_title -%}
+        <h3 class="cart-delivery-options__title">
+          {{ block.settings.title | default: '配送オプション' }}
+        </h3>
+      {%- endif -%}
+      
+      <!-- 配送オプションエリア（常に表示） -->
+      <div class="delivery-options-wrapper">
+        
+        <!-- 配送日時指定セクション -->
+        {%- if block.settings.enable_delivery_datetime -%}
+          <div class="delivery-section" data-section="datetime">
+            <div class="section-header">
+              <input type="hidden" name="attributes[配送日時指定]" value="">
+              
+              {%- assign datetime_checked = false -%}
+              {%- if cart.attributes['配送日時指定'] == '利用する' -%}
+                {%- assign datetime_checked = true -%}
+              {%- endif -%}
+              
+              <input type="checkbox" 
+                     id="datetime-toggle-{{ unique_id }}"
+                     class="section-toggle-checkbox"
+                     name="attributes[配送日時指定]"
+                     value="利用する"
+                     {% if datetime_checked %}checked{% endif %}>
+              
+              <label for="datetime-toggle-{{ unique_id }}" class="section-toggle-label">
+                <div class="section-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                </div>
+                <span class="section-title">{{ block.settings.datetime_label | default: '配送日時指定' }}</span>
+                <div class="toggle-indicator">
+                  <svg class="check-icon" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                    <path d="M1 4.5L5 8.5L13 1" stroke="white" stroke-width="2"/>
+                  </svg>
+                </div>
+              </label>
+            </div>
+
+            <div class="section-content" 
+                 id="datetime-content-{{ unique_id }}"
+                 {% unless datetime_checked %}style="display: none;"{% endunless %}>
+              
+              <!-- 配送業者選択（表示設定がONの場合のみ） -->
+              {%- if block.settings.show_delivery_company -%}
+                <div class="delivery-option-group">
+                  <label for="delivery-company-{{ unique_id }}" class="delivery-option-label">
+                    {{ block.settings.delivery_company_label | default: '配送業者' }}
+                  </label>
+                  
+                  <div class="delivery-select-wrapper">
+                    <select id="delivery-company-{{ unique_id }}" 
+                            class="delivery-select"
+                            name="attributes[{{ block.settings.delivery_company_attribute | default: '配送業者' }}]">
+                      <option value="">{{ block.settings.no_preference_text | default: '指定なし' }}</option>
+                      
+                      {%- assign company_options = block.settings.company_options | split: ',' -%}
+                      {%- assign company_attr = block.settings.delivery_company_attribute | default: '配送業者' -%}
+                      {%- assign saved_company = cart.attributes[company_attr] -%}
+                      {%- for company_option in company_options -%}
+                        {%- assign option_value = company_option | strip -%}
+                        <option value="{{ option_value }}" {% if saved_company == option_value %}selected{% endif %}>
+                          {{ option_value }}
+                        </option>
+                      {%- endfor -%}
+                    </select>
+                    <div class="delivery-select-arrow">
+                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                        <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              {%- endif -%}
+
+              <!-- 配送希望日選択 -->
+              <div class="delivery-option-group">
+                <label for="delivery-date-{{ unique_id }}" class="delivery-option-label">
+                  {{ block.settings.delivery_date_label | default: '配送希望日' }}
+                </label>
+                
+                <div class="delivery-select-wrapper">
+                  <select id="delivery-date-{{ unique_id }}" 
+                          class="delivery-select"
+                          name="attributes[{{ block.settings.delivery_date_attribute | default: '配送希望日' }}]">
+                    <option value="">{{ block.settings.date_placeholder_text | default: '日付を選択してください' }}</option>
+                    <!-- 日付オプションはJavaScriptで動的生成 -->
+                  </select>
+                  <div class="delivery-select-arrow">
+                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                      <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </div>
+                </div>
+                
+                {%- if block.settings.show_cutoff_notice -%}
+                  <div class="delivery-notice">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    {{ block.settings.cutoff_notice_text | default: '15時以降のご注文は翌営業日の発送となります' }}
+                  </div>
+                {%- endif -%}
+              </div>
+
+              <!-- 配送希望時間帯選択 -->
+              <div class="delivery-option-group">
+                <label for="delivery-time-{{ unique_id }}" class="delivery-option-label">
+                  {{ block.settings.delivery_time_label | default: '配送希望時間帯' }}
+                </label>
+                
+                <div class="delivery-select-wrapper">
+                  <select id="delivery-time-{{ unique_id }}" 
+                          class="delivery-select"
+                          name="attributes[{{ block.settings.delivery_time_attribute | default: '配送希望時間帯' }}]">
+                    <option value="">{{ block.settings.no_preference_text | default: '指定なし' }}</option>
+                    
+                    {%- assign time_options = block.settings.time_options | split: ',' -%}
+                    {%- assign time_attr = block.settings.delivery_time_attribute | default: '配送希望時間帯' -%}
+                    {%- assign saved_time = cart.attributes[time_attr] -%}
+                    {%- for time_option in time_options -%}
+                      {%- assign option_value = time_option | strip -%}
+                      <option value="{{ option_value }}" {% if saved_time == option_value %}selected{% endif %}>
+                        {{ option_value }}
+                      </option>
+                    {%- endfor -%}
+                  </select>
+                  <div class="delivery-select-arrow">
+                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                      <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+
+        <!-- ギフトオプションセクション（独立） -->
+        {%- if block.settings.enable_gift_options -%}
+          <div class="delivery-section" data-section="gift">
+            <div class="section-header">
+              <input type="hidden" name="attributes[ギフトオプション]" value="">
+              
+              {%- assign gift_checked = false -%}
+              {%- if cart.attributes['ギフトオプション'] == '利用する' -%}
+                {%- assign gift_checked = true -%}
+              {%- endif -%}
+              
+              <input type="checkbox" 
+                     id="gift-toggle-{{ unique_id }}"
+                     class="section-toggle-checkbox"
+                     name="attributes[ギフトオプション]"
+                     value="利用する"
+                     {% if gift_checked %}checked{% endif %}>
+              
+              <label for="gift-toggle-{{ unique_id }}" class="section-toggle-label">
+                <div class="section-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                </div>
+                <span class="section-title">{{ block.settings.gift_label | default: 'ギフトオプション' }}</span>
+                <div class="toggle-indicator">
+                  <svg class="check-icon" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                    <path d="M1 4.5L5 8.5L13 1" stroke="white" stroke-width="2"/>
+                  </svg>
+                </div>
+              </label>
+            </div>
+
+            <div class="section-content" 
+                 id="gift-content-{{ unique_id }}"
+                 {% unless gift_checked %}style="display: none;"{% endunless %}>
+              
+              <!-- のし指定 -->
+              {%- if block.settings.enable_noshi -%}
+                <div class="delivery-option-group">
+                  <label for="noshi-select-{{ unique_id }}" class="delivery-option-label">
+                    {{ block.settings.noshi_label | default: 'のし' }}
+                  </label>
+                  
+                  <div class="delivery-select-wrapper">
+                    <select id="noshi-select-{{ unique_id }}" 
+                            class="delivery-select"
+                            name="attributes[{{ block.settings.noshi_attribute | default: 'のし指定' }}]">
+                      <option value="">{{ block.settings.no_preference_text | default: '指定なし' }}</option>
+                      
+                      {%- assign noshi_options = block.settings.noshi_options | split: ',' -%}
+                      {%- assign noshi_attr = block.settings.noshi_attribute | default: 'のし指定' -%}
+                      {%- assign saved_noshi = cart.attributes[noshi_attr] -%}
+                      {%- for noshi_option in noshi_options -%}
+                        {%- assign option_value = noshi_option | strip -%}
+                        <option value="{{ option_value }}" {% if saved_noshi == option_value %}selected{% endif %}>
+                          {{ option_value }}
+                        </option>
+                      {%- endfor -%}
+                    </select>
+                    <div class="delivery-select-arrow">
+                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                        <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- のし名入れフィールド -->
+                  {%- assign noshi_name_attr = block.settings.noshi_name_attribute | default: 'のし名入れ' -%}
+                  {%- assign saved_noshi_name = cart.attributes[noshi_name_attr] -%}
+                  {%- assign show_noshi_name = false -%}
+                  {%- if saved_noshi != blank and saved_noshi != '' -%}
+                    {%- assign show_noshi_name = true -%}
+                  {%- endif -%}
+                  
+                  <div class="noshi-name-field" 
+                       id="noshi-name-field-{{ unique_id }}"
+                       {% unless show_noshi_name %}style="display: none;"{% endunless %}>
+                    <label for="noshi-name-{{ unique_id }}" class="noshi-name-label">
+                      {{ block.settings.noshi_name_label | default: 'のし上書き（お名前）' }}
+                    </label>
+                    <input type="text"
+                           id="noshi-name-{{ unique_id }}"
+                           class="noshi-name-input"
+                           name="attributes[{{ noshi_name_attr }}]"
+                           placeholder="{{ block.settings.noshi_name_placeholder | default: 'お名前をご入力ください' }}"
+                           maxlength="30"
+                           value="{{ saved_noshi_name }}">
+                    <div class="character-count">
+                      <span class="current-count">0</span> / 30文字
+                    </div>
+                  </div>
+                </div>
+              {%- endif -%}
+
+              <!-- ギフトメッセージ -->
+              {%- if block.settings.enable_gift_message -%}
+                <div class="delivery-option-group">
+                  <label for="gift-message-{{ unique_id }}" class="delivery-option-label">
+                    {{ block.settings.gift_message_label | default: 'ギフトメッセージ' }}
+                  </label>
+                  {%- assign message_attr = block.settings.gift_message_attribute | default: 'ギフトメッセージ' -%}
+                  {%- assign saved_message = cart.attributes[message_attr] -%}
+                  <textarea id="gift-message-{{ unique_id }}"
+                            class="delivery-notes-input"
+                            name="attributes[{{ message_attr }}]"
+                            placeholder="{{ block.settings.gift_message_placeholder | default: 'メッセージをご記入ください' }}"
+                            maxlength="100">{{ saved_message }}</textarea>
+                  <div class="character-count">
+                    <span class="current-count">0</span> / 100文字
+                  </div>
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <!-- 配送備考欄（常に表示） -->
+        {%- if block.settings.enable_notes -%}
+          <div class="delivery-section delivery-section--notes">
+            <div class="delivery-option-group">
+              <label for="delivery-notes-{{ unique_id }}" class="delivery-option-label">
+                {{ block.settings.notes_label | default: '配送備考' }}
+              </label>
+              {%- assign notes_attr = block.settings.notes_attribute | default: '配送備考' -%}
+              {%- assign saved_notes = cart.attributes[notes_attr] -%}
+              <textarea id="delivery-notes-{{ unique_id }}"
+                        class="delivery-notes-input"
+                        name="attributes[{{ notes_attr }}]"
+                        placeholder="{{ block.settings.notes_placeholder | default: 'その他ご要望がございましたらご記入ください' }}"
+                        maxlength="200">{{ saved_notes }}</textarea>
+              <div class="character-count">
+                <span class="current-count">0</span> / 200文字
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+
+        <!-- 更新ボタン -->
+        <div class="delivery-options-actions">
+          <button type="button" class="btn btn--full btn--primary delivery-options-update">
+            <span class="button-text">{{ block.settings.update_button_text | default: '配送オプションを更新' }}</span>
+            <span class="button-loading" style="display: none;">
+              <svg class="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-dasharray="31.416" stroke-dashoffset="31.416">
+                  <animate attributeName="stroke-dasharray" dur="2s" values="0 31.416;15.708 15.708;0 31.416" repeatCount="indefinite"/>
+                  <animate attributeName="stroke-dashoffset" dur="2s" values="0;-15.708;-31.416" repeatCount="indefinite"/>
+                </circle>
+              </svg>
+              更新中...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<style>
+    /* === CSS変数定義 === */
+    .cart-delivery-options {
+      --delivery-bg: {{ block.settings.bg_color | default: '#ffffff' }};
+      --delivery-text: {{ block.settings.text_color | default: '#333333' }};
+      --delivery-border: {{ block.settings.border_color | default: '#e0e6ed' }};
+      --delivery-primary: {{ block.settings.primary_color | default: '#007bff' }};
+      --delivery-success: {{ block.settings.success_color | default: '#28a745' }};
+      margin-bottom: 20px;
+    }
+
+    /* === 基本レイアウト === */
+    .cart-delivery-options__container {
+      background: var(--delivery-bg);
+      border: 1px solid var(--delivery-border);
+      border-radius: 12px;
+      padding: 24px;
+      color: var(--delivery-text);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .cart-delivery-options__title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--delivery-text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cart-delivery-options__title::before {
+      content: "";
+      width: 4px;
+      height: 24px;
+      background: var(--delivery-primary);
+      border-radius: 2px;
+    }
+
+    /* === セクション設計 === */
+    .delivery-section {
+      margin-bottom: 20px;
+      border: 1px solid var(--delivery-border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--delivery-bg);
+    }
+
+    .delivery-section--notes {
+      border: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    /* === セクションヘッダー === */
+    .section-header {
+      position: relative;
+    }
+
+    .section-toggle-checkbox {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .section-toggle-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 16px 20px;
+      background: #f8f9fa;
+      transition: all 0.3s ease;
+      gap: 12px;
+    }
+
+    .section-toggle-label:hover {
+      background: #e9ecef;
+    }
+
+    .section-toggle-checkbox:checked + .section-toggle-label {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-bottom: 1px solid var(--delivery-border);
+    }
+
+    .section-icon {
+      color: var(--delivery-primary);
+      flex-shrink: 0;
+    }
+
+    .section-toggle-checkbox:checked + .section-toggle-label .section-icon {
+      color: var(--delivery-success);
+    }
+
+    .section-title {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--delivery-text);
+    }
+
+    .toggle-indicator {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--delivery-border);
+      border-radius: 4px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .check-icon {
+      opacity: 0;
+      transform: scale(0);
+      transition: all 0.3s ease;
+    }
+
+    .section-toggle-checkbox:checked + .section-toggle-label .toggle-indicator {
+      background: var(--delivery-success);
+      border-color: var(--delivery-success);
+    }
+
+    .section-toggle-checkbox:checked + .section-toggle-label .check-icon {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* === セクションコンテンツ === */
+    .section-content {
+      padding: 20px;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* === オプショングループ === */
+    .delivery-option-group {
+      margin-bottom: 20px;
+    }
+
+    .delivery-option-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .delivery-option-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--delivery-text);
+      margin-bottom: 8px;
+    }
+
+    /* === セレクトボックス === */
+    .delivery-select-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .delivery-select {
+      width: 100%;
+      padding: 12px 40px 12px 16px;
+      border: 1px solid var(--delivery-border);
+      border-radius: 6px;
+      background: white;
+      color: var(--delivery-text);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+
+    .delivery-select:focus {
+      outline: none;
+      border-color: var(--delivery-primary);
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+
+    .delivery-select-arrow {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #6c757d;
+    }
+
+    /* === 通知エリア === */
+    .delivery-notice {
+      margin-top: 8px;
+      padding: 10px 12px;
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #856404;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      line-height: 1.4;
+    }
+
+    .delivery-notice svg {
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* === のし名入れフィールド === */
+    .noshi-name-field {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #dee2e6;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .noshi-name-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--delivery-text);
+      margin-bottom: 6px;
+    }
+
+    /* === 入力フィールド === */
+    .noshi-name-input,
+    .delivery-notes-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--delivery-border);
+      border-radius: 6px;
+      background: white;
+      color: var(--delivery-text);
+      font-size: 14px;
+      line-height: 1.5;
+      resize: vertical;
+      transition: border-color 0.2s ease;
+    }
+
+    .noshi-name-input {
+      min-height: auto;
+    }
+
+    .delivery-notes-input {
+      min-height: 80px;
+    }
+
+    .noshi-name-input:focus,
+    .delivery-notes-input:focus {
+      outline: none;
+      border-color: var(--delivery-primary);
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+
+    /* === 文字数カウンター === */
+    .character-count {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 6px;
+      font-size: 11px;
+      color: #6c757d;
+    }
+
+    .current-count {
+      font-weight: 600;
+      color: var(--delivery-text);
+    }
+
+    /* === 更新ボタン === */
+    .delivery-options-actions {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--delivery-border);
+    }
+
+    .delivery-options-update {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .delivery-options-update:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,123,255,0.25);
+    }
+
+    .delivery-options-update:disabled {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .button-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .spinner {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* === 成功メッセージ === */
+    .delivery-success-message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #28a745;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 9999;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+    }
+
+    /* === モバイル対応 === */
+    @media screen and (max-width: 767px) {
+      .cart-delivery-options__container {
+        padding: 16px;
+        border-radius: 8px;
+      }
+      
+      .cart-delivery-options__title {
+        font-size: 18px;
+      }
+      
+      .delivery-section {
+        margin-bottom: 16px;
+      }
+      
+      .section-toggle-label {
+        padding: 14px 16px;
+        gap: 10px;
+      }
+      
+      .section-title {
+        font-size: 15px;
+      }
+      
+      .section-content {
+        padding: 16px;
+      }
+      
+      .delivery-option-group {
+        margin-bottom: 16px;
+      }
+
+      .delivery-select {
+        padding: 10px 36px 10px 14px;
+        font-size: 14px;
+      }
+
+      .delivery-options-update {
+        min-height: 44px;
+        font-size: 14px;
+      }
+    }
+</style>
+  <!-- 配送オプション用JavaScript -->
+  <script>
+   document.addEventListener('DOMContentLoaded', function() {
+  /**
+   * 配送オプション機能初期化（改良版）
+   * @param {string} blockId - ブロック固有ID
+   */
+  const blockId = '{{ unique_id }}';
+  const container = document.querySelector(`[data-cart-delivery-options="${blockId}"]`);
+  
+  if (!container) {
+    console.warn('配送オプションコンテナが見つかりません');
+    return;
+  }
+
+  // DOM要素の取得
+  const elements = {
+    // 日時指定セクション
+    datetimeToggle: container.querySelector('#datetime-toggle-{{ unique_id }}'),
+    datetimeContent: container.querySelector('#datetime-content-{{ unique_id }}'),
+    companySelect: container.querySelector('#delivery-company-{{ unique_id }}'),
+    dateSelect: container.querySelector('#delivery-date-{{ unique_id }}'),
+    timeSelect: container.querySelector('#delivery-time-{{ unique_id }}'),
+    
+    // ギフトセクション
+    giftToggle: container.querySelector('#gift-toggle-{{ unique_id }}'),
+    giftContent: container.querySelector('#gift-content-{{ unique_id }}'),
+    noshiSelect: container.querySelector('#noshi-select-{{ unique_id }}'),
+    noshiNameField: container.querySelector('#noshi-name-field-{{ unique_id }}'),
+    
+    // 共通
+    updateButton: container.querySelector('.delivery-options-update')
+  };
+
+  // 設定値
+  const config = {
+    excludeWeekends: {{ block.settings.exclude_weekends | json }},
+    excludeHolidays: {{ block.settings.exclude_holidays | json }},
+    minDeliveryDays: {{ block.settings.min_delivery_days | default: 3 | json }},
+    maxDeliveryDays: {{ block.settings.max_delivery_days | default: 30 | json }},
+    cutoffTime: '{{ block.settings.cutoff_time | default: "15:00" }}',
+    customHolidays: '{{ block.settings.custom_holidays | default: "" }}'.split(',').filter(d => d.trim()),
+    showDeliveryCompany: {{ block.settings.show_delivery_company | json }}
+  };
+
+  // 配送業者別時間帯マッピング（配送業者選択が有効な場合のみ使用）
+  const timeSlotMapping = {
+    'ヤマト運輸': ['午前中(8-12時)', '14-16時', '16-18時', '18-20時', '19-21時'],
+    '佐川急便': ['午前中', '12-14時', '14-16時', '16-18時', '18-21時'],
+    '日本郵便': ['午前中', '12-14時', '14-16時', '16-18時', '18-20時', '19-21時'],
+    '西濃運輸': ['午前中', '12-14時', '14-16時', '16-18時', '18-20時']
+  };
+
+  /**
+   * 初期化処理
+   */
+  function init() {
+    setupDateOptions();
+    setupEventListeners();
+    setupCharacterCount();
+  }
+
+  /**
+   * イベントリスナー設定
+   */
+  function setupEventListeners() {
+    // 日時指定セクショントグル
+    if (elements.datetimeToggle) {
+      elements.datetimeToggle.addEventListener('change', handleDatetimeToggle);
+    }
+
+    // ギフトセクショントグル
+    if (elements.giftToggle) {
+      elements.giftToggle.addEventListener('change', handleGiftToggle);
+    }
+
+    // 配送業者変更時の時間帯更新（配送業者選択が有効な場合のみ）
+    if (config.showDeliveryCompany && elements.companySelect && elements.timeSelect) {
+      elements.companySelect.addEventListener('change', updateTimeSlots);
+    }
+
+    // のし選択
+    if (elements.noshiSelect) {
+      elements.noshiSelect.addEventListener('change', handleNoshiSelect);
+      handleNoshiSelect(); // 初期状態設定
+    }
+
+    // 更新ボタン
+    if (elements.updateButton) {
+      elements.updateButton.addEventListener('click', updateCartAttributes);
+    }
+  }
+
+  /**
+   * 日時指定セクション切り替え処理
+   */
+  function handleDatetimeToggle() {
+    if (!elements.datetimeToggle || !elements.datetimeContent) return;
+
+    if (elements.datetimeToggle.checked) {
+      elements.datetimeContent.style.display = 'block';
+    } else {
+      elements.datetimeContent.style.display = 'none';
+      clearDatetimeOptions();
+    }
+  }
+
+  /**
+   * ギフトセクション切り替え処理
+   */
+  function handleGiftToggle() {
+    if (!elements.giftToggle || !elements.giftContent) return;
+
+    if (elements.giftToggle.checked) {
+      elements.giftContent.style.display = 'block';
+    } else {
+      elements.giftContent.style.display = 'none';
+      clearGiftOptions();
+    }
+  }
+
+  /**
+   * 日時指定オプションクリア
+   */
+  function clearDatetimeOptions() {
+    if (!elements.datetimeContent) return;
+
+    const selects = elements.datetimeContent.querySelectorAll('select');
+    selects.forEach(select => select.selectedIndex = 0);
+  }
+
+  /**
+   * ギフトオプションクリア
+   */
+  function clearGiftOptions() {
+    if (!elements.giftContent) return;
+
+    const selects = elements.giftContent.querySelectorAll('select');
+    const inputs = elements.giftContent.querySelectorAll('input[type="text"], textarea');
+
+    selects.forEach(select => select.selectedIndex = 0);
+    inputs.forEach(input => input.value = '');
+
+    if (elements.noshiNameField) {
+      elements.noshiNameField.style.display = 'none';
+    }
+  }
+
+  /**
+   * 配送業者別時間帯更新
+   */
+  function updateTimeSlots() {
+    if (!config.showDeliveryCompany || !elements.companySelect || !elements.timeSelect) return;
+
+    const selectedCompany = elements.companySelect.value;
+    const currentValue = elements.timeSelect.value;
+
+    // 既存オプション削除（最初のオプション以外）
+    while (elements.timeSelect.children.length > 1) {
+      elements.timeSelect.removeChild(elements.timeSelect.lastChild);
+    }
+
+    // 時間帯オプション生成
+    const timeSlots = timeSlotMapping[selectedCompany] || [
+      '午前中', '12-14時', '14-16時', '16-18時', '18-20時', '19-21時'
+    ];
+
+    timeSlots.forEach(timeSlot => {
+      const option = document.createElement('option');
+      option.value = timeSlot;
+      option.textContent = timeSlot;
+      
+      if (currentValue === timeSlot) {
+        option.selected = true;
+      }
+      
+      elements.timeSelect.appendChild(option);
+    });
+  }
+
+  /**
+   * のし選択処理
+   */
+  function handleNoshiSelect() {
+    if (!elements.noshiSelect || !elements.noshiNameField) return;
+
+    if (elements.noshiSelect.value && elements.noshiSelect.value !== '') {
+      elements.noshiNameField.style.display = 'block';
+    } else {
+      elements.noshiNameField.style.display = 'none';
+      const nameInput = elements.noshiNameField.querySelector('input');
+      if (nameInput) nameInput.value = '';
+    }
+  }
+
+  /**
+   * 配送日オプション生成
+   */
+  function setupDateOptions() {
+    if (!elements.dateSelect) return;
+
+    const today = new Date();
+    const currentHour = today.getHours();
+    const currentMinute = today.getMinutes();
+    const cutoffTime = config.cutoffTime.split(':');
+    const cutoffHour = parseInt(cutoffTime[0]);
+    const cutoffMinute = parseInt(cutoffTime[1] || 0);
+
+    // 締切時間判定
+    const isPastCutoff = (currentHour > cutoffHour) || 
+                        (currentHour === cutoffHour && currentMinute >= cutoffMinute);
+
+    let startDate = new Date(today);
+    let minDays = config.minDeliveryDays;
+
+    if (isPastCutoff) {
+      minDays += 1;
+    }
+
+    startDate.setDate(today.getDate() + minDays);
+
+    // 現在の選択値保存
+    const currentValue = elements.dateSelect.value;
+    const savedValue = '{{ cart.attributes[block.settings.delivery_date_attribute] }}';
+
+    // 既存オプション削除
+    while (elements.dateSelect.children.length > 1) {
+      elements.dateSelect.removeChild(elements.dateSelect.lastChild);
+    }
+
+    // 日付オプション生成
+    const maxOptions = config.maxDeliveryDays - config.minDeliveryDays;
+    
+    for (let i = 0; i < maxOptions; i++) {
+      const currentDate = new Date(startDate);
+      currentDate.setDate(startDate.getDate() + i);
+
+      // 除外日判定
+      if (config.excludeWeekends && isWeekend(currentDate)) continue;
+      if (config.excludeHolidays && isHoliday(currentDate)) continue;
+      if (isCustomHoliday(currentDate)) continue;
+
+      const option = document.createElement('option');
+      const formattedValue = formatDisplayDate(currentDate);
+      option.value = formattedValue;
+      option.textContent = formattedValue;
+
+      if (savedValue === formattedValue || currentValue === formattedValue) {
+        option.selected = true;
+      }
+
+      elements.dateSelect.appendChild(option);
+    }
+  }
+
+  /**
+   * 土日判定
+   */
+  function isWeekend(date) {
+    const dayOfWeek = date.getDay();
+    return dayOfWeek === 0 || dayOfWeek === 6;
+  }
+
+  /**
+   * 祝日判定（2025年日本の祝日）
+   */
+  function isHoliday(date) {
+    const holidays = [
+      '2025-01-01', '2025-01-13', '2025-02-11', '2025-02-23',
+      '2025-03-20', '2025-04-29', '2025-05-03', '2025-05-04',
+      '2025-05-05', '2025-07-21', '2025-08-11', '2025-09-15',
+      '2025-09-23', '2025-10-13', '2025-11-03', '2025-11-23'
+    ];
+    return holidays.includes(formatDate(date));
+  }
+
+  /**
+   * カスタム休業日判定
+   */
+  function isCustomHoliday(date) {
+    if (!config.customHolidays.length) return false;
+    return config.customHolidays.includes(formatDate(date));
+  }
+
+  /**
+   * 日付フォーマット（YYYY-MM-DD）
+   */
+  function formatDate(date) {
+    return date.toLocaleDateString('sv-SE');
+  }
+
+  /**
+   * 表示用日付フォーマット
+   */
+  function formatDisplayDate(date) {
+    return date.toLocaleDateString('ja-JP', {
+      month: 'numeric',
+      day: 'numeric',
+      weekday: 'short'
+    });
+  }
+
+  /**
+   * 文字数カウンター設定
+   */
+  function setupCharacterCount() {
+    const countElements = container.querySelectorAll('input[maxlength], textarea[maxlength]');
+
+    countElements.forEach(element => {
+      const maxLength = parseInt(element.getAttribute('maxlength')) || 100;
+      const countElement = element.parentElement.querySelector('.current-count');
+
+      if (!countElement) return;
+
+      function updateCount() {
+        const currentLength = element.value.length;
+        countElement.textContent = currentLength;
+
+        // 文字数に応じた色変更
+        if (currentLength > maxLength * 0.9) {
+          countElement.style.color = '#dc3545';
+        } else if (currentLength > maxLength * 0.7) {
+          countElement.style.color = '#ffc107';
+        } else {
+          countElement.style.color = '';
+        }
+      }
+
+      element.addEventListener('input', updateCount);
+      updateCount(); // 初期値設定
+    });
+  }
+
+  /**
+   * カート属性更新
+   */
+  function updateCartAttributes() {
+    if (!elements.updateButton) return;
+
+    const buttonText = elements.updateButton.querySelector('.button-text');
+    const buttonLoading = elements.updateButton.querySelector('.button-loading');
+
+    // ボタン状態変更
+    elements.updateButton.disabled = true;
+    if (buttonText) buttonText.style.display = 'none';
+    if (buttonLoading) buttonLoading.style.display = 'flex';
+
+    // フォーム送信
+    const form = document.getElementById('cartForm') || document.querySelector('form[action*="/cart"]');
+    if (form) {
+      const submitButton = document.createElement('button');
+      submitButton.type = 'submit';
+      submitButton.name = 'update';
+      submitButton.style.display = 'none';
+      form.appendChild(submitButton);
+      submitButton.click();
+      form.removeChild(submitButton);
+
+      // 成功メッセージ表示
+      setTimeout(() => {
+        showMessage('配送オプションを更新しました');
+      }, 500);
+    }
+
+    // ボタン復元
+    setTimeout(() => {
+      elements.updateButton.disabled = false;
+      if (buttonText) buttonText.style.display = 'inline';
+      if (buttonLoading) buttonLoading.style.display = 'none';
+    }, 2000);
+  }
+
+  /**
+   * メッセージ表示
+   */
+  function showMessage(text) {
+    // 既存メッセージ削除
+    const existingMessage = document.querySelector('.delivery-success-message');
+    if (existingMessage) {
+      existingMessage.remove();
+    }
+
+    // メッセージ作成
+    const message = document.createElement('div');
+    message.className = 'delivery-success-message';
+    message.textContent = text;
+
+    document.body.appendChild(message);
+
+    // アニメーション表示
+    setTimeout(() => {
+      message.style.transform = 'translateX(0)';
+    }, 100);
+
+    // 自動削除
+    setTimeout(() => {
+      message.style.transform = 'translateX(400px)';
+      setTimeout(() => {
+        if (message.parentNode) {
+          message.parentNode.removeChild(message);
+        }
+      }, 300);
+    }, 3000);
+  }
+
+  // 初期化実行
+  init();
+
+  // ページ読み込み完了時の追加処理
+  window.addEventListener('load', function() {
+    if (config.showDeliveryCompany && elements.companySelect && elements.companySelect.value) {
+      updateTimeSlots();
+    }
+  });
+});
+  </script>
+            {%- when 'subtotal' -%}
+              <div class="js-contents" {{ block.shopify_attributes }}>
+                <div class="totals">
+                  <h2 class="totals__subtotal">{{ 'sections.cart.subtotal' | t }}</h2>
+                  <p class="totals__subtotal-value">{{ cart.total_price | money_with_currency }}</p>
+                </div>
+
+                <div>
+                  {%- if cart.cart_level_discount_applications.size > 0 -%}
+                    <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
+                      {%- for discount in cart.cart_level_discount_applications -%}
+                        <li class="discounts__discount discounts__discount--position">
+                          {%- render 'icon-discount' -%}
+                          {{ discount.title }}
+                          (-{{ discount.total_allocated_amount | money }})
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endif -%}
+                </div>
+
+                <small class="tax-note caption-large rte">
+                  {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+                    {{ 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                  {%- elsif cart.taxes_included -%}
+                    {{ 'sections.cart.taxes_included_but_shipping_at_checkout' | t }}
+                  {%- elsif shop.shipping_policy.body != blank -%}
+                    {{ 'sections.cart.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+                  {%- else -%}
+                    {{ 'sections.cart.taxes_and_shipping_at_checkout' | t }}
+                  {%- endif -%}
+                </small>
+              </div>
+            {%- else -%}
+              <div class="cart__ctas" {{ block.shopify_attributes }}>
+                <noscript>
+                  <button type="submit" class="cart__update-button button button--secondary" form="cart">
+                    {{ 'sections.cart.update' | t }}
+                  </button>
+                </noscript>
+
+                <button
+                  type="submit"
+                  id="checkout"
+                  class="cart__checkout-button button"
+                  name="checkout"
+                  {% if cart == empty %}
+                    disabled
+                  {% endif %}
+                  form="cart"
+                >
+                  {{ 'sections.cart.checkout' | t }}
+                </button>
+              </div>
+
+              {%- if additional_checkout_buttons -%}
+                <div class="cart__dynamic-checkout-buttons additional-checkout-buttons">
+                  {{ content_for_additional_checkout_buttons }}
+                </div>
+              {%- endif -%}
+          {%- endcase -%}
+        {% endfor %}
+
+        <div id="cart-errors"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    function isIE() {
+      const ua = window.navigator.userAgent;
+      const msie = ua.indexOf('MSIE ');
+      const trident = ua.indexOf('Trident/');
+
+      return msie > 0 || trident > 0;
+    }
+
+    if (!isIE()) return;
+    const cartSubmitInput = document.createElement('input');
+    cartSubmitInput.setAttribute('name', 'checkout');
+    cartSubmitInput.setAttribute('type', 'hidden');
+    document.querySelector('#cart').appendChild(cartSubmitInput);
+    document.querySelector('#checkout').addEventListener('click', function (event) {
+      document.querySelector('#cart').submit();
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-footer.name",
+  "class": "cart__footer-wrapper",
+  "blocks": [
+    {
+      "type": "subtotal",
+      "name": "t:sections.main-cart-footer.blocks.subtotal.name",
+      "limit": 1
+    },
+    {
+  "type": "delivery-options",
+  "name": "配送日時指定オプション",
+  "limit": 1,
+  "settings": [
+    { "type": "header", "content": "基本設定" },
+    { "type": "checkbox", "id": "show_title", "label": "タイトルを表示", "default": true },
+    { "type": "text", "id": "title", "label": "タイトル", "default": "配送オプション" },
+    { "type": "text", "id": "no_preference_text", "label": "希望しない場合のテキスト", "default": "指定なし" },
+
+    { "type": "header", "content": "配送日時指定サービス設定" },
+    { "type": "checkbox", "id": "enable_delivery_datetime", "label": "配送日時指定セクションを有効化", "default": true },
+    { "type": "text", "id": "datetime_label", "label": "配送日時指定ラベル", "default": "配送日時指定" },
+    { "type": "textarea", "id": "delivery_service_description", "label": "サービス説明", "default": "お届け日時やギフトオプションを指定できます" },
+
+    { "type": "header", "content": "配送業者設定" },
+    { "type": "checkbox", "id": "show_delivery_company", "label": "配送業者選択を表示", "default": true },
+    { "type": "text", "id": "delivery_company_label", "label": "配送業者ラベル", "default": "配送業者" },
+    { "type": "text", "id": "delivery_company_attribute", "label": "配送業者属性名", "default": "配送業者" },
+    { "type": "textarea", "id": "company_options", "label": "配送業者選択肢", "default": "ヤマト運輸,佐川急便,日本郵便,西濃運輸", "info": "カンマ区切りの表示名のみ（例：ヤマト運輸,佐川急便）" },
+
+    { "type": "header", "content": "配送希望日設定" },
+    { "type": "checkbox", "id": "enable_delivery_date", "label": "配送希望日を有効化", "default": true },
+    { "type": "checkbox", "id": "require_delivery_date", "label": "配送希望日を必須にする", "default": false },
+    { "type": "text", "id": "delivery_date_label", "label": "配送希望日ラベル", "default": "配送希望日" },
+    { "type": "text", "id": "delivery_date_attribute", "label": "配送希望日属性名", "default": "配送希望日" },
+    { "type": "text", "id": "date_placeholder_text", "label": "日付選択プレースホルダー", "default": "日付を選択してください" },
+    { "type": "checkbox", "id": "exclude_weekends", "label": "土日を除外する", "default": false, "info": "土曜日・日曜日を配送日から除外" },
+    { "type": "checkbox", "id": "exclude_holidays", "label": "祝日を除外する", "default": true, "info": "日本の祝日を配送日から除外" },
+    { "type": "text", "id": "custom_holidays", "label": "休業日（カスタム）", "default": "2025-12-29", "info": "YYYY-MM-DDをカンマ区切り（例：2025-12-29,2025-12-30）" },
+    { "type": "range", "id": "min_delivery_days", "min": 0, "max": 14, "step": 1, "label": "最短配送日（営業日後）", "default": 3, "info": "締切時刻後は自動で+1日" },
+    { "type": "range", "id": "max_delivery_days", "min": 14, "max": 98, "step": 7, "label": "選択可能最大日数", "default": 28, "info": "7日刻み（minとmaxの差がstepで割り切れる必要があります）" },
+    { "type": "text", "id": "cutoff_time", "label": "当日受注締切時間", "default": "15:00", "info": "HH:MM形式。この時間以降の注文は翌営業日扱い" },
+    { "type": "checkbox", "id": "show_cutoff_notice", "label": "営業時間外注意を表示", "default": true },
+    { "type": "textarea", "id": "cutoff_notice_text", "label": "営業時間外注意テキスト", "default": "15時以降のご注文は翌営業日の発送となります（土日祝日を除く）" },
+
+    { "type": "header", "content": "配送希望時間帯設定" },
+    { "type": "checkbox", "id": "enable_delivery_time", "label": "配送希望時間帯を有効化", "default": true },
+    { "type": "text", "id": "delivery_time_label", "label": "配送希望時間帯ラベル", "default": "配送希望時間帯" },
+    { "type": "text", "id": "delivery_time_attribute", "label": "配送希望時間帯属性名", "default": "配送希望時間帯" },
+    { "type": "textarea", "id": "time_options", "label": "時間帯選択肢", "default": "午前中,12-14時,14-16時,16-18時,18-20時,19-21時", "info": "カンマ区切りの表示名のみ。配送業者有効時は自動調整" },
+
+    { "type": "header", "content": "ギフトオプション設定" },
+    { "type": "checkbox", "id": "enable_gift_options", "label": "ギフトオプションを有効化", "default": true },
+    { "type": "text", "id": "gift_label", "label": "ギフトオプションラベル", "default": "ギフトオプション" },
+    { "type": "checkbox", "id": "enable_noshi", "label": "のし指定を有効化", "default": true },
+    { "type": "text", "id": "noshi_label", "label": "のしラベル", "default": "のし" },
+    { "type": "text", "id": "noshi_attribute", "label": "のし属性名", "default": "のし指定" },
+    { "type": "textarea", "id": "noshi_options", "label": "のし選択肢", "default": "蝶結び（紅白）,結び切り（紅白）,あわじ結び（紅白）,結び切り（黒白）,あわじ結び（黒白）", "info": "カンマ区切りの表示名のみ" },
+    { "type": "text", "id": "noshi_name_label", "label": "のし名入れラベル", "default": "のし上書き（お名前）" },
+    { "type": "text", "id": "noshi_name_attribute", "label": "のし名入れ属性名", "default": "のし名入れ" },
+    { "type": "text", "id": "noshi_name_placeholder", "label": "のし名入れプレースホルダー", "default": "お名前をご入力ください" },
+    { "type": "checkbox", "id": "enable_gift_message", "label": "ギフトメッセージを有効化", "default": true },
+    { "type": "text", "id": "gift_message_label", "label": "ギフトメッセージラベル", "default": "ギフトメッセージ" },
+    { "type": "text", "id": "gift_message_attribute", "label": "ギフトメッセージ属性名", "default": "ギフトメッセージ" },
+    { "type": "text", "id": "gift_message_placeholder", "label": "ギフトメッセージプレースホルダー", "default": "メッセージをご記入ください" },
+
+    { "type": "header", "content": "備考欄設定" },
+    { "type": "checkbox", "id": "enable_notes", "label": "配送備考欄を有効化", "default": true },
+    { "type": "text", "id": "notes_label", "label": "備考欄ラベル", "default": "配送備考" },
+    { "type": "text", "id": "notes_attribute", "label": "備考欄属性名", "default": "配送備考" },
+    { "type": "text", "id": "notes_placeholder", "label": "備考欄プレースホルダー", "default": "その他ご要望がございましたらご記入ください（例：不在時は宅配ボックスへ）" },
+
+    { "type": "header", "content": "料金・案内表示設定" },
+    { "type": "checkbox", "id": "show_fee_notice", "label": "配送に関する案内を表示", "default": true },
+
+    { "type": "header", "content": "ボタン設定" },
+    { "type": "text", "id": "update_button_text", "label": "更新ボタンテキスト", "default": "配送オプションを更新" },
+
+    { "type": "header", "content": "デザイン設定" },
+    { "type": "color", "id": "bg_color", "label": "背景色", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "テキスト色", "default": "#333333" },
+    { "type": "color", "id": "border_color", "label": "ボーダー色", "default": "#e0e6ed" },
+    { "type": "color", "id": "primary_color", "label": "アクセントカラー", "default": "#007bff" },
+    { "type": "color", "id": "success_color", "label": "配送サービス選択色", "default": "#28a745" }
+  ]
+},
+    {
+      "type": "buttons",
+      "name": "t:sections.main-cart-footer.blocks.buttons.name",
+      "limit": 1
+    },
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

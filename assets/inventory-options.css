@@ -1,0 +1,57 @@
+.badge--soldout {
+  display:inline-block;
+  background-color:#b91c1c;
+  color:#fff;
+  font-size:12px;
+  font-weight:600;
+  padding:4px 8px;
+  border-radius:6px;
+  margin-right:6px;
+  line-height:1.4;
+}
+.button--soldout {
+  background:#999!important;
+  cursor:not-allowed!important;
+  opacity:.6;
+}
+.method-buttons {
+  display:flex;
+  gap:15px;
+  margin-bottom:25px;
+}
+.method-btn {
+  flex:1;
+  background:var(--custom-bg,#B3B6BC);
+  border:2px solid var(--custom-border,#e1e5e9);
+  color:#fff;
+  padding:20px;
+  cursor:pointer;
+  transition:.3s;
+}
+.method-btn:hover,
+.method-btn.selected {
+  background:var(--accent,#007c89);
+}
+.date-options {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+  gap:18px;
+}
+.date-option {
+  background:var(--custom-bg,#B3B6BC);
+  color:#fff;
+  border:2px solid var(--custom-border,#e1e5e9);
+  padding:24px;
+  transition:.3s;
+  cursor:pointer;
+  text-align:left;
+}
+.date-option:hover,
+.date-option.selected {
+  background:var(--accent,#007c89);
+}
+.soldout-message {
+  text-align:center;
+  font-size:16px;
+  border-radius:4px;
+}

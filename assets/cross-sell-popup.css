@@ -1,0 +1,738 @@
+/* ファイル名: assets/cross-sell-popup.css */
+/* 機能説明: 添付画像を忠実に再現したクロスセル ポップアップスタイル */
+/* 対応デバイス: モバイル(375px), タブレット(768px), デスクトップ(1280px+) */
+
+/* ===== ベースリセット ===== */
+.cross-sell-popup *, 
+.cross-sell-popup *::before, 
+.cross-sell-popup *::after {
+  box-sizing: border-box;
+}
+
+/* ===== ポップアップ メインコンテナ ===== */
+.cross-sell-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  
+  /* アニメーション用初期状態 */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.cross-sell-popup.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ===== オーバーレイ背景 ===== */
+.cross-sell-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+}
+
+/* ===== ポップアップ コンテンツ ===== */
+.cross-sell-content {
+  position: relative;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 650px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 1;
+  
+  /* アニメーション */
+  transform: translateY(20px) scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+.cross-sell-popup.is-visible .cross-sell-content {
+  transform: translateY(0) scale(1);
+}
+
+/* ===== ヘッダー部分（上部のレイアウト） ===== */
+.cross-sell-header {
+  display: flex;
+  padding: 25px 30px 20px;
+  border-bottom: 1px solid #e8e8e8;
+  gap: 20px;
+}
+
+/* ===== 左側: 追加された商品情報 ===== */
+.added-product-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  flex: 1;
+}
+
+.added-product-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.added-product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  background: #f0f0f0;
+}
+
+.added-product-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.added-product-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+}
+
+.added-product-price {
+  font-size: 15px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* ===== 右側: カート情報とView Cartボタン ===== */
+.cart-info-section {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 15px;
+}
+
+.cart-summary {
+  text-align: right;
+}
+
+.cart-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.cart-total {
+  font-size: 24px;
+  font-weight: 700;
+  color: #000;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.cart-items-count {
+  font-size: 14px;
+  color: #999;
+}
+
+/* ===== View Cart ボタン ===== */
+.view-cart-btn {
+  background: transparent;
+  color: #4A90E2;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.view-cart-btn:hover {
+  color: #357ABD;
+  text-decoration: underline;
+}
+
+/* ===== クロスセル商品セクション ===== */
+.cross-sell-products-section {
+  padding: 25px 30px 30px;
+}
+
+.cross-sell-products-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #999;
+  margin: 0 0 25px 0;
+  text-align: left;
+}
+
+/* ===== 商品グリッド（3列レイアウト） ===== */
+.cross-sell-products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* ===== 商品カード ===== */
+.cross-sell-product-card {
+  background: #ffffff;
+  transition: transform 0.2s ease;
+  text-align: center;
+}
+
+.cross-sell-product-card:hover {
+  transform: translateY(-2px);
+}
+
+.product-card-image {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  background: #f8f8f8;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.product-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-card-info {
+  text-align: center;
+}
+
+.product-card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4A90E2;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.product-card-title:hover {
+  text-decoration: underline;
+}
+
+/* ===== 価格表示 ===== */
+.product-card-price {
+  margin-bottom: 12px;
+}
+
+.price-compare {
+  font-size: 14px;
+  color: #999;
+  text-decoration: line-through;
+  margin-right: 8px;
+}
+
+.price-current {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+}
+
+/* ===== バリエーション選択 ===== */
+.product-variants {
+  margin-bottom: 12px;
+}
+
+.variant-selector {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  background: #ffffff;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.variant-selector:focus {
+  outline: none;
+  border-color: #4A90E2;
+}
+
+/* ===== カート追加ボタン ===== */
+.add-to-cart-btn {
+  width: 100%;
+  padding: 10px 12px;
+  background: #4A4A4A;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+}
+
+.add-to-cart-btn:hover:not(:disabled) {
+  background: #333;
+}
+
+.add-to-cart-btn:disabled,
+.add-to-cart-btn.sold-out {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.add-to-cart-btn .btn-loading svg {
+  animation: spin 1s linear infinite;
+}
+
+.add-to-cart-btn.loading .btn-text,
+.add-to-cart-btn.success .btn-text,
+.add-to-cart-btn.loading .btn-success,
+.add-to-cart-btn.success .btn-loading {
+  display: none;
+}
+
+.add-to-cart-btn.loading .btn-loading,
+.add-to-cart-btn.success .btn-success {
+  display: flex;
+}
+
+/* ===== "Select options" ボタンスタイル ===== */
+.cross-sell-product-card .variant-selector[value=""] ~ .add-to-cart-btn,
+.cross-sell-product-card .add-to-cart-btn[data-variant-id=""] {
+  background: #fff;
+  color: #4A4A4A;
+  border: 1px solid #4A4A4A;
+}
+
+.cross-sell-product-card .variant-selector[value=""] ~ .add-to-cart-btn:hover,
+.cross-sell-product-card .add-to-cart-btn[data-variant-id=""]:hover {
+  background: #f5f5f5;
+}
+
+/* ===== アニメーション ===== */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cross-sell-product-card {
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+.cross-sell-product-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.cross-sell-product-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+/* ===== タブレット対応 (768px - 1023px) ===== */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .cross-sell-content {
+    max-width: 600px;
+  }
+  
+  .cross-sell-header {
+    padding: 20px 25px 18px;
+  }
+  
+  .added-product-image {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .added-product-title {
+    font-size: 15px;
+  }
+  
+  .cart-total {
+    font-size: 22px;
+  }
+  
+  .cross-sell-products-section {
+    padding: 20px 25px 25px;
+  }
+  
+  .cross-sell-products-grid {
+    gap: 15px;
+  }
+  
+  .product-card-image {
+    height: 160px;
+  }
+}
+
+/* ===== モバイル対応 (767px以下) ===== */
+@media screen and (max-width: 767px) {
+  .cross-sell-popup {
+    padding: 15px;
+  }
+  
+  .cross-sell-content {
+    max-width: 100%;
+    border-radius: 6px;
+  }
+  
+  /* ヘッダーを縦レイアウトに変更 */
+  .cross-sell-header {
+    flex-direction: column;
+    padding: 20px 20px 15px;
+    gap: 15px;
+  }
+  
+  .cart-info-section {
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .cart-summary {
+    text-align: left;
+  }
+  
+  .added-product-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .added-product-title {
+    font-size: 14px;
+  }
+  
+  .added-product-price {
+    font-size: 14px;
+  }
+  
+  .cart-total {
+    font-size: 20px;
+  }
+  
+  .cross-sell-products-section {
+    padding: 15px 20px 20px;
+  }
+  
+  .cross-sell-products-title {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  
+  /* モバイルでは2列レイアウト */
+  .cross-sell-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .product-card-image {
+    height: 140px;
+    margin-bottom: 8px;
+  }
+  
+  .product-card-title {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  
+  .price-current {
+    font-size: 15px;
+  }
+  
+  .add-to-cart-btn {
+    font-size: 12px;
+    padding: 8px 10px;
+    min-height: 36px;
+  }
+  
+  .variant-selector {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+}
+
+/* ===== 小さなモバイル対応 (375px以下) ===== */
+@media screen and (max-width: 375px) {
+  .cross-sell-popup {
+    padding: 10px;
+  }
+  
+  .cross-sell-header {
+    padding: 15px 15px 12px;
+    gap: 12px;
+  }
+  
+  .added-product-section {
+    gap: 10px;
+  }
+  
+  .added-product-image {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .added-product-title {
+    font-size: 13px;
+  }
+  
+  .added-product-price {
+    font-size: 13px;
+  }
+  
+  .cart-total {
+    font-size: 18px;
+  }
+  
+  .cart-subtitle {
+    font-size: 14px;
+  }
+  
+  .cross-sell-products-section {
+    padding: 12px 15px 15px;
+  }
+  
+  .cross-sell-products-title {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+  
+  .cross-sell-products-grid {
+    gap: 10px;
+  }
+  
+  .product-card-image {
+    height: 120px;
+    margin-bottom: 6px;
+  }
+  
+  .product-card-title {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  
+  .price-current {
+    font-size: 14px;
+  }
+  
+  .add-to-cart-btn {
+    font-size: 11px;
+    padding: 6px 8px;
+    min-height: 32px;
+  }
+}
+
+/* ===== デスクトップ大画面対応 (1280px+) ===== */
+@media screen and (min-width: 1280px) {
+  .cross-sell-content {
+    max-width: 700px;
+  }
+  
+  .cross-sell-header {
+    padding: 30px 35px 25px;
+    gap: 25px;
+  }
+  
+  .added-product-image {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .added-product-title {
+    font-size: 18px;
+  }
+  
+  .added-product-price {
+    font-size: 16px;
+  }
+  
+  .cart-total {
+    font-size: 26px;
+  }
+  
+  .cart-subtitle {
+    font-size: 17px;
+  }
+  
+  .cross-sell-products-section {
+    padding: 30px 35px 35px;
+  }
+  
+  .cross-sell-products-title {
+    font-size: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .cross-sell-products-grid {
+    gap: 25px;
+  }
+  
+  .product-card-image {
+    height: 200px;
+    margin-bottom: 15px;
+  }
+  
+  .product-card-title {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .price-current {
+    font-size: 17px;
+  }
+  
+  .add-to-cart-btn {
+    font-size: 14px;
+    padding: 12px 14px;
+    min-height: 44px;
+  }
+  
+  .variant-selector {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+}
+
+/* ===== アクセシビリティ ===== */
+@media (prefers-reduced-motion: reduce) {
+  .cross-sell-popup,
+  .cross-sell-content,
+  .cross-sell-product-card,
+  .add-to-cart-btn {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ===== 高コントラストモード対応 ===== */
+@media (prefers-contrast: high) {
+  .cross-sell-overlay {
+    background: rgba(0, 0, 0, 0.9);
+  }
+  
+  .cross-sell-content {
+    border: 2px solid #000;
+  }
+  
+  .cross-sell-product-card {
+    border: 1px solid #000;
+  }
+  
+  .add-to-cart-btn {
+    border: 2px solid #fff;
+  }
+}
+
+/* ===== フォーカス管理 ===== */
+.cross-sell-popup:focus-within .view-cart-btn:focus,
+.cross-sell-popup:focus-within .add-to-cart-btn:focus,
+.cross-sell-popup:focus-within .variant-selector:focus {
+  outline: 3px solid #4A90E2;
+  outline-offset: 2px;
+}
+
+/* ===== ダークモード対応 ===== */
+@media (prefers-color-scheme: dark) {
+  .cross-sell-content {
+    background: #1a1a1a;
+    color: #ffffff;
+  }
+  
+  .cross-sell-header {
+    border-bottom-color: #333;
+  }
+  
+  .added-product-title,
+  .cart-total {
+    color: #ffffff;
+  }
+  
+  .added-product-price,
+  .cart-subtitle {
+    color: #ccc;
+  }
+  
+  .cart-items-count {
+    color: #999;
+  }
+  
+  .cross-sell-products-title {
+    color: #aaa;
+  }
+  
+  .product-card-title {
+    color: #6BB6FF;
+  }
+  
+  .price-current {
+    color: #ffffff;
+  }
+  
+  .product-image-placeholder {
+    background: #333;
+    color: #666;
+  }
+  
+  .variant-selector {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #ffffff;
+  }
+  
+  .view-cart-btn {
+    color: #6BB6FF;
+  }
+  
+  .view-cart-btn:hover {
+    color: #4A90E2;
+  }
+  
+  .add-to-cart-btn {
+    background: #555;
+  }
+  
+  .add-to-cart-btn:hover:not(:disabled) {
+    background: #444;
+  }
+}

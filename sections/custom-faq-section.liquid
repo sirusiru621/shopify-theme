@@ -1,0 +1,837 @@
+<!-- 
+  Japanese FAQ Section - Shopify Online Store 2.0
+  完全レスポンシブ対応、アクセシビリティ準拠
+-->
+
+{{ 'section-japanese-faq.css' | asset_url | stylesheet_tag }}
+
+<div class="japanese-faq-section" 
+     data-section-id="{{ section.id }}" 
+     data-section-type="japanese-faq"
+     style="
+       --section-bg-color: {{ section.settings.background_color }};
+       --text-color: {{ section.settings.text_color }};
+       --accent-color: {{ section.settings.accent_color }};
+       --button-bg-color: {{ section.settings.button_background }};
+       --button-text-color: {{ section.settings.button_text_color }};
+       --padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+       --padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+       --padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+       --padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+     ">
+  
+  <div class="container">
+    <!-- ブランドロゴ/アイコンエリア -->
+    <div class="brand-section">
+      {%- if section.settings.brand_logo != blank -%}
+        <div class="brand-logo" data-aos="fade-up" data-aos-delay="100">
+          <img 
+            src="{{ section.settings.brand_logo | img_url: '120x120' }}"
+            srcset="
+              {{ section.settings.brand_logo | img_url: '60x60' }} 60w,
+              {{ section.settings.brand_logo | img_url: '120x120' }} 120w,
+              {{ section.settings.brand_logo | img_url: '180x180' }} 180w
+            "
+            sizes="(max-width: 768px) 60px, 80px"
+            alt="{{ section.settings.brand_logo.alt | default: shop.name }}"
+            loading="lazy"
+            width="80"
+            height="80">
+        </div>
+      {%- else -%}
+        <div class="brand-icon" data-aos="fade-up" data-aos-delay="100">
+          <!-- デフォルトブランドアイコン -->
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="20" cy="20" r="3" fill="currentColor" opacity="0.8"/>
+            <circle cx="35" cy="15" r="2" fill="currentColor" opacity="0.6"/>
+            <circle cx="25" cy="35" r="1.5" fill="currentColor" opacity="0.4"/>
+            <path d="M15 55 Q25 45 35 55 Q45 65 55 55" stroke="currentColor" stroke-width="1" fill="none" opacity="0.5"/>
+          </svg>
+
+        </div>
+      {%- endif -%}
+    </div>
+
+    <!-- メインコンテンツエリア -->
+    <div class="main-content">
+      <!-- セクションタイトル -->
+      {%- if section.settings.section_title != blank -%}
+        <div class="section-header" data-aos="fade-up" data-aos-delay="200">
+          <h2 class="section-title">{{ section.settings.section_title }}</h2>
+          {%- if section.settings.section_subtitle != blank -%}
+            <p class="section-subtitle">{{ section.settings.section_subtitle }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <!-- FAQカテゴリーグリッド -->
+      <div class="faq-grid" data-aos="fade-up" data-aos-delay="300">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'faq_category' -%}
+              <div class="faq-category" {{ block.shopify_attributes }}>
+                <button 
+                  class="faq-button"
+                  type="button"
+                  data-category="{{ block.id }}"
+                  aria-expanded="false"
+                  aria-controls="content-{{ block.id }}">
+                  <span class="faq-button-text">{{ block.settings.category_title }}</span>
+                  {%- if block.settings.show_icon -%}
+                    <span class="faq-icon" aria-hidden="true">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M6 9L10 13L14 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                  {%- endif -%}
+                </button>
+                
+                {%- if block.settings.category_description != blank -%}
+                  <div 
+                    class="faq-content" 
+                    id="content-{{ block.id }}"
+                    aria-hidden="true">
+                    <div class="faq-content-inner">
+                      {{ block.settings.category_description }}
+                    </div>
+                  </div>
+                {%- endif -%}
+              </div>
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+
+      <!-- 言語切替エリア -->
+      {%- if section.settings.show_language_switcher -%}
+        <div class="language-switcher" data-aos="fade-up" data-aos-delay="400">
+          <div class="language-options">
+            <button class="lang-button active" data-lang="ja" aria-pressed="true">
+              {{ section.settings.japanese_label | default: '日本語' }}
+            </button>
+            <button class="lang-button" data-lang="en" aria-pressed="false">
+              {{ section.settings.english_label | default: 'ENGLISH' }}
+            </button>
+            <button class="lang-button" data-lang="zh" aria-pressed="false">
+              {{ section.settings.chinese_label | default: '简体中文' }}
+            </button>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<style>
+/* Japanese FAQ Section Styles */
+.japanese-faq-section {
+  background-color: var(--section-bg-color, #f5f5f5);
+  color: var(--text-color, #333);
+  padding: var(--padding-top-desktop, 80px) 0 var(--padding-bottom-desktop, 80px);
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.japanese-faq-section .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+}
+
+/* ブランドセクション */
+.brand-section {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.brand-logo img {
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.brand-logo img:hover {
+  transform: scale(1.05);
+}
+
+.brand-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon svg {
+  color: var(--accent-color, #666);
+  transition: color 0.3s ease;
+}
+
+.brand-text {
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-color, #333);
+  font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* セクションヘッダー */
+.section-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.section-title {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 300;
+  margin: 0 0 60px 0;
+  color: var(--text-color, #333);
+}
+
+.section-subtitle {
+  font-size: clamp(14px, 2.5vw, 16px);
+  color: var(--text-color, #666);
+  margin: 0;
+  font-weight: 300;
+}
+
+/* FAQグリッド */
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-category {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.faq-category:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.faq-button {
+  width: 100%;
+  padding: 20px;
+  border: none;
+  background: var(--button-bg-color, #fff);
+  color: var(--button-text-color, #333);
+  font-size: clamp(14px, 2.5vw, 16px);
+  font-weight: 400;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.faq-button:hover {
+  background-color: var(--accent-color, #f0f0f0);
+}
+
+.faq-button:focus {
+  outline: 2px solid var(--accent-color, #007acc);
+  outline-offset: 2px;
+}
+
+.faq-button[aria-expanded="true"] .faq-icon {
+  transform: rotate(180deg);
+}
+
+.faq-icon {
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.faq-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.faq-content[aria-hidden="false"] {
+  max-height: 300px;
+}
+
+.faq-content-inner {
+  padding: 20px;
+  font-size: clamp(13px, 2vw, 14px);
+  line-height: 1.6;
+  color: var(--text-color, #555);
+}
+
+/* 言語切替 */
+.language-switcher {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.language-options {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.lang-button {
+  background: none;
+  border: none;
+  color: var(--text-color, #999);
+  font-size: clamp(12px, 2vw, 14px);
+  cursor: pointer;
+  padding: 8px 0;
+  font-weight: 300;
+  transition: all 0.3s ease;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.lang-button:hover,
+.lang-button.active {
+  color: var(--accent-color, #333);
+}
+
+.lang-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 1px;
+  background: var(--accent-color, #333);
+}
+
+.lang-button:focus {
+  outline: 2px solid var(--accent-color, #007acc);
+  outline-offset: 2px;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .japanese-faq-section {
+    padding: var(--padding-top-mobile, 60px) 0 var(--padding-bottom-mobile, 60px);
+    min-height: auto;
+  }
+  
+  .japanese-faq-section .container {
+    padding: 0 16px;
+  }
+  
+  .brand-section {
+    margin-bottom: 40px;
+  }
+  
+  .brand-text {
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+  
+  .faq-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .faq-button {
+    padding: 16px;
+    font-size: 14px;
+  }
+  
+  .language-options {
+    gap: 20px;
+  }
+  
+  .section-header {
+    margin-bottom: 40px;
+  }
+}
+
+@media (max-width: 375px) {
+  .japanese-faq-section .container {
+    padding: 0 12px;
+  }
+  
+  .faq-button {
+    padding: 14px;
+  }
+  
+  .language-options {
+    gap: 15px;
+  }
+}
+
+/* アニメーション設定 */
+[data-aos] {
+  opacity: 0;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+[data-aos].aos-animate {
+  opacity: 1;
+}
+
+[data-aos="fade-up"] {
+  transform: translateY(30px);
+}
+
+[data-aos="fade-up"].aos-animate {
+  transform: translateY(0);
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+  .japanese-faq-section {
+    --section-bg-color: #1a1a1a;
+    --text-color: #e0e0e0;
+    --accent-color: #4a9eff;
+  }
+  
+  .faq-category {
+    background: rgba(40, 40, 40, 0.8);
+  }
+  
+  .faq-button {
+    background: rgba(60, 60, 60, 0.8);
+    color: #e0e0e0;
+  }
+  
+  .faq-content {
+    background: rgba(50, 50, 50, 0.95);
+  }
+}
+
+/* 印刷対応 */
+@media print {
+  .japanese-faq-section {
+    background: white !important;
+    color: black !important;
+    padding: 20px 0;
+  }
+  
+  .faq-content {
+    max-height: none !important;
+  }
+  
+  .language-switcher {
+    display: none;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const faqSection = document.querySelector('.japanese-faq-section');
+  if (!faqSection) return;
+
+  // Intersection Observer for animations
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('aos-animate');
+      }
+    });
+  }, observerOptions);
+
+  // Observe all elements with data-aos attribute
+  const animatedElements = faqSection.querySelectorAll('[data-aos]');
+  animatedElements.forEach((el) => observer.observe(el));
+
+  // FAQ accordion functionality
+  const faqButtons = faqSection.querySelectorAll('.faq-button');
+  
+  faqButtons.forEach((button) => {
+    button.addEventListener('click', function() {
+      const content = this.parentElement.querySelector('.faq-content');
+      const isExpanded = this.getAttribute('aria-expanded') === 'true';
+      
+      // Close all other FAQs
+      faqButtons.forEach((otherButton) => {
+        if (otherButton !== this) {
+          otherButton.setAttribute('aria-expanded', 'false');
+          const otherContent = otherButton.parentElement.querySelector('.faq-content');
+          if (otherContent) {
+            otherContent.setAttribute('aria-hidden', 'true');
+          }
+        }
+      });
+      
+      // Toggle current FAQ
+      this.setAttribute('aria-expanded', !isExpanded);
+      if (content) {
+        content.setAttribute('aria-hidden', isExpanded);
+      }
+    });
+    
+    // Keyboard navigation
+    button.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.click();
+      }
+    });
+  });
+
+  // Language switcher functionality
+  const langButtons = faqSection.querySelectorAll('.lang-button');
+  
+  langButtons.forEach((button) => {
+    button.addEventListener('click', function() {
+      const selectedLang = this.getAttribute('data-lang');
+      
+      // Update active state
+      langButtons.forEach((btn) => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+      });
+      
+      this.classList.add('active');
+      this.setAttribute('aria-pressed', 'true');
+      
+      // Trigger custom event for language change
+      const languageChangeEvent = new CustomEvent('languageChange', {
+        detail: { language: selectedLang }
+      });
+      faqSection.dispatchEvent(languageChangeEvent);
+    });
+  });
+
+  // Keyboard navigation for language switcher
+  const languageSwitcher = faqSection.querySelector('.language-options');
+  if (languageSwitcher) {
+    languageSwitcher.addEventListener('keydown', function(e) {
+      const currentButton = document.activeElement;
+      const buttons = Array.from(langButtons);
+      const currentIndex = buttons.indexOf(currentButton);
+      
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        let nextIndex;
+        
+        if (e.key === 'ArrowLeft') {
+          nextIndex = currentIndex > 0 ? currentIndex - 1 : buttons.length - 1;
+        } else {
+          nextIndex = currentIndex < buttons.length - 1 ? currentIndex + 1 : 0;
+        }
+        
+        buttons[nextIndex].focus();
+      }
+    });
+  }
+
+  // Smooth scroll behavior for FAQ content
+  const style = document.createElement('style');
+  style.textContent = `
+    .faq-content {
+      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Resize observer for responsive adjustments
+  if (window.ResizeObserver) {
+    const resizeObserver = new ResizeObserver((entries) => {
+      entries.forEach(() => {
+        // Recalculate FAQ content heights if needed
+        const openContents = faqSection.querySelectorAll('.faq-content[aria-hidden="false"]');
+        openContents.forEach((content) => {
+          const inner = content.querySelector('.faq-content-inner');
+          if (inner) {
+            content.style.maxHeight = inner.scrollHeight + 40 + 'px';
+          }
+        });
+      });
+    });
+    
+    resizeObserver.observe(faqSection);
+  }
+});
+
+// Expose API for external integrations
+window.JapaneseFAQSection = {
+  openFAQ: function(blockId) {
+    const button = document.querySelector(`[data-category="${blockId}"]`);
+    if (button) {
+      button.click();
+    }
+  },
+  
+  setLanguage: function(lang) {
+    const button = document.querySelector(`[data-lang="${lang}"]`);
+    if (button) {
+      button.click();
+    }
+  },
+  
+  closeAllFAQs: function() {
+    const buttons = document.querySelectorAll('.faq-button');
+    buttons.forEach((button) => {
+      button.setAttribute('aria-expanded', 'false');
+      const content = button.parentElement.querySelector('.faq-content');
+      if (content) {
+        content.setAttribute('aria-hidden', 'true');
+      }
+    });
+  }
+};
+</script>
+
+{% schema %}
+{
+  "name": "Japanese FAQ Section",
+  "tag": "section",
+  "class": "section-japanese-faq",
+  "settings": [
+    {
+      "type": "header",
+      "content": "📌 セクション基本設定"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "セクションタイトル",
+      "default": "よくあるご質問",
+      "info": "セクションのメインタイトルを入力してください"
+    },
+    {
+      "type": "textarea",
+      "id": "section_subtitle",
+      "label": "セクションサブタイトル",
+      "default": "FAQ",
+      "info": "セクションの説明文を入力してください（任意）"
+    },
+    {
+      "type": "header",
+      "content": "🎨 ブランド・ロゴ設定"
+    },
+    {
+      "type": "image_picker",
+      "id": "brand_logo",
+      "label": "ブランドロゴ",
+      "info": "推奨サイズ: 120x120px以上の正方形画像"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "ブランド名",
+      "default": "SUSIRI",
+      "info": "ロゴが設定されていない場合に表示されるブランド名"
+    },
+    {
+      "type": "header",
+      "content": "🌐 言語切替設定"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_language_switcher",
+      "label": "言語切替を表示",
+      "default": true,
+      "info": "言語切替ボタンの表示/非表示を設定"
+    },
+    {
+      "type": "text",
+      "id": "japanese_label",
+      "label": "日本語ラベル",
+      "default": "日本語",
+      "info": "日本語切替ボタンのテキスト"
+    },
+    {
+      "type": "text",
+      "id": "english_label",
+      "label": "英語ラベル",
+      "default": "ENGLISH",
+      "info": "英語切替ボタンのテキスト"
+    },
+    {
+      "type": "text",
+      "id": "chinese_label",
+      "label": "中国語ラベル",
+      "default": "简体中文",
+      "info": "中国語切替ボタンのテキスト"
+    },
+    {
+      "type": "header",
+      "content": "🎨 カラー設定"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景色",
+      "default": "#f5f5f5",
+      "info": "セクション全体の背景色"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "テキスト色",
+      "default": "#333333",
+      "info": "メインテキストの色"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "アクセント色",
+      "default": "#666666",
+      "info": "アイコンやホバー時の色"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "ボタン背景色",
+      "default": "#ffffff",
+      "info": "FAQボタンの背景色"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "ボタンテキスト色",
+      "default": "#333333",
+      "info": "FAQボタンのテキスト色"
+    },
+    {
+      "type": "header",
+      "content": "📱 レスポンシブ・余白設定"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "デスクトップ上部余白",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "default": 80,
+      "unit": "px",
+      "info": "デスクトップでのセクション上部余白"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "デスクトップ下部余白",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "default": 80,
+      "unit": "px",
+      "info": "デスクトップでのセクション下部余白"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "モバイル上部余白",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "default": 60,
+      "unit": "px",
+      "info": "モバイルでのセクション上部余白"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "モバイル下部余白",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "default": 60,
+      "unit": "px",
+      "info": "モバイルでのセクション下部余白"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_category",
+      "name": "FAQカテゴリー",
+      "settings": [
+        {
+          "type": "text",
+          "id": "category_title",
+          "label": "カテゴリータイトル",
+          "default": "会員登録",
+          "info": "FAQカテゴリーのタイトルを入力"
+        },
+        {
+          "type": "richtext",
+          "id": "category_description",
+          "label": "カテゴリー説明",
+          "default": "<p>会員登録に関するよくある質問とその回答をこちらに記載してください。</p>",
+          "info": "このカテゴリーの詳細説明（HTML対応）"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_icon",
+          "label": "展開アイコンを表示",
+          "default": true,
+          "info": "ボタンに展開/折りたたみアイコンを表示"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Japanese FAQ Section",
+      "blocks": [
+        {
+          "type": "faq_category",
+          "settings": {
+            "category_title": "会員登録",
+            "category_description": "<p>会員登録の方法や必要な情報について説明いたします。</p>"
+          }
+        },
+        {
+          "type": "faq_category",
+          "settings": {
+            "category_title": "配送スケジュール",
+            "category_description": "<p>商品の配送時期や配送方法についてご確認いただけます。</p>"
+          }
+        },
+        {
+          "type": "faq_category",
+          "settings": {
+            "category_title": "お支払い・領収書",
+            "category_description": "<p>お支払い方法や領収書の発行について詳しく説明いたします。</p>"
+          }
+        },
+        {
+          "type": "faq_category",
+          "settings": {
+            "category_title": "キャンセル・変更",
+            "category_description": "<p>注文のキャンセルや変更手続きについてご案内いたします。</p>"
+          }
+        },
+        {
+          "type": "faq_category",
+          "settings": {
+            "category_title": "国内配送について",
+            "category_description": "<p>国内配送の詳細や配送エリアについて説明いたします。</p>"
+          }
+        },
+        {
+          "type": "faq_category",
+          "settings": {
+            "category_title": "海外配送について",
+            "category_description": "<p>海外配送の対応地域や送料について詳しくご案内いたします。</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

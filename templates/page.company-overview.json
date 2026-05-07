@@ -1,0 +1,92 @@
+/*
+ * ------------------------------------------------------------
+ * 会社概要ページ用テンプレート
+ *
+ * 使い方:
+ * 1. 管理画面 > オンラインストア > ページ で「会社概要」などのページを作成
+ * 2. テーマの「テンプレート」で「company-overview」を選択
+ * 3. ページの本文に沿革・挨拶などを記入（main-page セクション）
+ * 4. カスタマイズで「企業情報」カラムの各項目を編集
+ *
+ * 注: この JSON はテーマエディタで上書きされる場合があります
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "padding_top": 40,
+        "padding_bottom": 28
+      }
+    },
+    "company_info_multicolumn": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_trade_name": {
+          "type": "column",
+          "settings": {
+            "title": "商号",
+            "text": "<p>（正式名称をご記入ください）</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_address": {
+          "type": "column",
+          "settings": {
+            "title": "所在地",
+            "text": "<p>（郵便番号・住所をご記入ください）</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_representative": {
+          "type": "column",
+          "settings": {
+            "title": "代表者",
+            "text": "<p>（役職・氏名をご記入ください）</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_established": {
+          "type": "column",
+          "settings": {
+            "title": "設立",
+            "text": "<p>（年月をご記入ください）</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_trade_name",
+        "column_address",
+        "column_representative",
+        "column_established"
+      ],
+      "name": "企業情報",
+      "settings": {
+        "title": "企業情報",
+        "heading_size": "h2",
+        "image_width": "third",
+        "image_ratio": "adapt",
+        "columns_desktop": 4,
+        "column_alignment": "left",
+        "background_style": "none",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "background-2",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 36,
+        "padding_bottom": 60
+      }
+    }
+  },
+  "order": [
+    "main",
+    "company_info_multicolumn"
+  ]
+}

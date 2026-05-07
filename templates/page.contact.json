@@ -1,0 +1,274 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "180ffa6f-ba41-45af-b803-94cca8e2195e": {
+      "type": "rich-text",
+      "blocks": {
+        "template--19650934964507__180ffa6f-ba41-45af-b803-94cca8e2195e-text-1": {
+          "type": "text",
+          "settings": {
+            "text": "<p>お問い合わせ<br/></p><p>商品およびご注文に関するお問い合わせを承っております。<br/>お名前、メールアドレス、およびお問い合わせ内容をご記入の上、送信してください。<br/>※お問い合わせ内容についてのご返信には3日前後かかる場合がございますのでご了承ください。</p>"
+          }
+        }
+      },
+      "block_order": [
+        "template--19650934964507__180ffa6f-ba41-45af-b803-94cca8e2195e-text-1"
+      ],
+      "custom_css": [
+        ".rte > *:first-child {margin-top: 0; font-size: calc(var(--font-heading-scale) * 2.4rem); color: rgb(var(--color-foreground));}",
+        "@media (max-width: 768px) {.rte > *:first-child {font-size: calc(var(--font-heading-scale) * 2rem); }}"
+      ],
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "background-2",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
+    },
+    "collapsible_content_8qn76F": {
+      "type": "collapsible-content",
+      "blocks": {
+        "collapsible_row_3LAcD6": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "オンラインストア 商品の販売開始はいつですか？（再販はいつですか？）",
+            "icon": "question_mark",
+            "row_content": "<p>A：オンラインストアの商品は、毎週水曜日の午前9時よりご購入いただけるようになります。ご注文は翌週水曜日まで承っており、毎週木曜日に発送をさせていただいております。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_PBMXCy": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "店頭受け取り予約商品の販売開始はいつですか？（再販はいつですか？）",
+            "icon": "question_mark",
+            "row_content": "<p>A：店頭受取予約商品は、毎週土曜日の午前9時よりご購入いただけるようになります。ご注文は翌週金曜日まで承っており、毎週週末の土・日に店頭にてお受け取りいただいております。</p><p>※土日に続く週末もお受け取り予約が可能です。飛び石の祝日はお店がお休みとなりますのでご注意ください。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_HKdxEe": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "間違って購入してしまったので注文キャンセルしたいのですが可能でしょうか？",
+            "icon": "question_mark",
+            "row_content": "<p>A：恐れ入りますが、キャンセルのお手続きは、オンラインページ内にてお客様ご自身で行っていただく形となっております。こちらからご返信している予約完了のメールより操作をお願いいたします。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_Mr84Q8": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "店頭での当日販売はありますか？",
+            "icon": "question_mark",
+            "row_content": "<p>A：はい、店舗でも当日販売を行っております。ご予約なしでご購入いただける商品もございますので、ぜひお気軽にお立ち寄りくださいませ。<br/>店舗は午前10時より午後5時まで営業しております。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_UtYFGK": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "喫茶の席のみの予約は可能でしょうか？予約なしでも入れますか？",
+            "icon": "question_mark",
+            "row_content": "<p>A：通常の喫茶のお席は、ご予約なしでご利用いただけます。予約がなくてもお気軽にお立ち寄りください。<br/>一方で、季節の食事とお菓子のセットをお楽しみいただける「北和菓席」につきましては、午前10時30分と午後12時30分の1日2回、事前のご予約をお願いしております。<br/>ご予約は北和菓席のご予約ページより承っております。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_CV3q64": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "領収書発行をお願いしたいです。",
+            "icon": "question_mark",
+            "row_content": "<p>A：領収書の発行は、マイページまたは、こちらからご返信するご予約完了のメールからお客様ご自身で行っていただけます。どうぞご利用くださいませ。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_myCVrL": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "購入した商品の受け取り日時を間違ってしまいました。変更は可能でしょうか？",
+            "icon": "question_mark",
+            "row_content": "<p>A：はい、変更は可能でございます。マイページまたは、こちらからご返信するご予約完了のメールからお客様ご自身で日時のご変更をお願い申し上げます。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_3qzahn": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "配送先の変更をしたいのですが、どうすればよいでしょうか？",
+            "icon": "question_mark",
+            "row_content": "<p>A：配送先のご変更も承っております。お手数ではございますが、マイページまたは、こちらからご返信するご予約完了のメールからお客様ご自身で変更をお願い申し上げます。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_DYzbRY": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "「北和菓席」のキャンセルはいつまで可能でしょうか？",
+            "icon": "question_mark",
+            "row_content": "<p>A：「北和菓席」のキャンセルは、食材のご用意がございますためご利用週の木曜日までにお手続きをお願いいたします。マイページまたは、こちらからご返信するご予約完了のメールからお客様ご自身で変更をお願い申し上げます。<br/>なお、金曜日以降のキャンセルはお受け致しかねます。ご返金についても致しかねますので、あらかじめご了承いただけますと幸いです。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_YFtrYf": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "贈り物なので、金額のわかるものは入れないでほしいのですが可能でしょうか？",
+            "icon": "question_mark",
+            "row_content": "<p>A：ご安心くださいませ。金額の記載された明細書は、通常、商品に同封しておりません。贈り物としても安心してご利用いただけます。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_Y3bY8E": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "店頭受け取り日時を誤って受け取りができませんでした。振替は可能でしょうか？",
+            "icon": "question_mark",
+            "row_content": "<p>A：ご指定のお受け取り週の土日のいづれかであれば、振替対応が可能でございます。恐れ入りますが、材料のご用意がございますのでお受け取り週の木曜日までに、マイページまたは、こちらからご返信するご予約完了のメールからお客様ご自身で変更をお願い申し上げます。<br/>なお、金曜日以降のキャンセルはお受け致しかねます。ご返金についても致しかねますので、あらかじめご了承いただけますと幸いです。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_J4iRaF": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "紙袋は当日買えますか？",
+            "icon": "question_mark",
+            "row_content": "<p>A：はい、店頭にて紙袋を販売しております。ご入用の際は、どうぞお気軽にスタッフへお声がけくださいませ。小サイズ120円・中サイズ150円・大サイズ180円</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_9qwkjp": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "保冷袋は当日買えますか？",
+            "icon": "question_mark",
+            "row_content": "<p>A：はい、店頭にて保冷袋を販売しております。ご入用の際は、どうぞお気軽にスタッフへお声がけくださいませ。小サイズ120円・中サイズ150円・大サイズ180円<br/>保冷剤が必要な商品には無料でおつけしております。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_WeHLjU": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "大量注文をお願いしたいのですが可能でしょうか？",
+            "icon": "question_mark",
+            "row_content": "<p>A：はい、承っております。「まとまったご注文」ページより、必要事項をご記入のうえ、10日前までにご依頼くださいませ。内容を確認次第、担当よりお見積もりをお送りいたします。ご返信に3日前後かかる可能性がございますがご了承いただけますようお願いいたします。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_KPQBPa": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "商品の到着日は指定できますか？",
+            "icon": "question_mark",
+            "row_content": "<p>A：ご注文の際に到着日、時間の指定をいただけますので操作をお願いします。また、毎週木曜日の発送後の変更や到着日の指定につきましては恐れ入りますが、商品発送後にお知らせするヤマト運輸の追跡番号を用いて、お客様ご自身でご設定いただく形となっております。何卒ご理解賜りますようお願い申し上げます。</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_H4REXY": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "紙袋のサイズについて",
+            "icon": "question_mark",
+            "row_content": "<p>A：大中小3サイズの紙袋のご用意がございます。サイズは以下を参考にご注文ください。商品のご注文の最後に選択いただけます。</p><p><br/>小サイズ　W280×D240×H230 <br/>例）<br/>4個入り×2箱<br/>雪景糖大×3箱<br/>焼き菓子や香草茶などの丸容器×8個<br/><br/>中サイズ　W250×D185×H200 <br/>例）<br/>9個入り箱×2箱<br/>4個入り×4箱<br/>どら焼き6個入り×2籠<br/><br/>大サイズ   W220×D140×H140  <br/>例）<br/>16個入り×2箱<br/>どら焼き12個入り×2籠</p>",
+            "page": ""
+          }
+        }
+      },
+      "block_order": [
+        "collapsible_row_3LAcD6",
+        "collapsible_row_PBMXCy",
+        "collapsible_row_HKdxEe",
+        "collapsible_row_Mr84Q8",
+        "collapsible_row_UtYFGK",
+        "collapsible_row_CV3q64",
+        "collapsible_row_myCVrL",
+        "collapsible_row_3qzahn",
+        "collapsible_row_DYzbRY",
+        "collapsible_row_YFtrYf",
+        "collapsible_row_Y3bY8E",
+        "collapsible_row_J4iRaF",
+        "collapsible_row_9qwkjp",
+        "collapsible_row_WeHLjU",
+        "collapsible_row_KPQBPa",
+        "collapsible_row_H4REXY"
+      ],
+      "name": "t:sections.collapsible_content.presets.name",
+      "settings": {
+        "caption": "",
+        "heading": "よくある質問",
+        "heading_size": "h2",
+        "heading_alignment": "center",
+        "layout": "none",
+        "color_scheme": "background-2",
+        "container_color_scheme": "",
+        "open_first_collapsible_row": false,
+        "image_ratio": "adapt",
+        "desktop_layout": "image_second",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "form": {
+      "type": "contact-form",
+      "settings": {
+        "heading": "",
+        "heading_size": "h2",
+        "color_scheme": "background-1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "bulk_order_form_NKCfzj": {
+      "type": "bulk-order-form",
+      "name": "まとまったご注文フォーム",
+      "settings": {
+        "section_title": "まとまったご注文について",
+        "section_description": "",
+        "order_info_text": "<h5>アイテムを問わず10個を超えるまとまった注文をご希望の場合は、送料を特別料金にてご案内可能です。</h5><h5>発送日から2週間前までに下記フォームよりお気軽にお問合せください。</h5>",
+        "quote_duration": "3日程度",
+        "payment_note": "発送の2日前までにお振込願います。",
+        "shipping_schedule": "毎週木曜日",
+        "additional_note": "<p>ご返信に3日程度かかる場合がございます。ご了承の程お願いいたします。</p>",
+        "product_collection": "全ての商品",
+        "fallback_products": "雪もち\nどら焼き\nおはぎ\n季節のおもち\n流水羹\n雪景糖\n米粉のぼうろ\nお茶・珈琲\n贈り物",
+        "form_note": "<p>領収書は入金確認後にメールにてお送りいたします。発送日や但し書きはお気軽にご相談ください。変更のご希望がございましたらお手数をおかけしますが、「その他のご要望」にお書きください。</p>",
+        "submit_button_text": "お問い合わせを送信",
+        "section_bg_color": "#b3b6bc",
+        "text_color": "#595757",
+        "accent_color": "#121212",
+        "button_bg_color": "#000000",
+        "button_text_color": "#ffffff",
+        "border_color": "#e7eaf0",
+        "title_font_size": 32,
+        "desktop_font_size": 16,
+        "mobile_font_size": 14,
+        "section_padding_top": 60,
+        "section_padding_bottom": 60
+      }
+    }
+  },
+  "order": [
+    "180ffa6f-ba41-45af-b803-94cca8e2195e",
+    "collapsible_content_8qn76F",
+    "main",
+    "form",
+    "bulk_order_form_NKCfzj"
+  ]
+}
