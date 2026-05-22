@@ -1,0 +1,90 @@
+{% comment %}
+  Grain inventory cart gate.
+
+  This validates cart totals by common grain stock group/method before checkout.
+  It cannot perform order-confirmed stock deduction by itself; the private line
+  item properties are intentionally emitted for a backend app/webhook to consume.
+{% endcomment %}
+
+{%- if cart != empty -%}
+  <style>
+    .grain-inventory-cart-status {
+      margin: 0 0 16px;
+      padding: 12px 14px;
+      border: 1px solid #d7dde6;
+      background: #f7f9fb;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .grain-inventory-cart-status--error {
+      border-color: #b91c1c;
+      background: #fff5f5;
+      color: #8a1f1f;
+    }
+
+    .grain-inventory-disabled {
+      opacity: 0.55;
+      pointer-events: none;
+    }
+  </style>
+
+  <div class="grain-inventory-cart-status" data-grain-cart-status aria-live="polite" hidden></div>
+
+  <script type="application/json" data-grain-inventory-cart>
+    {
+      "items": [
+        {%- for item in cart.items -%}
+          {%- liquid
+            assign property_group = item.properties._grain_inventory_group
+            assign property_method = item.properties._grain_stock_method
+            assign property_units = item.properties._grain_units_per_item
+            assign variant_group = item.variant.metafields.custom.grain_inventory_group.value | default: item.variant.metafields.custom.grain_inventory_group
+            assign product_group = item.product.metafields.custom.grain_inventory_group.value | default: item.product.metafields.custom.grain_inventory_group
+            assign group = property_group | default: variant_group | default: product_group
+
+            assign raw_method = property_method | default: item.properties['配送方法']
+            assign method = raw_method
+            if raw_method == '店舗受け取り'
+              assign method = 'pickup'
+            elsif raw_method == '配送' or raw_method == 'オンライン配送'
+              assign method = 'delivery'
+            endif
+
+            assign units = property_units | default: item.variant.metafields.custom.grain_units_per_item.value | default: item.variant.metafields.custom.grain_units_per_item
+            assign stock_handle = ''
+            if method == 'pickup'
+              assign stock_handle = item.variant.metafields.custom.grain_stock_pickup_handle.value | default: item.variant.metafields.custom.grain_stock_pickup_handle | default: item.product.metafields.custom.grain_stock_pickup_handle.value | default: item.product.metafields.custom.grain_stock_pickup_handle
+            else
+              assign stock_handle = item.variant.metafields.custom.grain_stock_delivery_handle.value | default: item.variant.metafields.custom.grain_stock_delivery_handle | default: item.product.metafields.custom.grain_stock_delivery_handle.value | default: item.product.metafields.custom.grain_stock_delivery_handle
+            endif
+            if stock_handle == blank
+              assign stock_handle = item.product.metafields.custom.base_item_handle.value | default: item.product.metafields.custom.base_item_handle
+            endif
+
+            assign stock_available = blank
+            if stock_handle != blank
+              assign stock_product = all_products[stock_handle]
+              if stock_product
+                assign stock_available = stock_product.selected_or_first_available_variant.inventory_quantity
+              endif
+            endif
+          -%}
+          {
+            "line": {{ forloop.index | json }},
+            "key": {{ item.key | json }},
+            "title": {{ item.product.title | append: ' - ' | append: item.variant.title | json }},
+            "variantId": {{ item.variant.id | json }},
+            "quantity": {{ item.quantity | json }},
+            "group": {{ group | json }},
+            "method": {{ method | json }},
+            "unitsPerItem": {{ units | json }},
+            "stockHandle": {{ stock_handle | json }},
+            "stockAvailable": {% if stock_available == blank %}null{% else %}{{ stock_available | json }}{% endif %}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}

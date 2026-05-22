@@ -15,11 +15,19 @@ if (!customElements.get('product-form')) {
         this.hideErrors = this.dataset.hideErrors === 'true';
       }
 
-      onSubmitHandler(evt) {
+      async onSubmitHandler(evt) {
         evt.preventDefault();
         if (this.submitButton.getAttribute('aria-disabled') === 'true') return;
 
         this.handleErrorMessage();
+
+        if (window.GrainInventory?.validateProductForm) {
+          const grainValidation = await window.GrainInventory.validateProductForm(this.form);
+          if (!grainValidation.ok) {
+            this.handleErrorMessage(grainValidation.message);
+            return;
+          }
+        }
 
         this.submitButton.setAttribute('aria-disabled', true);
         this.submitButton.classList.add('loading');

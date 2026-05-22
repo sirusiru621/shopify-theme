@@ -1,0 +1,107 @@
+{% comment %}
+  Grain inventory product bridge.
+
+  This replaces the old title-based/base_item_handle grain stock checks with a
+  data-driven validator. The actual order-confirmed stock deduction still needs
+  an app/webhook or another server-side process; this snippet only exposes
+  product, variant, and stock data to the theme-side cart gate.
+{% endcomment %}
+
+{%- liquid
+  assign product_group = product.metafields.custom.grain_inventory_group.value | default: product.metafields.custom.grain_inventory_group
+  assign delivery_handle = product.metafields.custom.grain_stock_delivery_handle.value | default: product.metafields.custom.grain_stock_delivery_handle
+  assign pickup_handle = product.metafields.custom.grain_stock_pickup_handle.value | default: product.metafields.custom.grain_stock_pickup_handle
+  assign legacy_base_handle = product.metafields.custom.base_item_handle.value | default: product.metafields.custom.base_item_handle
+
+  if delivery_handle == blank and legacy_base_handle != blank
+    assign delivery_handle = legacy_base_handle
+  endif
+  if pickup_handle == blank and legacy_base_handle != blank
+    assign pickup_handle = legacy_base_handle
+  endif
+
+  assign grain_enabled = false
+  if product_group != blank or delivery_handle != blank or pickup_handle != blank
+    assign grain_enabled = true
+  endif
+-%}
+
+{%- if grain_enabled -%}
+  <style>
+    .grain-inventory-status {
+      margin: 0 0 12px;
+      padding: 10px 12px;
+      border: 1px solid #d7dde6;
+      background: #f7f9fb;
+      color: #333;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .grain-inventory-status--error {
+      border-color: #b91c1c;
+      background: #fff5f5;
+      color: #8a1f1f;
+    }
+
+    .grain-inventory-disabled {
+      opacity: 0.55;
+      pointer-events: none;
+    }
+  </style>
+
+  <div class="grain-inventory-status" data-grain-product-status aria-live="polite"></div>
+
+  <input type="hidden" name="properties[_grain_inventory_enabled]" value="true" form="{{ product_form_id }}">
+  <input type="hidden" name="properties[_grain_inventory_group]" value="" data-grain-property="group" form="{{ product_form_id }}">
+  <input type="hidden" name="properties[_grain_stock_method]" value="" data-grain-property="method" form="{{ product_form_id }}">
+  <input type="hidden" name="properties[_grain_units_per_item]" value="" data-grain-property="units" form="{{ product_form_id }}">
+
+  <script type="application/json" data-grain-inventory-product>
+    {
+      "productId": {{ product.id | json }},
+      "productTitle": {{ product.title | json }},
+      "defaultGroup": {{ product_group | json }},
+      "variants": [
+        {%- for variant in product.variants -%}
+          {%- liquid
+            assign variant_group = variant.metafields.custom.grain_inventory_group.value | default: variant.metafields.custom.grain_inventory_group | default: product_group
+            assign variant_units = variant.metafields.custom.grain_units_per_item.value | default: variant.metafields.custom.grain_units_per_item
+            assign variant_delivery_handle = variant.metafields.custom.grain_stock_delivery_handle.value | default: variant.metafields.custom.grain_stock_delivery_handle | default: delivery_handle
+            assign variant_pickup_handle = variant.metafields.custom.grain_stock_pickup_handle.value | default: variant.metafields.custom.grain_stock_pickup_handle | default: pickup_handle
+            assign delivery_stock = blank
+            assign pickup_stock = blank
+            if variant_delivery_handle != blank
+              assign delivery_stock_product = all_products[variant_delivery_handle]
+              if delivery_stock_product
+                assign delivery_stock = delivery_stock_product.selected_or_first_available_variant.inventory_quantity
+              endif
+            endif
+            if variant_pickup_handle != blank
+              assign pickup_stock_product = all_products[variant_pickup_handle]
+              if pickup_stock_product
+                assign pickup_stock = pickup_stock_product.selected_or_first_available_variant.inventory_quantity
+              endif
+            endif
+          -%}
+          {
+            "id": {{ variant.id | json }},
+            "title": {{ variant.title | json }},
+            "group": {{ variant_group | json }},
+            "unitsPerItem": {{ variant_units | json }},
+            "stocks": {
+              "delivery": {
+                "handle": {{ variant_delivery_handle | json }},
+                "available": {% if delivery_stock == blank %}null{% else %}{{ delivery_stock | json }}{% endif %}
+              },
+              "pickup": {
+                "handle": {{ variant_pickup_handle | json }},
+                "available": {% if pickup_stock == blank %}null{% else %}{{ pickup_stock | json }}{% endif %}
+              }
+            }
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}

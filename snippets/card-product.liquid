@@ -1,9 +1,7 @@
 {% comment %}
-  Renders a product card with specific delivery/pickup labels + 粒在庫完売ロジック
-
-  対象：
-  雪もち4個入り／9個入り／16個入り
-  親在庫商品（非公開）：「雪もち粒」商品を metafield で指定
+  Renders a product card.
+  The old title-based grain sold-out badge was removed because it could not
+  support separated delivery/pickup stock or variant-level grain consumption.
 {% endcomment %}
 
 {{ 'component-rating.css' | asset_url | stylesheet_tag }}
@@ -106,34 +104,6 @@
             <a href="{{ card_product.url }}" class="full-unstyled-link">{{ card_product.title | escape }}</a>
           
 
-            {%- comment -%}
-              ▼▼ 雪もち粒在庫に基づく完売ラベル ▼▼
-            {%- endcomment -%}
-            {% assign base_handle = card_product.metafields.custom.base_item_handle %}
-            {% if base_handle %}
-              {% assign base_product = all_products[base_handle] %}
-              {% if base_product %}
-                {% assign base_stock = base_product.variants.first.inventory_quantity %}
-                {% assign title = card_product.title | strip %}
-                {% if title contains '雪もち' %}
-                  <div class="product__badges product__badges--card">
-                    {% if base_stock < 16 %}
-                      <span class="badge badge--soldout">16個入り 売り切れ</span>
-                    {% endif %}
-                    {% if base_stock < 9 %}
-                      <span class="badge badge--soldout">9個入り 売り切れ</span>
-                    {% endif %}
-                    {% if base_stock < 4 %}
-                      <span class="badge badge--soldout">4個入り 売り切れ</span>
-                    {% endif %}
-                    {% if base_stock <= 0 %}
-                      <span class="badge badge--soldout">全商品完売</span>
-                    {% endif %}
-                  </div>
-                {% endif %}
-              {% endif %}
-            {% endif %}
-            {%- comment -%}▲▲ 完売ラベルここまで ▲▲{%- endcomment -%}
           </h3>
 
           {% render 'price', product: card_product %}

@@ -22,6 +22,14 @@
       if block.settings.show_dynamic_checkout and gift_card_recipient_feature_active == false
         assign show_dynamic_checkout = true
       endif
+
+      assign grain_inventory_group = product.metafields.custom.grain_inventory_group.value | default: product.metafields.custom.grain_inventory_group
+      assign grain_delivery_handle = product.metafields.custom.grain_stock_delivery_handle.value | default: product.metafields.custom.grain_stock_delivery_handle
+      assign grain_pickup_handle = product.metafields.custom.grain_stock_pickup_handle.value | default: product.metafields.custom.grain_stock_pickup_handle
+      assign legacy_base_handle = product.metafields.custom.base_item_handle.value | default: product.metafields.custom.base_item_handle
+      if grain_inventory_group != blank or grain_delivery_handle != blank or grain_pickup_handle != blank or legacy_base_handle != blank
+        assign show_dynamic_checkout = false
+      endif
     -%}
 
     <product-form class="product-form" data-hide-errors="{{ gift_card_recipient_feature_active }}">
