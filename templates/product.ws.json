@@ -36,7 +36,7 @@
           "type": "text",
           "disabled": true,
           "settings": {
-            "text": "{{ product.vendor }}",
+            "text": "<p>{{ product.vendor }}</p>",
             "text_style": "body"
           }
         },
@@ -167,7 +167,7 @@
         "493daddf-2c1f-4694-a099-5a29fd5c023c": {
           "type": "text",
           "settings": {
-            "text": "-----------------------------------------------------------------------",
+            "text": "<p>-----------------------------------------------------------------------</p>",
             "text_style": "uppercase"
           }
         },

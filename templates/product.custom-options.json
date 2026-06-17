@@ -36,7 +36,7 @@
           "type": "text",
           "disabled": true,
           "settings": {
-            "text": "{{ product.vendor }}",
+            "text": "<p>{{ product.vendor }}</p>",
             "text_style": "body"
           }
         },
@@ -96,35 +96,10 @@
           "type": "quantity_selector",
           "settings": {}
         },
-        "gift_settings_simple_bKWg8B": {
-          "type": "gift_settings_simple",
-          "settings": {
-            "show_icon": true,
-            "button_text": "ギフト梱包をご希望の方はこちら",
-            "modal_title": "ご進物の設定",
-            "accent_color": "#007c89",
-            "quantity_step_label": "1. 設定する数量を指定してください",
-            "quantity_placeholder": "選択してください",
-            "max_quantity": 10,
-            "purpose_step_label": "2. 用途を選択してください",
-            "purpose_placeholder": "選択してください",
-            "sample_image_label": "3. 選択された用途のサンプル画像",
-            "addressee_step_label": "4. 宛名書きを入力してください",
-            "addressee_note": "※宛名を入力される場合のみご記入ください（空欄でも問題ありません）",
-            "addressee_placeholder": "例：山田太郎様",
-            "addressee_max_length": 20,
-            "cancel_button_text": "キャンセル",
-            "submit_button_text": "設定を保存",
-            "edit_button_text": "変更する",
-            "quantity_property_name": "ギフト設定_数量",
-            "purpose_property_name": "ギフト設定_用途",
-            "addressee_property_name": "ギフト設定_宛名書き"
-          }
-        },
         "31044696-b263-4ab1-972b-7ae2970a7d69": {
           "type": "text",
           "settings": {
-            "text": "※毎週木曜日24時を過ぎたご注文は翌々週のご対応となります。",
+            "text": "<p>※毎週木曜日24時を過ぎたご注文は翌々週のご対応となります。</p>",
             "text_style": "uppercase"
           }
         },
@@ -154,7 +129,7 @@
         "493daddf-2c1f-4694-a099-5a29fd5c023c": {
           "type": "text",
           "settings": {
-            "text": "-----------------------------------------------------------------------",
+            "text": "<p>-----------------------------------------------------------------------</p>",
             "text_style": "uppercase"
           }
         },
@@ -178,7 +153,6 @@
         "price",
         "inventory_options_gqdmwn",
         "quantity_selector",
-        "gift_settings_simple_bKWg8B",
         "31044696-b263-4ab1-972b-7ae2970a7d69",
         "variant_picker",
         "buy_buttons",

@@ -1,5 +1,7 @@
 // weekend-reservation.js - 予約人数制限対応版（既存機能完全保持）
 
+const DISABLE_RESERVATION_SLOT_LIMITS = true;
+
 class WeekendReservationCalendar {
   constructor(container) {
     this.container = container;
@@ -112,8 +114,8 @@ class WeekendReservationCalendar {
     const cells = Math.ceil((leadEmpty + daysInMonth) / 7) * 7;
     const today = new Date(); today.setHours(0,0,0,0);
 
-    const lockFuture = this.isFutureMonth(y, m, today) && !this.isFutureMonthUnlocked(today);
-    const paused = this.config.paused === true;
+    const lockFuture = DISABLE_RESERVATION_SLOT_LIMITS ? false : (this.isFutureMonth(y, m, today) && !this.isFutureMonthUnlocked(today));
+    const paused = DISABLE_RESERVATION_SLOT_LIMITS ? false : (this.config.paused === true);
 
     let html = '';
 
@@ -188,9 +190,9 @@ class WeekendReservationCalendar {
     if (!this.els.timeSlots) return;
     
     const slots = String(this.config.timeSlots || '').split(',').map(t => t.trim()).filter(Boolean);
-    const disabled = this.config.paused === true;
+    const disabled = DISABLE_RESERVATION_SLOT_LIMITS ? false : (this.config.paused === true);
     const capacity = this.config.timeSlotCapacity || {};
-    const reservations = this.config.reservationData || {};
+    const reservations = DISABLE_RESERVATION_SLOT_LIMITS ? {} : (this.config.reservationData || {});
     const soldOutLabel = this.config.labels?.soldOut || '完売';
     
     const dateReservations = reservations[dateStr] || {};
@@ -199,7 +201,7 @@ class WeekendReservationCalendar {
       const maxCapacity = capacity[time] || 999;
       const currentBookings = dateReservations[time] || 0;
       const remaining = maxCapacity - currentBookings;
-      const isSoldOut = remaining <= 0;
+      const isSoldOut = DISABLE_RESERVATION_SLOT_LIMITS ? false : (remaining <= 0);
       
       let slotClass = 'time-slot';
       let isDisabled = disabled || isSoldOut;

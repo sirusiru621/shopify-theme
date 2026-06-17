@@ -166,7 +166,7 @@
         "custom_liquid_6RK7Uh": {
           "type": "custom_liquid",
           "settings": {
-            "custom_liquid": "<hr>\nよくあるご質問は<a href=\"/pages/faq\" class=\"faq-link\">こちら</a><hr>"
+            "custom_liquid": "<hr>\nよくあるご質問は<a href=\"/pages/contact\" class=\"faq-link\">こちら</a><hr>"
           }
         },
         "share": {

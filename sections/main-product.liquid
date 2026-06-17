@@ -347,22 +347,9 @@
   assign reservation_enabled = product.metafields.custom.reservation_enabled.value | default: false
   assign current_year = 'now' | date: '%Y'
   assign current_month = 'now' | date: '%m' | plus: 0
-  assign current_hour = 'now' | date: '%H' | plus: 0
-  assign current_weekday = 'now' | date: '%w' | plus: 0
   assign is_cart_open = true
   assign status_message = "予約受付中"
   assign status_detail = "土・日のみ選択できます"
-
-  if current_weekday == 5 and current_hour >= 10
-    assign is_cart_open = false
-    assign status_message = "予約受付停止中"
-    assign status_detail = "土曜日10:00より受付再開予定"
-  endif
-  if current_weekday == 6 and current_hour < 10
-    assign is_cart_open = false
-    assign status_message = "予約受付停止中"
-    assign status_detail = "本日10:00より受付再開予定"
-  endif
 
   assign show_calendar = reservation_enabled
   assign calendar_functional = reservation_enabled
@@ -375,25 +362,8 @@
   assign stop_end_hour = 10
   assign available_weekdays_numbers = '0,6'
 
-  if is_cart_open == false
-    assign status_detail = block.settings.stop_message | default: status_detail
-  endif
-
   assign calendar_paused = false
-  if is_cart_open == false
-    assign calendar_paused = true
-  endif
-
-  comment
-    ✅ 予約データをmetafieldから取得
-    形式: { "2025-11-01": { "10:30": 3, "12:30": 5 }, "2025-11-02": { "10:30": 6 } }
-  endcomment
-  assign reservation_data_raw = product.metafields.custom.reservation_bookings.value
-  if reservation_data_raw == blank
-    assign reservation_data = '{}'
-  else
-    assign reservation_data = reservation_data_raw
-  endif
+  assign reservation_data = '{}'
 -%}
 
 <style>
@@ -538,11 +508,6 @@
 
 <script src="{{ 'weekend-reservation.js' | asset_url }}" defer></script>
 {%- when 'inventory_options' -%}
-{% comment %}
-  旧実装は base_item_handle と商品名の「4個/9個/16個」判定に依存していたため無効化。
-  新実装は variant metafield の消費粒数と、発送/店頭受取それぞれの共通在庫商品を参照する。
-{% endcomment %}
-{% render 'grain-inventory-product', product: product, product_form_id: product_form_id %}
 
 <div class="inventory-linked-delivery-options" style="margin: 20px 0;" {{ block.shopify_attributes }}>
 
@@ -683,6 +648,8 @@
   <script>
   (() => {
     'use strict';
+
+    const DISABLE_BACKEND_INVENTORY_LOGIC = true;
     
     const config = window.inventoryLinkedConfig || {};
     const { displaySettings, storeSettings, designSettings, messages } = config;
@@ -899,6 +866,14 @@
       }
 
       isSalesAvailable(dateInfo, method) {
+        if (DISABLE_BACKEND_INVENTORY_LOGIC) {
+          return {
+            available: true,
+            reason: 'available',
+            message: null
+          };
+        }
+
         if (dateInfo.inventory.available <= 0) {
           return {
             available: false,

@@ -120,7 +120,7 @@
         "sectionId": "{{ section.id }}",
         "productId": {{ product.id }},
         "variantId": {{ current_variant.id }},
-        "reservationData": {% if reservation_data_safe %}{{ reservation_data_safe | json }}{% else %}{}{% endif %},
+        "reservationData": {},
         "settings": {
           "dateFormat": "{{ section.settings.date_format | default: 'YYYY-MM-DD' }}",
           "timeFormat": "{{ section.settings.time_format | default: 'HH:mm' }}",

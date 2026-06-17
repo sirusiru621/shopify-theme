@@ -36,7 +36,7 @@
           "type": "text",
           "disabled": true,
           "settings": {
-            "text": "{{ product.vendor }}",
+            "text": "<p>{{ product.vendor }}</p>",
             "text_style": "body"
           }
         },
@@ -52,7 +52,7 @@
           "type": "text",
           "disabled": true,
           "settings": {
-            "text": "※毎週木曜日24時を過ぎたご注文は翌々週のご対応となります。",
+            "text": "<p>※毎週木曜日24時を過ぎたご注文は翌々週のご対応となります。</p>",
             "text_style": "uppercase"
           }
         },
@@ -133,7 +133,7 @@
         "493daddf-2c1f-4694-a099-5a29fd5c023c": {
           "type": "text",
           "settings": {
-            "text": "-----------------------------------------------------------------------",
+            "text": "<p>-----------------------------------------------------------------------</p>",
             "text_style": "uppercase"
           }
         }

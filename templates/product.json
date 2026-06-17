@@ -33,11 +33,10 @@
       "type": "main-product",
       "blocks": {
         "vendor": {
-          "type": "text",
+          "type": "custom_liquid",
           "disabled": true,
           "settings": {
-            "text": "{{ product.vendor }}",
-            "text_style": "body"
+            "custom_liquid": "<div class=\"product__text\">{{ product.vendor }}</div>"
           }
         },
         "title": {
@@ -51,7 +50,7 @@
         "text_wWVwVW": {
           "type": "text",
           "settings": {
-            "text": "税込",
+            "text": "<p>税込</p>",
             "text_style": "body"
           }
         },
@@ -149,7 +148,7 @@
         "31044696-b263-4ab1-972b-7ae2970a7d69": {
           "type": "text",
           "settings": {
-            "text": "※毎週木曜日24時を過ぎたご注文は翌々週のご対応となります。",
+            "text": "<p>※毎週木曜日24時を過ぎたご注文は翌々週のご対応となります。</p>",
             "text_style": "uppercase"
           }
         },
@@ -179,7 +178,7 @@
         "493daddf-2c1f-4694-a099-5a29fd5c023c": {
           "type": "text",
           "settings": {
-            "text": "-----------------------------------------------------------------------",
+            "text": "<p>-----------------------------------------------------------------------</p>",
             "text_style": "uppercase"
           }
         },
@@ -296,19 +295,19 @@
         "template--19650935193883__76fca9f5-e4b3-42c9-bc43-24f71ab40f7c-text-1": {
           "type": "text",
           "settings": {
-            "text": "<h5>紙袋と熨斗は商品と一緒にご購入をお願いいたします。 　　　　　　</h5>"
+            "text": "<p>紙袋と熨斗は商品と一緒にご購入をお願いいたします。</p>"
           }
         },
         "cbebd1f6-baac-4dac-bed1-c79a92b2dc1e": {
           "type": "text",
           "settings": {
-            "text": "<h5><a href=\"/collections/紙袋\" title=\"紙袋\">紙袋のご購入はこちら</a>　　　　　　　　　　　　　　　　　　　　　</h5>"
+            "text": "<p><a href=\"/collections/紙袋\" title=\"紙袋\">紙袋のご購入はこちら</a></p>"
           }
         },
         "06460611-d13f-4695-9cf7-26df37ab5efd": {
           "type": "text",
           "settings": {
-            "text": "<h5><a href=\"/collections/熨斗\" title=\"熨斗\">熨斗のご購入はこちら</a>　　　　　　　　　　　　　　　　　　　　　</h5>"
+            "text": "<p><a href=\"/collections/熨斗\" title=\"熨斗\">熨斗のご購入はこちら</a></p>"
           }
         }
       },

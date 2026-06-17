@@ -21,14 +21,6 @@ if (!customElements.get('product-form')) {
 
         this.handleErrorMessage();
 
-        if (window.GrainInventory?.validateProductForm) {
-          const grainValidation = await window.GrainInventory.validateProductForm(this.form);
-          if (!grainValidation.ok) {
-            this.handleErrorMessage(grainValidation.message);
-            return;
-          }
-        }
-
         this.submitButton.setAttribute('aria-disabled', true);
         this.submitButton.classList.add('loading');
         this.querySelector('.loading-overlay__spinner').classList.remove('hidden');
