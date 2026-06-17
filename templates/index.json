@@ -36,6 +36,41 @@
             "link_target": false
           }
         },
+        "slide_PrYjGA": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/IMG_0163.jpg",
+            "video_url": "",
+            "youtube_id": "",
+            "slide_title": "",
+            "slide_description": "",
+            "slide_link": "shopify://collections/雪景糖",
+            "link_target": false
+          }
+        },
+        "slide_af4kpV": {
+          "type": "slide",
+          "settings": {
+            "video_url": "",
+            "youtube_id": "",
+            "slide_title": "タイトル",
+            "slide_description": "<p>説明文をここに入力してください</p>",
+            "slide_link": "",
+            "link_target": false
+          }
+        },
+        "slide_VCCWrT": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/IMG_9756.jpg",
+            "video_url": "",
+            "youtube_id": "",
+            "slide_title": "",
+            "slide_description": "",
+            "slide_link": "shopify://collections/ohagi",
+            "link_target": false
+          }
+        },
         "slide_j4eLFP": {
           "type": "slide",
           "settings": {
@@ -46,60 +81,15 @@
             "slide_link": "shopify://products/季節のおもち",
             "link_target": false
           }
-        },
-        "slide_xdMWd9": {
-          "type": "slide",
-          "settings": {
-            "video_url": "",
-            "youtube_id": "",
-            "slide_title": "",
-            "slide_description": "",
-            "slide_link": "shopify://collections/雪景糖",
-            "link_target": false
-          }
-        },
-        "slide_z8KmrM": {
-          "type": "slide",
-          "settings": {
-            "video_url": "",
-            "youtube_id": "",
-            "slide_title": "",
-            "slide_description": "",
-            "slide_link": "shopify://collections/ohagi",
-            "link_target": false
-          }
-        },
-        "slide_VEmhBh": {
-          "type": "slide",
-          "settings": {
-            "video_url": "",
-            "youtube_id": "",
-            "slide_title": "",
-            "slide_description": "",
-            "slide_link": "shopify://collections/どら焼き",
-            "link_target": false
-          }
-        },
-        "slide_wgi9kA": {
-          "type": "slide",
-          "settings": {
-            "video_url": "",
-            "youtube_id": "",
-            "slide_title": "",
-            "slide_description": "",
-            "slide_link": "shopify://collections/全ての商品",
-            "link_target": false
-          }
         }
       },
       "block_order": [
         "slide_e8tEB9",
         "slide_N7jqmB",
-        "slide_j4eLFP",
-        "slide_xdMWd9",
-        "slide_z8KmrM",
-        "slide_VEmhBh",
-        "slide_wgi9kA"
+        "slide_PrYjGA",
+        "slide_af4kpV",
+        "slide_VCCWrT",
+        "slide_j4eLFP"
       ],
       "name": "TOP PAGEプロダクトセクション",
       "settings": {
