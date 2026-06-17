@@ -38,6 +38,65 @@
         "color_scheme": "background-1"
       }
     },
+    "collection_header_section_kfhxHh": {
+      "type": "collection-header-section",
+      "blocks": {
+        "heading_46cC7X": {
+          "type": "heading",
+          "settings": {
+            "heading": "雪もち"
+          }
+        },
+        "text_PYD7dT": {
+          "type": "text",
+          "settings": {
+            "text": "<p>じっくりと炊き上げた有機栽培のえりも<br/>小豆のつぶあんと北海道の草原から届いた<br/>グラスフェッドミルクで作ったクリームを<br/>北海道の粉雪のようにふわふわのお餅で包みました。</p>"
+          }
+        },
+        "buttons_LyyDGh": {
+          "type": "buttons",
+          "settings": {
+            "button_label_1": "雪もちのこだわりを読む",
+            "button_link_1": "/collections/yuki-mochi",
+            "button_style_secondary_1": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": true
+          }
+        }
+      },
+      "block_order": [
+        "heading_46cC7X",
+        "text_PYD7dT",
+        "buttons_LyyDGh"
+      ],
+      "name": "コレクションヘッダー",
+      "settings": {
+        "image": "shopify://shop_images/visual_sisiri_04.jpg",
+        "image_overlay_opacity": 20,
+        "image_height": "large",
+        "section_height": 80,
+        "mobile_height": 70,
+        "desktop_content_position": "middle-right",
+        "desktop_content_alignment": "right",
+        "mobile_content_alignment": "center",
+        "mobile_layout_style": "vertical",
+        "mobile_text_direction": "vertical",
+        "show_text_below": true,
+        "heading_font_size": 32,
+        "heading_color": "#ffffff",
+        "text_font_size": 18,
+        "text_color": "#ffffff",
+        "button_font_size": 16,
+        "mobile_heading_font_size": 22,
+        "mobile_text_font_size": 14,
+        "mobile_button_font_size": 14,
+        "button_primary_bg": "#FFFFFF",
+        "button_primary_text": "#121212",
+        "button_primary_hover": "#FFFFFF",
+        "button_secondary_text": "#ffffff"
+      }
+    },
     "rich_text_bBKbg4": {
       "type": "rich-text",
       "blocks": {
@@ -141,6 +200,7 @@
   "order": [
     "breadcrumb_iXnddL",
     "banner",
+    "collection_header_section_kfhxHh",
     "rich_text_bBKbg4",
     "rich_text_4DjVX6",
     "product-grid",
