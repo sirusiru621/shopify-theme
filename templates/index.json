@@ -233,6 +233,7 @@
       "type": "artisanal-hero-section",
       "name": "Artisanal Hero",
       "settings": {
+        "hero_image": "shopify://shop_images/DSC07218_cfaeb44d-35f3-419f-b973-83f3ed5fe3e2.jpg",
         "show_overlay": true,
         "overlay_opacity": 40,
         "heading_jp": "贈り物",
@@ -264,6 +265,7 @@
       "type": "artisanal-hero-section",
       "name": "Artisanal Hero",
       "settings": {
+        "hero_image": "shopify://shop_images/7C201966_da440ea8-7755-4616-90b9-b1e0c90ba3da.jpg",
         "show_overlay": true,
         "overlay_opacity": 25,
         "heading_jp": "北和菓席",
@@ -305,6 +307,7 @@
       "type": "artisanal-hero-section",
       "name": "Artisanal Hero",
       "settings": {
+        "hero_image": "shopify://shop_images/IMG_0895.jpg",
         "show_overlay": true,
         "overlay_opacity": 50,
         "heading_jp": "作家作品",
