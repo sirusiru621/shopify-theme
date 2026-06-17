@@ -72,7 +72,7 @@
       ],
       "name": "コレクションヘッダー",
       "settings": {
-        "image": "shopify://shop_images/visual_sisiri_04.jpg",
+        "image": "shopify://shop_images/DSC07218_3be61dd7-d5e6-4f40-aebc-233346a62b6d.jpg",
         "image_overlay_opacity": 20,
         "image_height": "large",
         "section_height": 80,
@@ -91,9 +91,9 @@
         "mobile_heading_font_size": 22,
         "mobile_text_font_size": 14,
         "mobile_button_font_size": 14,
-        "button_primary_bg": "#FFFFFF",
+        "button_primary_bg": "#ffffff",
         "button_primary_text": "#121212",
-        "button_primary_hover": "#FFFFFF",
+        "button_primary_hover": "#ffffff",
         "button_secondary_text": "#ffffff"
       }
     },
