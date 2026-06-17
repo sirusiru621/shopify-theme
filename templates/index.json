@@ -12,7 +12,7 @@
     "fv_section_8y6Ke4": {
       "type": "fv-section",
       "blocks": {
-        "slide_4UiWQH": {
+        "slide_e8tEB9": {
           "type": "slide",
           "settings": {
             "slide_image": "shopify://shop_images/DSC00717.jpg",
@@ -24,7 +24,7 @@
             "link_target": false
           }
         },
-        "slide_j4eLFP": {
+        "slide_N7jqmB": {
           "type": "slide",
           "settings": {
             "slide_image": "shopify://shop_images/DSC07479.jpg",
@@ -36,10 +36,20 @@
             "link_target": false
           }
         },
+        "slide_j4eLFP": {
+          "type": "slide",
+          "settings": {
+            "video_url": "",
+            "youtube_id": "",
+            "slide_title": "カルダモン香る栗のおもち",
+            "slide_description": "<p>栗をまるごと一粒いれて<br/>スパイスを効かせた道明寺で包みました。</p><p>秋を感じるおもちです。</p>",
+            "slide_link": "shopify://products/季節のおもち",
+            "link_target": false
+          }
+        },
         "slide_xdMWd9": {
           "type": "slide",
           "settings": {
-            "slide_image": "shopify://shop_images/IMG_0163.jpg",
             "video_url": "",
             "youtube_id": "",
             "slide_title": "",
@@ -51,7 +61,6 @@
         "slide_z8KmrM": {
           "type": "slide",
           "settings": {
-            "slide_image": "shopify://shop_images/IMG_9756.jpg",
             "video_url": "",
             "youtube_id": "",
             "slide_title": "",
@@ -63,7 +72,6 @@
         "slide_VEmhBh": {
           "type": "slide",
           "settings": {
-            "slide_image": "shopify://shop_images/IMG_9067.jpg",
             "video_url": "",
             "youtube_id": "",
             "slide_title": "",
@@ -75,7 +83,6 @@
         "slide_wgi9kA": {
           "type": "slide",
           "settings": {
-            "slide_image": "shopify://shop_images/EC_TOP4.jpg",
             "video_url": "",
             "youtube_id": "",
             "slide_title": "",
@@ -86,7 +93,8 @@
         }
       },
       "block_order": [
-        "slide_4UiWQH",
+        "slide_e8tEB9",
+        "slide_N7jqmB",
         "slide_j4eLFP",
         "slide_xdMWd9",
         "slide_z8KmrM",
@@ -119,7 +127,6 @@
           "type": "sweets_item",
           "settings": {
             "title": "雪もち",
-            "image": "shopify://shop_images/EC_yukimochi_image_049791dd-7430-4aff-a171-bb24226b3515.jpg",
             "link": "shopify://collections/雪もち"
           }
         },
@@ -127,7 +134,6 @@
           "type": "sweets_item",
           "settings": {
             "title": "どら焼き",
-            "image": "shopify://shop_images/EC_image_dora_shiro_014c3849-b592-4a0a-bd59-844dbf3f684a.jpg",
             "link": "shopify://collections/どら焼き"
           }
         },
@@ -135,7 +141,6 @@
           "type": "sweets_item",
           "settings": {
             "title": "おはぎ",
-            "image": "shopify://shop_images/IMG_9793.jpg",
             "link": "shopify://collections/ohagi"
           }
         },
@@ -143,7 +148,6 @@
           "type": "sweets_item",
           "settings": {
             "title": "季節のおもち",
-            "image": "shopify://shop_images/DSC07479.jpg",
             "link": "shopify://collections/季節のおもち"
           }
         },
@@ -151,7 +155,6 @@
           "type": "sweets_item",
           "settings": {
             "title": "流氷羹",
-            "image": "shopify://shop_images/IMG_8784-Enhanced-NR-Edit_610d4d41-4f54-4398-9206-b48bcebd7c38.jpg",
             "link": "shopify://collections/流氷羹"
           }
         },
@@ -159,7 +162,6 @@
           "type": "sweets_item",
           "settings": {
             "title": "雪景糖",
-            "image": "shopify://shop_images/7C201903_2a120209-ad88-4962-be92-d2efd4a201dc.jpg",
             "link": "shopify://collections/雪景糖"
           }
         },
@@ -168,7 +170,6 @@
           "disabled": true,
           "settings": {
             "title": "米粉のぼうろ",
-            "image": "shopify://shop_images/31C36176-589A-4116-8147-2FFF9A47B2DC_699ace08-ffd7-4ba2-ad4e-98224e52f9dc.jpg",
             "link": "shopify://collections/米粉のぼうろ"
           }
         },
@@ -177,7 +178,6 @@
           "disabled": true,
           "settings": {
             "title": "お茶",
-            "image": "shopify://shop_images/5933C011-9AED-4AC0-86FF-504CCC68D4E7_bdcaeca3-7191-493e-922c-a7b0ce32b614.jpg",
             "link": "shopify://collections/japanese-tea-coffee"
           }
         },
@@ -186,7 +186,6 @@
           "disabled": true,
           "settings": {
             "title": "贈り物",
-            "image": "shopify://shop_images/DSC07218_cfaeb44d-35f3-419f-b973-83f3ed5fe3e2.jpg",
             "link": "shopify://collections/贈り物"
           }
         }
@@ -236,7 +235,6 @@
       "type": "artisanal-hero-section",
       "name": "Artisanal Hero",
       "settings": {
-        "hero_image": "shopify://shop_images/DSC07218_cfaeb44d-35f3-419f-b973-83f3ed5fe3e2.jpg",
         "show_overlay": true,
         "overlay_opacity": 40,
         "heading_jp": "贈り物",
@@ -268,7 +266,6 @@
       "type": "artisanal-hero-section",
       "name": "Artisanal Hero",
       "settings": {
-        "hero_image": "shopify://shop_images/7C201966_da440ea8-7755-4616-90b9-b1e0c90ba3da.jpg",
         "show_overlay": true,
         "overlay_opacity": 25,
         "heading_jp": "北和菓席",
@@ -310,7 +307,6 @@
       "type": "artisanal-hero-section",
       "name": "Artisanal Hero",
       "settings": {
-        "hero_image": "shopify://shop_images/IMG_0895.jpg",
         "show_overlay": true,
         "overlay_opacity": 50,
         "heading_jp": "作家作品",
@@ -344,7 +340,6 @@
         "dedication_item_f8B8MR": {
           "type": "dedication_item",
           "settings": {
-            "image": "shopify://shop_images/EC_yukimochi_image_049791dd-7430-4aff-a171-bb24226b3515.jpg",
             "title": "雪もちの話を読む",
             "text": "<p>厳選された上質な素材のみを使用し、職人の技術と伝統を大切にした製品づくりを行っています。一つひとつに込められた想いをお届けします。</p>",
             "title_font_size": 26,
@@ -366,7 +361,6 @@
         "dedication_item_KPRCbG": {
           "type": "dedication_item",
           "settings": {
-            "image": "shopify://shop_images/EC_image_dora_shiro_014c3849-b592-4a0a-bd59-844dbf3f684a.jpg",
             "title": "どら焼きの話",
             "text": "<p>代々受け継がれてきた製法を守り続け、変わらぬ美味しさを提供します。時代を超えて愛される味わいを大切にしています。</p>",
             "title_font_size": 26,
