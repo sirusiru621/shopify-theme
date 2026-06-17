@@ -119,6 +119,7 @@
           "type": "sweets_item",
           "settings": {
             "title": "雪もち",
+            "image": "shopify://shop_images/EC_yukimochi_image_049791dd-7430-4aff-a171-bb24226b3515.jpg",
             "link": "shopify://collections/雪もち"
           }
         },
@@ -126,6 +127,7 @@
           "type": "sweets_item",
           "settings": {
             "title": "どら焼き",
+            "image": "shopify://shop_images/EC_image_dora_shiro_014c3849-b592-4a0a-bd59-844dbf3f684a.jpg",
             "link": "shopify://collections/どら焼き"
           }
         },
@@ -133,6 +135,7 @@
           "type": "sweets_item",
           "settings": {
             "title": "おはぎ",
+            "image": "shopify://shop_images/IMG_9793.jpg",
             "link": "shopify://collections/ohagi"
           }
         },
@@ -140,6 +143,7 @@
           "type": "sweets_item",
           "settings": {
             "title": "季節のおもち",
+            "image": "shopify://shop_images/DSC07479_1.jpg",
             "link": "shopify://collections/季節のおもち"
           }
         },
@@ -147,6 +151,7 @@
           "type": "sweets_item",
           "settings": {
             "title": "流氷羹",
+            "image": "shopify://shop_images/IMG_8784-Enhanced-NR-Edit_610d4d41-4f54-4398-9206-b48bcebd7c38.jpg",
             "link": "shopify://collections/流氷羹"
           }
         },
@@ -154,6 +159,7 @@
           "type": "sweets_item",
           "settings": {
             "title": "雪景糖",
+            "image": "shopify://shop_images/7C201903_2a120209-ad88-4962-be92-d2efd4a201dc.jpg",
             "link": "shopify://collections/雪景糖"
           }
         },
