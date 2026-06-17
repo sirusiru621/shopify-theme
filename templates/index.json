@@ -48,17 +48,6 @@
             "link_target": false
           }
         },
-        "slide_af4kpV": {
-          "type": "slide",
-          "settings": {
-            "video_url": "",
-            "youtube_id": "",
-            "slide_title": "タイトル",
-            "slide_description": "<p>説明文をここに入力してください</p>",
-            "slide_link": "",
-            "link_target": false
-          }
-        },
         "slide_VCCWrT": {
           "type": "slide",
           "settings": {
@@ -71,14 +60,27 @@
             "link_target": false
           }
         },
-        "slide_j4eLFP": {
+        "slide_BUiTHW": {
           "type": "slide",
           "settings": {
+            "slide_image": "shopify://shop_images/IMG_9067.jpg",
             "video_url": "",
             "youtube_id": "",
-            "slide_title": "カルダモン香る栗のおもち",
-            "slide_description": "<p>栗をまるごと一粒いれて<br/>スパイスを効かせた道明寺で包みました。</p><p>秋を感じるおもちです。</p>",
-            "slide_link": "shopify://products/季節のおもち",
+            "slide_title": "",
+            "slide_description": "",
+            "slide_link": "shopify://collections/どら焼き",
+            "link_target": false
+          }
+        },
+        "slide_KKngrV": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/EC_TOP4.jpg",
+            "video_url": "",
+            "youtube_id": "",
+            "slide_title": "",
+            "slide_description": "",
+            "slide_link": "shopify://collections/全ての商品",
             "link_target": false
           }
         }
@@ -87,9 +89,9 @@
         "slide_e8tEB9",
         "slide_N7jqmB",
         "slide_PrYjGA",
-        "slide_af4kpV",
         "slide_VCCWrT",
-        "slide_j4eLFP"
+        "slide_BUiTHW",
+        "slide_KKngrV"
       ],
       "name": "TOP PAGEプロダクトセクション",
       "settings": {
