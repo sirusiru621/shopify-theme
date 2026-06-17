@@ -33,14 +33,14 @@
           "type": "link_list",
           "settings": {
             "heading": "",
-            "menu": "link-list"
+            "menu": ""
           }
         },
         "link_list_H6p3d9": {
           "type": "link_list",
           "settings": {
             "heading": "",
-            "menu": "footer-1"
+            "menu": ""
           }
         }
       },
