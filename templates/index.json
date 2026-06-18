@@ -272,7 +272,7 @@
         "heading_en": "book a table",
         "description": "",
         "cta_text": "空席を確認する",
-        "cta_url": "shopify://products/喫茶-北和菓席-ご予約-コピー",
+        "cta_url": "https://www.tablecheck.com/ja/sisiri/reserve/message",
         "show_decorative_line": true,
         "accent_color": "#ffffff",
         "jp_heading_color": "#ffffff",
