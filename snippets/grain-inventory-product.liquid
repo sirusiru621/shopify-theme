@@ -1,0 +1,81 @@
+{% doc %}
+Renders grain inventory configuration and status for product pages.
+@param {object} product - Product object
+@param {string} section_id - Section ID for button targeting
+@example
+{% render 'grain-inventory-product', product: product, section_id: section.id %}
+{% enddoc %}
+
+{%- liquid
+  assign grain_enabled = false
+  assign grain_group = product.metafields.custom.grain_inventory_group.value | default: product.metafields.custom.grain_inventory_group
+
+  if grain_group != blank
+    assign grain_enabled = true
+  endif
+
+  assign delivery_handle = product.metafields.custom.grain_stock_delivery_handle.value | default: product.metafields.custom.grain_stock_delivery_handle
+  assign pickup_handle = product.metafields.custom.grain_stock_pickup_handle.value | default: product.metafields.custom.grain_stock_pickup_handle
+
+  if delivery_handle == blank
+    assign delivery_handle = product.metafields.custom.base_item_handle.value | default: product.metafields.custom.base_item_handle
+  endif
+-%}
+
+{%- if grain_enabled -%}
+  {%- assign delivery_stock_product = all_products[delivery_handle] -%}
+  {%- assign pickup_stock_product = all_products[pickup_handle] -%}
+
+  <div id="grainInventoryStatus" class="grain-inventory-status" hidden></div>
+
+  <script type="application/json" id="grain-inventory-variants">
+    {
+      {%- for variant in product.variants -%}
+        "{{ variant.id }}": {
+          "group": {{ grain_group | json }},
+          "unitsPerItem": {{ variant.metafields.custom.grain_units_per_item.value | default: variant.metafields.custom.grain_units_per_item | default: 0 }},
+          "deliveryStock": {
+            "handle": {{ delivery_handle | json }},
+            "quantity": {% if delivery_stock_product %}{{ delivery_stock_product.selected_or_first_available_variant.inventory_quantity | default: 0 }}{% else %}0{% endif %}
+          },
+          "pickupStock": {
+            "handle": {{ pickup_handle | json }},
+            "quantity": {% if pickup_stock_product %}{{ pickup_stock_product.selected_or_first_available_variant.inventory_quantity | default: 0 }}{% else %}0{% endif %}
+          }
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    }
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var variantsEl = document.getElementById('grain-inventory-variants');
+      if (!variantsEl || !window.GrainInventory) return;
+      window.GrainInventory.init({
+        enabled: true,
+        sectionId: {{ section_id | json }},
+        variants: JSON.parse(variantsEl.textContent)
+      });
+    });
+  </script>
+
+  <style>
+    .grain-inventory-status {
+      margin: 12px 0;
+      padding: 12px 16px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .grain-inventory-status--available {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+    .grain-inventory-status--soldout {
+      background: #ffebee;
+      color: #c62828;
+      border-left: 4px solid #f44336;
+    }
+  </style>
+{%- endif -%}

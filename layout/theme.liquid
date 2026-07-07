@@ -318,5 +318,9 @@
     {%- if settings.predictive_search_enabled -%}
       <script src="{{ 'predictive-search.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
+
+    <script src="{{ 'grain-inventory.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'sales-window.js' | asset_url }}" defer="defer"></script>
+    {{ 'sales-window.css' | asset_url | stylesheet_tag }}
   </body>
 </html>

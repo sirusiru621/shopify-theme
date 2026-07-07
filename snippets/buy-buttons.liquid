@@ -20,7 +20,10 @@
 
       assign show_dynamic_checkout = false
       if block.settings.show_dynamic_checkout and gift_card_recipient_feature_active == false
-        assign show_dynamic_checkout = true
+        assign grain_group = product.metafields.custom.grain_inventory_group.value | default: product.metafields.custom.grain_inventory_group
+        if grain_group == blank
+          assign show_dynamic_checkout = true
+        endif
       endif
     -%}
 

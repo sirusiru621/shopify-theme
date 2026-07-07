@@ -2,7 +2,9 @@
   id="MainProduct-{{ section.id }}"
   class="page-width section-{{ section.id }}-padding"
   data-section="{{ section.id }}"
+  data-product-handle="{{ product.handle }}"
 >
+  <div id="salesWindowBanner" class="sales-window-banner" hidden></div>
   {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
   {{ 'component-accordion.css' | asset_url | stylesheet_tag }}
   {{ 'component-price.css' | asset_url | stylesheet_tag }}
@@ -2396,6 +2398,7 @@
               </product-recommendations>
 
                  {%- when 'buy_buttons' -%}
+              {%- render 'grain-inventory-product', product: product, section_id: section.id -%}
               {%- render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true -%}
             
             {%- when 'icon-with-text' -%}

@@ -1183,6 +1183,7 @@
               </div>
             {%- else -%}
               <div class="cart__ctas" {{ block.shopify_attributes }}>
+                {% render 'grain-inventory-cart' %}
                 <noscript>
                   <button type="submit" class="cart__update-button button button--secondary" form="cart">
                     {{ 'sections.cart.update' | t }}

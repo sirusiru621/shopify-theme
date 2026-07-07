@@ -19,6 +19,19 @@ if (!customElements.get('product-form')) {
         evt.preventDefault();
         if (this.submitButton.getAttribute('aria-disabled') === 'true') return;
 
+        if (window.SalesWindow?.status && !window.SalesWindow.status.open) {
+          this.handleErrorMessage(window.SalesWindow.getClosedMessage(window.SalesWindow.status));
+          return;
+        }
+
+        if (window.GrainInventory?.validateProductForm) {
+          const grainCheck = window.GrainInventory.validateProductForm(this.form);
+          if (!grainCheck.valid) {
+            this.handleErrorMessage(grainCheck.message);
+            return;
+          }
+        }
+
         this.handleErrorMessage();
 
         this.submitButton.setAttribute('aria-disabled', true);
