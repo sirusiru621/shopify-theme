@@ -31,9 +31,18 @@ Renders grain inventory configuration and status for product pages.
   <script type="application/json" id="grain-inventory-variants">
     {
       {%- for variant in product.variants -%}
+        {%- liquid
+          # 粒数はバリエーションレベル優先、無ければ商品レベルのメタフィールドを使う。
+          # この店舗では 4個入/9個入/16個入 が別商品なので値は商品レベルに入る。
+          assign grain_units = variant.metafields.custom.grain_units_per_item.value | default: variant.metafields.custom.grain_units_per_item
+          if grain_units == blank
+            assign grain_units = product.metafields.custom.grain_units_per_item.value | default: product.metafields.custom.grain_units_per_item
+          endif
+          assign grain_units = grain_units | default: 0
+        -%}
         "{{ variant.id }}": {
           "group": {{ grain_group | json }},
-          "unitsPerItem": {{ variant.metafields.custom.grain_units_per_item.value | default: variant.metafields.custom.grain_units_per_item | default: 0 }},
+          "unitsPerItem": {{ grain_units | json }},
           "deliveryStock": {
             "handle": {{ delivery_handle | json }},
             "quantity": {% if delivery_stock_product %}{{ delivery_stock_product.selected_or_first_available_variant.inventory_quantity | default: 0 }}{% else %}0{% endif %}
