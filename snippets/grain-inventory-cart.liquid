@@ -68,12 +68,22 @@ Validates grain inventory for cart line items.
         if (!res.ok) throw new Error('grain stock check failed');
         return res.json();
       }).then(function(result) {
+        var checkoutBtn = document.getElementById('checkout') || document.querySelector('.cart__checkout-button');
         if (result.allAvailable === false) {
+          // どの受取方法が何粒不足しているかを明示する（汎用文言だと別商品のせいと誤解されるため）
+          var labelOf = function(m) { return m === 'pickup' ? '店頭受け取り' : '配送'; };
+          var shortages = (result.results || []).filter(function(r) { return r.available === false; });
+          var detail = shortages.map(function(r) {
+            return labelOf(r.method) + 'の粒在庫が不足しています（必要 ' + r.required + '粒／残り ' + r.remaining + '粒）';
+          }).join(' / ');
           noticeEl.hidden = false;
           noticeEl.className = 'grain-inventory-cart-notice grain-inventory-cart-notice--error';
-          noticeEl.textContent = '粒単位の在庫が不足している商品があります。数量を調整してください。';
-          var checkoutBtn = document.getElementById('checkout') || document.querySelector('.cart__checkout-button');
+          noticeEl.textContent = (detail || '粒単位の在庫が不足している商品があります') + '。数量を調整してください。';
           if (checkoutBtn) checkoutBtn.setAttribute('disabled', 'disabled');
+        } else {
+          // 在庫が足りている場合は通知を消し、checkout を再有効化
+          noticeEl.hidden = true;
+          if (checkoutBtn) checkoutBtn.removeAttribute('disabled');
         }
       }).catch(function() {
         // Development previews may not be able to reach the app proxy. Do not block checkout on transport errors.

@@ -2800,7 +2800,7 @@
         input.dispatchEvent(new Event('change', { bubbles: true }));
       }
     }, 0);
-  });
+  }, true); // capture フェーズで before を Dawn の加算前に取得し、二重加算(+2)を防ぐ
 
   // 手入力時のバリデーション（min/max/step を徹底順守）
   document.addEventListener('change', function(e) {
