@@ -21,6 +21,25 @@
       assign show_dynamic_checkout = false
       if block.settings.show_dynamic_checkout and gift_card_recipient_feature_active == false
         assign grain_group = product.metafields.custom.grain_inventory_group.value | default: product.metafields.custom.grain_inventory_group
+        if grain_group == blank and product.handle == 'yukimochi'
+          assign grain_group = 'yukimochi'
+        elsif grain_group == blank and product.handle == 'yukimochi-4pcs'
+          assign grain_group = 'yukimochi'
+        elsif grain_group == blank and product.handle == 'yukimochi-9pcs'
+          assign grain_group = 'yukimochi'
+        elsif grain_group == blank and product.handle == 'yukimochi-16pcs'
+          assign grain_group = 'yukimochi'
+        elsif grain_group == blank and product.type == 'どら焼き'
+          assign grain_group = 'どら焼き'
+        elsif grain_group == blank and product.handle == 'ryuhyo-kan-kibako'
+          assign grain_group = '流氷羹'
+        elsif grain_group == blank and product.handle == 'ryuhyo-kan-kamibako'
+          assign grain_group = '流氷羹'
+        elsif grain_group == blank and product.handle == 'sekketo-small'
+          assign grain_group = '雪景糖'
+        elsif grain_group == blank and product.handle == 'sekketo-large'
+          assign grain_group = '雪景糖'
+        endif
         if grain_group == blank
           assign show_dynamic_checkout = true
         endif

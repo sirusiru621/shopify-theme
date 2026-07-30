@@ -26,7 +26,13 @@ Validates grain inventory for cart line items.
             "key": {{ item.key | json }},
             "group": {{ item.properties._grain_inventory_group | json }},
             "method": {{ item.properties._grain_stock_method | default: 'delivery' | json }},
+            "shippingSlotId": {{ item.properties._grain_shipping_slot_id | json }},
+            "shippingDate": {{ item.properties._grain_shipping_date | json }},
+            "deliveryDate": {{ item.properties._grain_delivery_date | json }},
+            "pickupSlotId": {{ item.properties._grain_pickup_slot_id | json }},
+            "pickupDate": {{ item.properties._grain_pickup_date | json }},
             "unitsPerItem": {{ item.properties._grain_units_per_item | default: 0 }},
+            "componentUnits": {{ item.properties._grain_component_units | json }},
             "quantity": {{ item.quantity }}
           }
           {%- assign first_grain_item = false -%}
@@ -41,18 +47,42 @@ Validates grain inventory for cart line items.
       var noticeEl = document.getElementById('grainInventoryCartNotice');
       if (!dataEl || !noticeEl) return;
 
+      var parseComponents = function(value) {
+        if (!value) return {};
+        if (typeof value === 'string') {
+          try { value = JSON.parse(value); } catch (_) { return {}; }
+        }
+        return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+      };
       var items = JSON.parse(dataEl.textContent || '[]').filter(function(item) {
-        return item.group && item.method && parseInt(item.unitsPerItem, 10) > 0 && item.quantity > 0;
+        return item.group && item.method
+          && (parseInt(item.unitsPerItem, 10) > 0 || Object.keys(parseComponents(item.componentUnits)).length)
+          && item.quantity > 0;
       });
       var groupTotals = {};
       if (!items.length) return;
 
       items.forEach(function(item) {
-        var key = item.group + ':' + item.method;
+        var key = item.group + ':' + item.method + ':' + (item.shippingSlotId || item.pickupSlotId || 'legacy');
         if (!groupTotals[key]) {
-          groupTotals[key] = { group: item.group, method: item.method, required: 0 };
+          groupTotals[key] = {
+            group: item.group,
+            method: item.method,
+            shippingSlotId: item.shippingSlotId,
+            shippingDate: item.shippingDate,
+            deliveryDate: item.deliveryDate,
+            pickupSlotId: item.pickupSlotId,
+            pickupDate: item.pickupDate,
+            required: 0,
+            componentUnits: {}
+          };
         }
         groupTotals[key].required += (parseInt(item.unitsPerItem, 10) || 0) * item.quantity;
+        Object.entries(parseComponents(item.componentUnits)).forEach(function(entry) {
+          var componentId = entry[0];
+          var units = parseInt(entry[1], 10) || 0;
+          groupTotals[key].componentUnits[componentId] = (groupTotals[key].componentUnits[componentId] || 0) + units * item.quantity;
+        });
       });
 
       fetch('/apps/mochi/grain-stock/check', {
@@ -61,7 +91,18 @@ Validates grain inventory for cart line items.
         credentials: 'same-origin',
         body: JSON.stringify({
           items: Object.values(groupTotals).map(function(g) {
-            return { groupName: g.group, method: g.method, unitsPerItem: 1, quantity: g.required };
+            return {
+              groupName: g.group,
+              method: g.method,
+              shippingSlotId: g.shippingSlotId,
+              shippingDate: g.shippingDate,
+              deliveryDate: g.deliveryDate,
+              pickupSlotId: g.pickupSlotId,
+              pickupDate: g.pickupDate,
+              unitsPerItem: g.required,
+              quantity: 1,
+              componentUnits: g.componentUnits
+            };
           })
         })
       }).then(function(res) {
@@ -74,7 +115,19 @@ Validates grain inventory for cart line items.
           var labelOf = function(m) { return m === 'pickup' ? '店頭受け取り' : '配送'; };
           var shortages = (result.results || []).filter(function(r) { return r.available === false; });
           var detail = shortages.map(function(r) {
-            return labelOf(r.method) + 'の粒在庫が不足しています（必要 ' + r.required + '粒／残り ' + r.remaining + '粒）';
+            if (r.reason === 'mixed_shipping_slots') return '異なる発送日の商品がカートに入っています。同じ発送日に揃えてください';
+            if (r.reason === 'mixed_pickup_slots') return '異なる受取日の商品がカートに入っています。同じ受取日に揃えてください';
+            if (r.reason === 'slot_closed') return '選択した発送分は受付を終了しました。商品ページで別のお届け日を選び直してください';
+            if (r.reason === 'slot_not_found' || r.reason === 'delivery_date_out_of_range') return '選択したお届け日を確認できません。商品ページで選び直してください';
+            if (r.reason === 'pickup_slot_closed') return '選択した受取日は受付を終了しました。商品ページで別の受取日を選び直してください';
+            if (r.reason === 'pickup_slot_not_found' || r.reason === 'pickup_date_mismatch') return '選択した受取日を確認できません。商品ページで選び直してください';
+            if (r.components && r.components.length) {
+              return labelOf(r.method) + 'の在庫が不足しています（' + r.components
+                .filter(function(component) { return component.available === false; })
+                .map(function(component) { return component.name; })
+                .join('、') + '）';
+            }
+            return labelOf(r.method) + 'の商品在庫が不足しています';
           }).join(' / ');
           noticeEl.hidden = false;
           noticeEl.className = 'grain-inventory-cart-notice grain-inventory-cart-notice--error';

@@ -146,6 +146,32 @@
             "padding_bottom": 16
           }
         },
+        "delivery_schedule_dorayaki": {
+          "type": "delivery-schedule-picker",
+          "settings": {
+            "enable_schedule_picker": true,
+            "schedule_label": "お届け希望日",
+            "delivery_date_property": "配送希望日",
+            "show_heading": true,
+            "weekday_monday": false,
+            "weekday_tuesday": false,
+            "weekday_wednesday": false,
+            "weekday_thursday": false,
+            "weekday_friday": true,
+            "weekday_saturday": true,
+            "weekday_sunday": true,
+            "advance_days": 0,
+            "max_days": 3,
+            "cutoff_time": "10:00",
+            "show_cutoff_notice": true,
+            "cutoff_notice_text": "毎週木曜日発送です。お届け希望日は金曜日〜日曜日からお選びいただけます。",
+            "bg_color": "#ffffff",
+            "text_color": "#333333",
+            "border_color": "#e0e6ed",
+            "primary_color": "#000000",
+            "padding_bottom": 16
+          }
+        },
         "noshi_options_dUVMRC": {
           "type": "noshi-options",
           "settings": {
@@ -216,6 +242,7 @@
         "text_wWVwVW",
         "quantity_selector",
         "inventory_options_ePpbJd",
+        "delivery_schedule_dorayaki",
         "delivery_options_YHRLXB",
         "noshi_options_dUVMRC",
         "variant_picker",

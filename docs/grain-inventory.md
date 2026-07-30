@@ -15,21 +15,21 @@
 | --- | --- | --- | --- |
 | `custom.grain_inventory_group` | 商品/バリエーション | single line text | 共通在庫グループ名。例: `雪もち` |
 | `custom.grain_units_per_item` | バリエーション | number_integer | 1点購入時に消費する粒数。例: 4, 9, 16 |
-| `custom.grain_stock_delivery_handle` | 商品/バリエーション | single line text | 発送用の共通在庫商品ハンドル |
-| `custom.grain_stock_pickup_handle` | 商品/バリエーション | single line text | 店頭受取用の共通在庫商品ハンドル |
+| `custom.grain_inventory_components` | 商品/バリエーション | json | 部品別の1点あたり消費数。例: `{"dorayaki_black":3,"dorayaki_white":3}` |
+| `custom.grain_stock_delivery_handle` | 商品/バリエーション | single line text | 旧配送共通在庫の商品ハンドル（発送枠情報がない旧注文との後方互換用） |
+| `custom.grain_stock_pickup_handle` | 商品/バリエーション | single line text | 店頭受取用の共通在庫商品ハンドル（受取日別管理を行わない商品用） |
 
 後方互換として、旧 `custom.base_item_handle` がある場合は、発送/店頭受取の在庫ハンドルが未設定のときだけ共通在庫として参照します。
 
-## 共通在庫商品の作り方
+## 旧形式の店頭共通在庫
 
-例:
+受取枠情報がない既存注文との後方互換用として、旧店頭共通在庫の設定は残しています。新しい対象商品では受取日別在庫を使うため、新規設定は不要です。旧設定例:
 
-- `雪もち 発送用 粒在庫` という商品を作り、ハンドルを `yukimochi-delivery-stock` にする
 - `雪もち 店頭受取用 粒在庫` という商品を作り、ハンドルを `yukimochi-pickup-stock` にする
-- それぞれの Shopify 標準在庫数を粒数で設定する
+- Shopify 標準在庫数を粒数で設定する
 - 販売商品側の metafield に上記ハンドルを設定する
 
-このテーマはその在庫商品の `selected_or_first_available_variant.inventory_quantity` を読み、購入前判定に使います。
+配送分はShopify共通在庫ではなく、`sisiri-stock-app` の発送枠DBで発送日別に管理します。雪もち・どら焼き・流氷羹・雪景糖の店頭受取も共通在庫を使わず、アプリDBで受取日別に管理します。
 
 ## 注文に付与される private properties
 
@@ -41,18 +41,62 @@
 | `_grain_inventory_group` | 共通在庫グループ名 |
 | `_grain_stock_method` | `delivery` または `pickup` |
 | `_grain_units_per_item` | 1点あたり消費粒数 |
+| `_grain_component_units` | 黒・白など部品別の1点あたり消費数（JSON） |
+| `_grain_shipping_slot_id` | 配送商品の発送枠ID |
+| `_grain_shipping_date` | 発送日（`YYYY-MM-DD`） |
+| `_grain_delivery_date` | お届け希望日（`YYYY-MM-DD`） |
+| `_grain_pickup_slot_id` | 店舗受取商品の受取枠ID |
+| `_grain_pickup_date` | 受取日（`YYYY-MM-DD`） |
 
-バックエンド側では、注文 paid / orders/create などの確定イベントで、同じ `_grain_inventory_group` + `_grain_stock_method` を合算し、`_grain_units_per_item * quantity` を減算してください。二重減算防止には、処理済み注文 ID を保存してください。
+アプリは配送注文を `_grain_shipping_slot_id` ごとに、店頭注文を `_grain_pickup_slot_id` ごとに減算します。黒・白などの内訳がある商品は、選択された枠の該当内訳だけを減算します。キャンセル時は同じ枠・同じ内訳へ戻し、処理済み注文IDで二重処理を防ぎます。枠情報がない旧形式の注文だけは、後方互換として旧共通在庫を使用します。
 
-## どら焼き拡張
+## 全対象商品の店舗受取日別在庫
 
-白黒を別在庫で減らす場合は、通常の `grain_units_per_item` だけでは足りません。次のような JSON metafield を追加し、バックエンド側で解釈する設計に拡張してください。
+雪もち・どら焼き・流氷羹・雪景糖で店舗受取を選ぶと、テーマはApp Proxyの `/apps/mochi/pickup-slots` から商品グループ別の販売中受取枠を取得します。標準では金・土・日が対象で、前日の9:00に直近の受取日を閉じ、同時に翌週の同曜日を公開します。
+
+商品をカートへ入れる前とカート表示時に、選択した受取枠が販売中か、必要な粒数または内訳別個数が残っているかを再検証します。受取日未選択、締切済み、在庫不足、または異なる受取日の混在時は購入できません。同じ受取日の別商品は一緒に購入できます。
+
+商品ページやお届け日カードには、残り粒数・残り個数を表示しません。在庫判定は画面に数値を出さずに実行し、不足時だけ購入不可の案内を表示します。具体的な在庫数はアプリ管理画面でのみ確認します。
+
+## どら焼きの黒・白在庫
+
+どら焼きは `grain_inventory_components` を使い、黒・白を別在庫として判定・減算します。ミックス6個入りの例:
 
 ```json
 {
-  "dorayaki_white": 3,
-  "dorayaki_black": 3
+  "dorayaki_black": 3,
+  "dorayaki_white": 3
 }
 ```
 
-現時点のテーマ実装は、まず単一グループの粒数在庫を対象にしています。
+アプリはカート内の必要数を部品別に合算します。黒または白のどちらかが不足するとミックスも購入不可になり、注文確定時に両方を同時に減算、キャンセル時に両方を復元します。現在のどら焼き6商品は、メタフィールドが未設定でも商品ハンドルから既定の配合を読み取ります。メタフィールドを設定した場合はその値を優先します。
+
+## 流氷羹の共通在庫
+
+流氷羹の木箱入り（`ryuhyo-kan-kibako`）と紙箱入り（`ryuhyo-kan-kamibako`）は、同じ部品在庫を共有します。どちらも商品1点につき次の配合を使用します。
+
+```json
+{
+  "ryuhyokan_item": 1
+}
+```
+
+テーマは2商品のメタフィールドが未設定でも、商品ハンドルからこの既定配合と「流氷羹」グループを読み取ります。カート内では木箱・紙箱の必要数を合算し、注文確定時に共通在庫から減算、キャンセル時に復元します。
+
+## 雪景糖の商品別在庫
+
+雪景糖は、小（`sekketo-small`）と大（`sekketo-large`）で別々の部品在庫を使用します。
+
+小:
+
+```json
+{ "sekketo_small": 1 }
+```
+
+大:
+
+```json
+{ "sekketo_large": 1 }
+```
+
+テーマはメタフィールドが未設定でも商品ハンドルから「雪景糖」グループと対応する既定配合を読み取ります。注文確定時は購入した商品側の在庫だけを減算し、キャンセル時に同じ商品在庫へ復元します。

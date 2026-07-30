@@ -207,7 +207,15 @@
                 <span class="visually-hidden">{{ 'products.product.sku' | t }}:</span> {{- product.selected_or_first_available_variant.sku -}}
               </p>
             {%- when 'custom_liquid' -%}
-              {{ block.settings.custom_liquid }}
+              {%- liquid
+                assign custom_liquid_content = block.settings.custom_liquid
+                if product.handle contains '12'
+                  assign custom_liquid_content = custom_liquid_content | replace: 'どら焼き 黒6個（75g/個）', 'どら焼き 黒12個（75g/個）'
+                  assign custom_liquid_content = custom_liquid_content | replace: 'どら焼き 白6個（75g/個）', 'どら焼き 白12個（75g/個）'
+                  assign custom_liquid_content = custom_liquid_content | replace: 'どら焼き 白3個・黒3個（75g/個）', 'どら焼き 白6個・黒6個（75g/個）'
+                endif
+              -%}
+              {{ custom_liquid_content }}
             {%- when 'collapsible_tab' -%}
               <div class="product__accordion accordion quick-add-hidden" {{ block.shopify_attributes }}>
                 <details id="Details-{{ block.id }}-{{ section.id }}">
@@ -510,6 +518,41 @@
 
 <script src="{{ 'weekend-reservation.js' | asset_url }}" defer></script>
 {%- when 'inventory_options' -%}
+{%- liquid
+  assign uses_app_shipping_schedule = false
+  assign uses_pickup_date_inventory = false
+  assign inventory_schedule_group = product.metafields.custom.grain_inventory_group.value | default: product.metafields.custom.grain_inventory_group
+
+  if inventory_schedule_group != blank
+    assign uses_app_shipping_schedule = true
+    if inventory_schedule_group == 'yukimochi' or inventory_schedule_group == '雪餅' or inventory_schedule_group == '雪もち' or inventory_schedule_group == 'dorayaki' or inventory_schedule_group == 'どら焼き' or inventory_schedule_group == 'ryuhyokan' or inventory_schedule_group == '流氷羹' or inventory_schedule_group == 'sekketo' or inventory_schedule_group == '雪景糖'
+      assign uses_pickup_date_inventory = true
+    endif
+  elsif product.type == 'どら焼き'
+    assign inventory_schedule_group = 'dorayaki'
+    assign uses_app_shipping_schedule = true
+    assign uses_pickup_date_inventory = true
+  else
+    case product.handle
+      when 'yukimochi', 'yukimochi-4pcs', 'yukimochi-9pcs', 'yukimochi-16pcs'
+        assign inventory_schedule_group = 'yukimochi'
+        assign uses_app_shipping_schedule = true
+        assign uses_pickup_date_inventory = true
+      when 'dorayaki-kuro-6pcs', 'dorayaki-kuro-12pcs', 'dorayaki-siro-6pcs', 'dorayaki-siro-12pcs', 'dorayaki-2-6pcs', 'dorayaki-2-12'
+        assign inventory_schedule_group = 'dorayaki'
+        assign uses_app_shipping_schedule = true
+        assign uses_pickup_date_inventory = true
+      when 'ryuhyo-kan-kibako', 'ryuhyo-kan-kamibako'
+        assign inventory_schedule_group = 'ryuhyokan'
+        assign uses_app_shipping_schedule = true
+        assign uses_pickup_date_inventory = true
+      when 'sekketo-small', 'sekketo-large'
+        assign inventory_schedule_group = 'sekketo'
+        assign uses_app_shipping_schedule = true
+        assign uses_pickup_date_inventory = true
+    endcase
+  endif
+-%}
 
 <div class="inventory-linked-delivery-options" style="margin: 20px 0;" {{ block.shopify_attributes }}>
 
@@ -537,6 +580,10 @@
     productInventory: {{ product.selected_or_first_available_variant.inventory_quantity | default: 0 }},
     variantId: {{ product.selected_or_first_available_variant.id }},
     productId: {{ product.id }},
+    pickupDateInventory: {
+      enabled: {{ uses_pickup_date_inventory | json }},
+      group: {{ inventory_schedule_group | json }}
+    },
     
     displaySettings: {
       showInventoryStatus: {{ block.settings.show_inventory_status | json }},
@@ -574,7 +621,9 @@
         salesCloseTime: {{ block.settings.delivery_sales_close_time | default: '12:00' | json }},
         salesCloseDay: {{ block.settings.delivery_sales_close_day | default: '3' }},
         closeBeforeDays: {{ block.settings.delivery_close_before_days | default: '0' }},
-        maxOptions: {{ block.settings.delivery_max_options | default: 8 }},
+        // 発送枠アプリ対象商品は、旧UIが独自生成する配送日カードを表示しない。
+        // 配送方法の選択後は delivery-schedule-picker が正しいお届け希望日を表示する。
+        maxOptions: {% if uses_app_shipping_schedule %}0{% else %}{{ block.settings.delivery_max_options | default: 8 }}{% endif %},
         allowedDays: [
           {% if block.settings.delivery_day_sunday %}0,{% endif %}
           {% if block.settings.delivery_day_monday %}1,{% endif %}
@@ -901,11 +950,35 @@
         };
       }
 
-      generateDateOptions() {
+      async generateDateOptions() {
         if (!appState.selectedMethod) return [];
 
         appState.closeDebugLogs = [];
         addDebugLog(`日時オプション生成開始: ${appState.selectedMethod}`);
+
+        if (appState.selectedMethod === 'pickup' && config.pickupDateInventory?.enabled) {
+          const response = await fetch('/apps/mochi/pickup-slots?group=' + encodeURIComponent(config.pickupDateInventory.group), {
+            credentials: 'same-origin'
+          });
+          if (!response.ok) throw new Error('受取可能日を取得できませんでした');
+          const payload = await response.json();
+          const methodSettings = storeSettings.pickup || {};
+          return (payload.slots || []).map(slot => {
+            const date = new Date(slot.pickup_date + 'T00:00:00');
+            return {
+              date,
+              type: 'pickup',
+              time: methodSettings.time || '10:00-16:00',
+              inventory: { allocated: slot.capacity_units, reserved: slot.consumed_units, available: slot.remaining_units },
+              id: slot.id,
+              dateKey: slot.pickup_date,
+              remainingUnits: slot.remaining_units,
+              components: slot.components || [],
+              isPickupSlot: true,
+              salesStarted: true
+            };
+          });
+        }
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -953,10 +1026,19 @@
         return dates.slice(0, maxOptions);
       }
 
-      updateDateOptions() {
-        const dates = this.generateDateOptions();
+      async updateDateOptions() {
         if (!elements.dateOptions) return;
-        
+        const requestedMethod = appState.selectedMethod;
+        elements.dateOptions.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:24px;">受取可能日を確認しています…</div>';
+        let dates = [];
+        try {
+          dates = await this.generateDateOptions();
+        } catch (error) {
+          console.error('[pickup-slots]', error);
+          elements.dateOptions.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:#c62828;">現在、受取可能日を確認できません。時間をおいて再度お試しください。</div>';
+          return;
+        }
+        if (requestedMethod !== appState.selectedMethod) return;
         elements.dateOptions.innerHTML = '';
         
         const methodSettings = storeSettings[appState.selectedMethod] || {};
@@ -1191,6 +1273,17 @@
         }
         if (slotIdField) slotIdField.value = dateInfo.id;
 
+        if (appState.selectedMethod === 'pickup' && dateInfo.isPickupSlot) {
+          document.dispatchEvent(new CustomEvent('pickupSlotChange', {
+            detail: {
+              slotId: dateInfo.id,
+              pickupDate: dateInfo.dateKey,
+              remainingUnits: dateInfo.remainingUnits,
+              components: dateInfo.components || []
+            }
+          }));
+        }
+
         this.showSelectionInfo(dateInfo);
       }
 
@@ -1264,6 +1357,7 @@
 
             appState.selectedMethod = btn.dataset.method;
             appState.selectedDate = null;
+            document.dispatchEvent(new CustomEvent('pickupSlotChange', { detail: null }));
             
             if (elements.selectionInfo) elements.selectionInfo.style.display = 'none';
             
@@ -1358,7 +1452,29 @@
 
 
 {%- when 'delivery-schedule-picker' -%}
-{%- if block.settings.enable_schedule_picker -%}
+{%- liquid
+  assign delivery_schedule_group = product.metafields.custom.grain_inventory_group.value | default: product.metafields.custom.grain_inventory_group
+  if delivery_schedule_group == blank and product.handle == 'yukimochi'
+    assign delivery_schedule_group = 'yukimochi'
+  elsif delivery_schedule_group == blank and product.handle == 'yukimochi-4pcs'
+    assign delivery_schedule_group = 'yukimochi'
+  elsif delivery_schedule_group == blank and product.handle == 'yukimochi-9pcs'
+    assign delivery_schedule_group = 'yukimochi'
+  elsif delivery_schedule_group == blank and product.handle == 'yukimochi-16pcs'
+    assign delivery_schedule_group = 'yukimochi'
+  elsif delivery_schedule_group == blank and product.type == 'どら焼き'
+    assign delivery_schedule_group = 'どら焼き'
+  elsif delivery_schedule_group == blank and product.handle == 'ryuhyo-kan-kibako'
+    assign delivery_schedule_group = '流氷羹'
+  elsif delivery_schedule_group == blank and product.handle == 'ryuhyo-kan-kamibako'
+    assign delivery_schedule_group = '流氷羹'
+  elsif delivery_schedule_group == blank and product.handle == 'sekketo-small'
+    assign delivery_schedule_group = '雪景糖'
+  elsif delivery_schedule_group == blank and product.handle == 'sekketo-large'
+    assign delivery_schedule_group = '雪景糖'
+  endif
+-%}
+{%- if block.settings.enable_schedule_picker and delivery_schedule_group != blank -%}
 <div id="DeliverySchedulePicker-{{ block.id }}" 
      class="delivery-schedule-picker" 
      data-delivery-schedule
@@ -1415,9 +1531,49 @@
          id="deliveryDateHidden-{{ block.id }}"
          form="{{ product_form_id }}">
   <input type="hidden" 
-         name="properties[配送スロットID]" 
+         name="properties[_grain_shipping_slot_id]"
          id="deliverySlotHidden-{{ block.id }}"
          form="{{ product_form_id }}">
+  <input type="hidden"
+         name="properties[_grain_shipping_date]"
+         id="shippingDateHidden-{{ block.id }}"
+         form="{{ product_form_id }}">
+  <input type="hidden"
+         name="properties[_grain_delivery_date]"
+         id="grainDeliveryDateHidden-{{ block.id }}"
+         form="{{ product_form_id }}">
+  <input type="hidden"
+         name="properties[発送日]"
+         id="shippingDateDisplayHidden-{{ block.id }}"
+         form="{{ product_form_id }}">
+
+  <div
+    id="NextDayDeliveryNotice-{{ block.id }}"
+    class="next-day-delivery-notice"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="NextDayDeliveryNoticeTitle-{{ block.id }}"
+    hidden
+  >
+    <div class="next-day-delivery-notice__backdrop" data-next-day-notice-close></div>
+    <div class="next-day-delivery-notice__panel" tabindex="-1">
+      <button
+        type="button"
+        class="next-day-delivery-notice__close"
+        aria-label="閉じる"
+        data-next-day-notice-close
+      >×</button>
+      <h3 id="NextDayDeliveryNoticeTitle-{{ block.id }}">お気を付けください</h3>
+      <div class="next-day-delivery-notice__body">
+        <p class="next-day-delivery-notice__region">【北海道・中四国・九州・沖縄へ配送の場合】</p>
+        <p>お届け日指定のない場合は最短で<span data-shipping-weekday>木曜日</span>発送の翌々日（<span data-second-day-weekday>土曜日</span>）に到着します。</p>
+        <p class="next-day-delivery-notice__region">【それ以外の地域へ配送の場合】</p>
+        <p>お届け日指定のない場合は最短で<span data-shipping-weekday>木曜日</span>発送の翌日（<span data-next-day-weekday>金曜日</span>）に到着します。</p>
+        <p class="next-day-delivery-notice__note">※天候などにより変更となる場合がございますことをご了承ください。</p>
+      </div>
+      <button type="button" class="next-day-delivery-notice__confirm" data-next-day-notice-close>確認しました</button>
+    </div>
+  </div>
 </div>
 
 <style>
@@ -1594,6 +1750,97 @@
   margin-top: 12px;
   line-height: 1.5;
 }
+
+.next-day-delivery-notice[hidden] {
+  display: none;
+}
+
+.next-day-delivery-notice {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 2147483000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+  .next-day-delivery-notice__backdrop {
+    display: block !important;
+    position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(0, 0, 0, 0.58);
+  z-index: 0;
+}
+
+.next-day-delivery-notice__panel {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 100%);
+  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  background: #fff;
+  color: #222;
+  padding: 28px 24px 24px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+}
+
+.next-day-delivery-notice__panel h3 {
+  margin: 0 36px 20px 0;
+  font-size: 1.35rem;
+  line-height: 1.4;
+}
+
+.next-day-delivery-notice__body {
+  font-size: 0.95rem;
+  line-height: 1.75;
+}
+
+.next-day-delivery-notice__body p {
+  margin: 0 0 12px;
+}
+
+.next-day-delivery-notice__region {
+  font-weight: 700;
+  margin-bottom: 2px !important;
+}
+
+.next-day-delivery-notice__note {
+  font-size: 0.88rem;
+  color: #555;
+  margin-top: 18px !important;
+}
+
+.next-day-delivery-notice__close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  border: 0;
+  background: transparent;
+  color: #333;
+  font-size: 2rem;
+  line-height: 1;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.next-day-delivery-notice__confirm {
+  width: 100%;
+  margin-top: 12px;
+  border: 1px solid #222;
+  background: #222;
+  color: #fff;
+  padding: 12px 18px;
+  font: inherit;
+  cursor: pointer;
+}
 </style>
 
 <script>
@@ -1673,24 +1920,47 @@
       return this.isAllowedWeekday(date) && !this.isHoliday(date);
     }
 
-    generateDateOptions() {
-      const options = [];
-      const start = this.getStartDate();
-      let current = new Date(start);
-      let checked = 0;
+    async generateDateOptions() {
+      const grain = window.GrainInventory;
+      const variantConfig = grain?.getVariantConfig?.(grain.getCurrentVariantId?.());
+      const group = variantConfig?.group;
+      const componentRecipe = grain?.getComponentRecipe?.(grain.getCurrentVariantId?.()) || {};
+      if (!group) throw new Error('粒在庫グループが設定されていません');
 
-      while (options.length < this.config.maxDays && checked < 60) {
-        if (this.isValidDeliveryDate(current)) {
+      const response = await fetch('/apps/mochi/shipping-slots?group=' + encodeURIComponent(group), {
+        credentials: 'same-origin'
+      });
+      if (!response.ok) throw new Error('発送枠を取得できませんでした');
+      const payload = await response.json();
+      const options = [];
+      (payload.slots || []).forEach(slot => {
+        const componentRows = slot.components || [];
+        const componentAvailability = Object.entries(componentRecipe).map(([componentId, required]) => {
+          const stock = componentRows.find(component => component.id === componentId) || {};
+          return {
+            id: componentId,
+            name: stock.name || componentId,
+            required: Number(required),
+            remaining: Number(stock.remaining_units || 0),
+            available: Number(stock.remaining_units || 0) >= Number(required)
+          };
+        });
+        if (componentAvailability.length && componentAvailability.some(component => !component.available)) return;
+        (slot.delivery_dates || []).forEach(dateKey => {
+          const date = new Date(dateKey + 'T00:00:00');
           options.push({
-            date: new Date(current),
-            formatted: this.formatDate(current),
-            display: this.formatDisplayDate(current),
-            slotId: `delivery_${this.formatDateKey(current)}`
+            date: date,
+            dateKey: dateKey,
+            formatted: this.formatDate(date),
+            display: this.formatDisplayDate(date),
+            slotId: slot.id,
+            shipDate: slot.ship_date,
+            remainingUnits: slot.remaining_units,
+            components: componentRows,
+            componentAvailability: componentAvailability
           });
-        }
-        current.setDate(current.getDate() + 1);
-        checked++;
-      }
+        });
+      });
       return options;
     }
 
@@ -1721,11 +1991,84 @@
   const selectedDisplay = container.querySelector(`#selectedDisplay-${blockId}`);
   const hiddenDateField = container.querySelector(`#deliveryDateHidden-${blockId}`);
   const hiddenSlotField = container.querySelector(`#deliverySlotHidden-${blockId}`);
+  const hiddenShippingDateField = container.querySelector(`#shippingDateHidden-${blockId}`);
+  const hiddenGrainDeliveryDateField = container.querySelector(`#grainDeliveryDateHidden-${blockId}`);
+  const hiddenShippingDateDisplayField = container.querySelector(`#shippingDateDisplayHidden-${blockId}`);
+  const nextDayNotice = container.querySelector(`#NextDayDeliveryNotice-${blockId}`);
+  const nextDayNoticePanel = nextDayNotice?.querySelector('.next-day-delivery-notice__panel');
+  let nextDayNoticeTrigger = null;
+  let nextDayNoticePreviousOverflow = '';
+
+  function addDaysToDateKey(dateKey, days) {
+    const parts = String(dateKey || '').split('-').map(Number);
+    if (parts.length !== 3 || parts.some(part => !Number.isInteger(part))) return null;
+    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    date.setUTCDate(date.getUTCDate() + days);
+    return date.toISOString().slice(0, 10);
+  }
+
+  function weekdayNameForDateKey(dateKey) {
+    const parts = String(dateKey || '').split('-').map(Number);
+    if (parts.length !== 3 || parts.some(part => !Number.isInteger(part))) return '';
+    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    return ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'][date.getUTCDay()];
+  }
+
+  function isDayAfterShipping(opt) {
+    return Boolean(opt?.shipDate && opt?.dateKey && addDaysToDateKey(opt.shipDate, 1) === opt.dateKey);
+  }
+
+  function openNextDayDeliveryNotice(opt, trigger) {
+    if (!nextDayNotice) return;
+    const nextDayKey = addDaysToDateKey(opt.shipDate, 1);
+    const secondDayKey = addDaysToDateKey(opt.shipDate, 2);
+    nextDayNotice.querySelectorAll('[data-shipping-weekday]').forEach(element => {
+      element.textContent = weekdayNameForDateKey(opt.shipDate);
+    });
+    nextDayNotice.querySelector('[data-next-day-weekday]').textContent = weekdayNameForDateKey(nextDayKey);
+    nextDayNotice.querySelector('[data-second-day-weekday]').textContent = weekdayNameForDateKey(secondDayKey);
+    nextDayNoticeTrigger = trigger || null;
+    if (nextDayNotice.parentElement !== document.body) document.body.appendChild(nextDayNotice);
+    nextDayNoticePreviousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    nextDayNotice.hidden = false;
+    nextDayNoticePanel?.focus();
+  }
+
+  function closeNextDayDeliveryNotice() {
+    if (!nextDayNotice || nextDayNotice.hidden) return;
+    nextDayNotice.hidden = true;
+    document.body.style.overflow = nextDayNoticePreviousOverflow;
+    nextDayNoticeTrigger?.focus();
+    nextDayNoticeTrigger = null;
+  }
+
+  nextDayNotice?.querySelectorAll('[data-next-day-notice-close]').forEach(element => {
+    element.addEventListener('click', closeNextDayDeliveryNotice);
+  });
+  nextDayNotice?.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closeNextDayDeliveryNotice();
+  });
 
   // 🧩 日付カード描画
-  function renderDateOptions() {
+  async function renderDateOptions() {
     if (!dateOptionsContainer) return;
-    const options = dateManager.generateDateOptions();
+    dateManager.selectedDate = null;
+    if (selectionInfo) selectionInfo.style.display = 'none';
+    if (hiddenDateField) hiddenDateField.value = '';
+    if (hiddenSlotField) hiddenSlotField.value = '';
+    if (hiddenShippingDateField) hiddenShippingDateField.value = '';
+    if (hiddenGrainDeliveryDateField) hiddenGrainDeliveryDateField.value = '';
+    if (hiddenShippingDateDisplayField) hiddenShippingDateDisplayField.value = '';
+    dateOptionsContainer.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:24px;">お届け可能日を確認しています…</div>';
+    let options = [];
+    try {
+      options = await dateManager.generateDateOptions();
+    } catch (error) {
+      console.error('[shipping-slots]', error);
+      dateOptionsContainer.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#c62828;border:2px solid #ffcdd2;background:#ffebee;"><p style="margin:0;font-size:14px;">現在、配送可能日を確認できません。時間をおいて再度お試しください。</p></div>';
+      return;
+    }
     dateOptionsContainer.innerHTML = '';
 
     if (options.length === 0) {
@@ -1744,6 +2087,7 @@
       card.style.animationDelay = `${i * 0.05}s`;
       card.innerHTML = `
         <div class="date-card-date">${opt.display}</div>
+        <div class="date-card-day">${opt.shipDate.split('-').join('/')}発送分</div>
         <div class="date-card-status">選択可能</div>`;
       card.addEventListener('click', () => selectDate(opt, card));
       dateOptionsContainer.appendChild(card);
@@ -1764,6 +2108,7 @@
     if (s) s.textContent = '✓ 選択済み';
     dateManager.selectedDate = opt;
     updateSelection();
+    if (isDayAfterShipping(opt)) openNextDayDeliveryNotice(opt, card);
   }
 
   // 🕒 時間帯変更
@@ -1783,10 +2128,29 @@
       if (selectionInfo) selectionInfo.style.display = 'block';
       if (hiddenDateField) hiddenDateField.value = `${dateManager.selectedDate.formatted} ${dateManager.selectedTime}`;
       if (hiddenSlotField) hiddenSlotField.value = dateManager.selectedDate.slotId;
+      if (hiddenShippingDateField) hiddenShippingDateField.value = dateManager.selectedDate.shipDate;
+      if (hiddenGrainDeliveryDateField) hiddenGrainDeliveryDateField.value = dateManager.selectedDate.dateKey;
+      if (hiddenShippingDateDisplayField) hiddenShippingDateDisplayField.value = dateManager.selectedDate.shipDate.split('-').join('/') + '発送';
+      const legacyDateTimeField = document.getElementById('selectedDateTime');
+      const legacySlotField = document.getElementById('selectedSlotId');
+      if (legacyDateTimeField) legacyDateTimeField.value = dateManager.selectedDate.formatted + ' ' + dateManager.selectedTime;
+      if (legacySlotField) legacySlotField.value = dateManager.selectedDate.shipDate.split('-').join('/') + '発送';
+      document.dispatchEvent(new CustomEvent('shippingSlotChange', {
+        detail: {
+          slotId: dateManager.selectedDate.slotId,
+          shippingDate: dateManager.selectedDate.shipDate,
+          deliveryDate: dateManager.selectedDate.dateKey,
+          remainingUnits: dateManager.selectedDate.remainingUnits,
+          components: dateManager.selectedDate.components || []
+        }
+      }));
     } else {
       if (selectionInfo) selectionInfo.style.display = 'none';
       if (hiddenDateField) hiddenDateField.value = '';
       if (hiddenSlotField) hiddenSlotField.value = '';
+      if (hiddenShippingDateField) hiddenShippingDateField.value = '';
+      if (hiddenGrainDeliveryDateField) hiddenGrainDeliveryDateField.value = '';
+      if (hiddenShippingDateDisplayField) hiddenShippingDateDisplayField.value = '';
     }
   }
 
@@ -1800,17 +2164,20 @@
     } else {
       container.style.display = 'none';
       dateManager.selectedDate = null;
-      dateManager.selectedTime = null;
-      if (timeSelect) timeSelect.value = '';
+      dateManager.selectedTime = timeSelect?.value || '指定なし';
       if (selectionInfo) selectionInfo.style.display = 'none';
       if (hiddenDateField) hiddenDateField.value = '';
       if (hiddenSlotField) hiddenSlotField.value = '';
+      if (hiddenShippingDateField) hiddenShippingDateField.value = '';
+      if (hiddenGrainDeliveryDateField) hiddenGrainDeliveryDateField.value = '';
+      if (hiddenShippingDateDisplayField) hiddenShippingDateDisplayField.value = '';
     }
   });
 
   // 🚀 初期化
   function init() {
     container.style.display = 'none'; // 初期は非表示
+    dateManager.selectedTime = timeSelect?.value || '指定なし';
     console.log('DeliverySchedulePicker initialized:', { blockId, config });
   }
 
@@ -1835,7 +2202,7 @@
 
   <!-- 熨斗種類 -->
   <div class="noshi-field">
-    <label for="noshi-type-{{ block.id }}" class="noshi-label">種類<span class="noshi-required">*</span></label>
+    <label for="noshi-type-{{ block.id }}" class="noshi-label">種類<span class="noshi-optional">任意</span></label>
     <select 
       id="noshi-type-{{ block.id }}" 
       name="properties[のし種類]" 
@@ -1843,7 +2210,7 @@
       form="{{ product_form_id }}" 
       data-noshi-type="{{ block.id }}"
       aria-describedby="noshi-type-hint-{{ block.id }}">
-      <option value="">選択してください</option>
+      <option value="">のしなし（選択しない）</option>
       {%- assign noshi_options = block.settings.noshi_options | split: ',' -%}
       {%- for opt in noshi_options -%}
         {%- assign parts = opt | split: '|' -%}
@@ -1852,7 +2219,7 @@
         {%- endif -%}
       {%- endfor -%}
     </select>
-    <small id="noshi-type-hint-{{ block.id }}" class="noshi-hint">熨斗の種類を選択してください</small>
+    <small id="noshi-type-hint-{{ block.id }}" class="noshi-hint">必要な場合のみ熨斗の種類を選択してください</small>
   </div>
 
   <!-- サンプル画像 -->
@@ -1874,8 +2241,9 @@
       class="delivery-select" 
       form="{{ product_form_id }}" 
       data-noshi-qty="{{ block.id }}"
+      disabled
       aria-describedby="noshi-qty-hint-{{ block.id }}">
-      <option value="">選択してください</option>
+      <option value="">種類を選択すると枚数を選べます</option>
     </select>
     <small id="noshi-qty-hint-{{ block.id }}" class="noshi-hint">商品数量に応じて選択できます</small>
   </div>
@@ -1895,6 +2263,8 @@
       maxlength="50" 
       placeholder="お名前をご入力ください（例：田中太郎）" 
       form="{{ product_form_id }}"
+      data-noshi-name="{{ block.id }}"
+      disabled
       rows="2"
       aria-describedby="noshi-name-hint-{{ block.id }}"></textarea>
     <small id="noshi-name-hint-{{ block.id }}" class="noshi-hint">最大50文字まで入力できます</small>
@@ -1994,9 +2364,10 @@
   gap: 4px;
 }
 
-.noshi-required {
-  color: #dc3545;
-  font-size: 0.9rem;
+.noshi-optional {
+  color: #6c757d;
+  font-size: 0.8rem;
+  font-weight: 400;
 }
 
 .noshi-hint {
@@ -2089,6 +2460,7 @@
     const noshiPreview = document.querySelector(`[data-noshi-preview="${blockId}"]`);
     const noshiImg = document.querySelector(`[data-noshi-image="${blockId}"]`);
     const qtySelect = document.querySelector(`[data-noshi-qty="${blockId}"]`);
+    const nameInput = document.querySelector(`[data-noshi-name="${blockId}"]`);
     const priceDisplay = document.querySelector(`[data-noshi-price-display="${blockId}"]`);
     const priceInfo = document.getElementById(`noshi-price-${blockId}`);
     const feeHandleInput = document.querySelector(`[data-noshi-fee-handle="${blockId}"]`);
@@ -2196,7 +2568,7 @@
       const productQty = parseInt(productQtyEl.value || 1, 10);
       const currentValue = qtySelect.value;
       
-      qtySelect.innerHTML = '<option value="">選択してください</option>';
+      qtySelect.innerHTML = '<option value="">枚数を選択してください</option>';
       
       for (let i = 1; i <= productQty; i++) {
         const opt = document.createElement('option');
@@ -2211,9 +2583,26 @@
       
       updateNoshiPrice();
     }
+
+    // のしは任意。種類を選んだ場合だけ枚数・名入れを有効にする。
+    function updateNoshiState() {
+      const hasNoshi = Boolean((noshiSelect.value || '').trim());
+
+      if (qtySelect) {
+        qtySelect.disabled = !hasNoshi;
+        if (!hasNoshi) qtySelect.value = '';
+      }
+      if (nameInput) {
+        nameInput.disabled = !hasNoshi;
+        if (!hasNoshi) nameInput.value = '';
+      }
+
+      updateImage();
+      updateNoshiPrice();
+    }
     
     // イベントリスナー
-    noshiSelect.addEventListener('change', updateImage);
+    noshiSelect.addEventListener('change', updateNoshiState);
     
     if (qtySelect) {
       qtySelect.addEventListener('change', updateNoshiPrice);
@@ -2229,19 +2618,41 @@
     const form = document.querySelector(`#${noshiSelect.getAttribute('form')}`);
     if (form) {
       form.addEventListener('submit', async function(e) {
+        const hasNoshi = Boolean((noshiSelect.value || '').trim());
+
+        // 未選択は「のしなし」としてそのまま購入可能。
+        if (!hasNoshi) {
+          if (qtySelect) qtySelect.value = '';
+          return;
+        }
+
+        // のし料金を同時追加する場合は通常の商品フォーム処理を止め、この処理だけで一括追加する。
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
         // バリデーション
-        if (noshiSelect.value && !qtySelect.value) {
-          e.preventDefault();
+        if (!qtySelect.value) {
           alert('のし枚数を選択してください');
           qtySelect.focus();
           return;
+        }
+
+        if (window.SalesWindow?.status && !window.SalesWindow.status.open) {
+          alert(window.SalesWindow.getClosedMessage(window.SalesWindow.status));
+          return;
+        }
+
+        if (window.GrainInventory?.validateProductForm) {
+          const grainCheck = window.GrainInventory.validateProductForm(form);
+          if (!grainCheck.valid) {
+            alert(grainCheck.message);
+            return;
+          }
         }
         
         // のし枚数が選択されている場合、料金商品も追加
         const noshiQty = parseInt(qtySelect.value || 0, 10);
         if (noshiQty > 0) {
-          e.preventDefault();
-          
           const variantId = await getNoshiFeeVariantId();
           if (!variantId) {
             alert('のし料金商品が見つかりません。管理者にお問い合わせください。');
@@ -2298,13 +2709,13 @@
             alert('カートへの追加に失敗しました。もう一度お試しください。');
           }
         }
-      });
+      }, true);
     }
     
     // 初期化時にVariant IDを取得
     getNoshiFeeVariantId();
     
-    updateImage();
+    updateNoshiState();
     console.log('✅ Noshi initialization complete');
   }
   
