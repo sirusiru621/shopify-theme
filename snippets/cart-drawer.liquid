@@ -176,9 +176,14 @@
                               {%- for property in item.properties -%}
                                 {%- assign property_first_char = property.first | slice: 0 -%}
                                 {%- assign property_key = property.first | strip -%}
+                                {%- assign hide_duplicate_datetime = false -%}
+                                {%- if property_key == '希望日時' and item.properties['発送日'] != blank -%}
+                                  {%- assign hide_duplicate_datetime = true -%}
+                                {%- endif -%}
                                 {%- if property.last != blank
                                   and property_first_char != '_'
                                   and property_key != '配送選択'
+                                  and hide_duplicate_datetime == false
                                 -%}
                                   <div class="product-option">
                                     <dt>{{ property.first }}:</dt>

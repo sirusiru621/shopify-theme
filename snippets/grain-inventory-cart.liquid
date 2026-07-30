@@ -21,6 +21,31 @@ Validates grain inventory for cart line items.
       {%- assign first_grain_item = true -%}
       {%- for item in cart.items -%}
         {%- if item.properties._grain_inventory_enabled == 'true' -%}
+          {%- liquid
+            assign component_units = item.properties._grain_component_units
+            if component_units == blank
+              case item.product.handle
+                when 'dorayaki-kuro-6pcs'
+                  assign component_units = '{"dorayaki_black":6}'
+                when 'dorayaki-kuro-12pcs'
+                  assign component_units = '{"dorayaki_black":12}'
+                when 'dorayaki-siro-6pcs'
+                  assign component_units = '{"dorayaki_white":6}'
+                when 'dorayaki-siro-12pcs'
+                  assign component_units = '{"dorayaki_white":12}'
+                when 'dorayaki-2-6pcs'
+                  assign component_units = '{"dorayaki_black":3,"dorayaki_white":3}'
+                when 'dorayaki-2-12'
+                  assign component_units = '{"dorayaki_black":6,"dorayaki_white":6}'
+                when 'ryuhyo-kan-kibako', 'ryuhyo-kan-kamibako'
+                  assign component_units = '{"ryuhyokan_item":1}'
+                when 'sekketo-small'
+                  assign component_units = '{"sekketo_small":1}'
+                when 'sekketo-large'
+                  assign component_units = '{"sekketo_large":1}'
+              endcase
+            endif
+          -%}
           {%- unless first_grain_item -%},{%- endunless -%}
           {
             "key": {{ item.key | json }},
@@ -32,7 +57,7 @@ Validates grain inventory for cart line items.
             "pickupSlotId": {{ item.properties._grain_pickup_slot_id | json }},
             "pickupDate": {{ item.properties._grain_pickup_date | json }},
             "unitsPerItem": {{ item.properties._grain_units_per_item | default: 0 }},
-            "componentUnits": {{ item.properties._grain_component_units | json }},
+            "componentUnits": {{ component_units | json }},
             "quantity": {{ item.quantity }}
           }
           {%- assign first_grain_item = false -%}
@@ -61,6 +86,45 @@ Validates grain inventory for cart line items.
       });
       var groupTotals = {};
       if (!items.length) return;
+      var validationState = 'checking';
+
+      var getCheckoutButtons = function() {
+        return document.querySelectorAll(
+          '#checkout, .cart__checkout-button, button[name="checkout"], input[name="checkout"]'
+        );
+      };
+      var setCheckoutEnabled = function(enabled) {
+        getCheckoutButtons().forEach(function(button) {
+          button.disabled = !enabled;
+          button.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+        });
+      };
+      var showValidationError = function(message) {
+        noticeEl.hidden = false;
+        noticeEl.className = 'grain-inventory-cart-notice grain-inventory-cart-notice--error';
+        noticeEl.textContent = message;
+        validationState = 'invalid';
+        setCheckoutEnabled(false);
+      };
+
+      document.addEventListener('click', function(event) {
+        if (!(event.target instanceof Element)) return;
+        var target = event.target.closest(
+          '#checkout, .cart__checkout-button, button[name="checkout"], input[name="checkout"]'
+        );
+        if (!target || validationState === 'valid') return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        if (validationState === 'checking') {
+          showValidationError('在庫を確認しています。少し待ってからもう一度お試しください。');
+        }
+      }, true);
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() { setCheckoutEnabled(false); }, { once: true });
+      } else {
+        setCheckoutEnabled(false);
+      }
 
       items.forEach(function(item) {
         var key = item.group + ':' + item.method + ':' + (item.shippingSlotId || item.pickupSlotId || 'legacy');
@@ -109,7 +173,6 @@ Validates grain inventory for cart line items.
         if (!res.ok) throw new Error('grain stock check failed');
         return res.json();
       }).then(function(result) {
-        var checkoutBtn = document.getElementById('checkout') || document.querySelector('.cart__checkout-button');
         if (result.allAvailable === false) {
           // どの受取方法が何粒不足しているかを明示する（汎用文言だと別商品のせいと誤解されるため）
           var labelOf = function(m) { return m === 'pickup' ? '店頭受け取り' : '配送'; };
@@ -128,17 +191,15 @@ Validates grain inventory for cart line items.
             }
             return labelOf(r.method) + 'の商品在庫が不足しています';
           }).join(' / ');
-          noticeEl.hidden = false;
-          noticeEl.className = 'grain-inventory-cart-notice grain-inventory-cart-notice--error';
-          noticeEl.textContent = (detail || '粒単位の在庫が不足している商品があります') + '。数量を調整してください。';
-          if (checkoutBtn) checkoutBtn.setAttribute('disabled', 'disabled');
+          showValidationError((detail || '粒単位の在庫が不足している商品があります') + '。数量を調整してください。');
         } else {
           // 在庫が足りている場合は通知を消し、checkout を再有効化
           noticeEl.hidden = true;
-          if (checkoutBtn) checkoutBtn.removeAttribute('disabled');
+          validationState = 'valid';
+          setCheckoutEnabled(true);
         }
       }).catch(function() {
-        // Development previews may not be able to reach the app proxy. Do not block checkout on transport errors.
+        showValidationError('在庫を確認できませんでした。ページを再読み込みして、もう一度お試しください。');
       });
     })();
   </script>

@@ -1204,7 +1204,14 @@
                 </button>
               </div>
 
-              {%- if additional_checkout_buttons -%}
+              {%- assign has_grain_inventory_items = false -%}
+              {%- for item in cart.items -%}
+                {%- if item.properties._grain_inventory_enabled == 'true' -%}
+                  {%- assign has_grain_inventory_items = true -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if additional_checkout_buttons and has_grain_inventory_items == false -%}
                 <div class="cart__dynamic-checkout-buttons additional-checkout-buttons">
                   {{ content_for_additional_checkout_buttons }}
                 </div>

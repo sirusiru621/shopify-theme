@@ -88,12 +88,23 @@
     input.value = method;
   }
 
+  function syncLegacyDateTimeProperty(method) {
+    const input = document.getElementById('selectedDateTime');
+    if (!input) return;
+    if (method === 'pickup') {
+      input.name = 'properties[希望日時]';
+    } else {
+      input.removeAttribute('name');
+    }
+  }
+
   document.addEventListener('deliveryMethodChange', (e) => {
     const method = e.detail?.method === 'pickup' ? 'pickup' : 'delivery';
     currentStockMethod = method;
     if (method === 'delivery') selectedPickupSlot = null;
     if (method === 'pickup') selectedShippingSlot = null;
     syncStockMethodProperty(method);
+    syncLegacyDateTimeProperty(method);
     if (method === 'pickup') window.GrainInventory?.loadPickupComponentStock?.();
     window.GrainInventory?.refresh?.();
   });
