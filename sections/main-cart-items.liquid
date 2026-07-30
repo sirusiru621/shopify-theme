@@ -137,10 +137,12 @@
     ✅ 除外条件:
     - 空欄（blank）
     - 内部プロパティ（_で始まる）
+    - 旧配送選択（発送日と重複するため）
     - ご希望の日時や確認用などの文言を持つキー
   {%- endcomment -%}
   {%- if property.last != blank
       and property_first_char != '_'
+      and property_key != '配送選択'
       and property_key != 'ご希望の日時'
       and property_key != '確認用'
       and property_key != '下記タブよりご希望の日時をお選びください'
