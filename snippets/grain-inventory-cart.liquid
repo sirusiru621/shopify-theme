@@ -115,7 +115,6 @@ Validates grain inventory for cart line items.
           var labelOf = function(m) { return m === 'pickup' ? '店頭受け取り' : '配送'; };
           var shortages = (result.results || []).filter(function(r) { return r.available === false; });
           var detail = shortages.map(function(r) {
-            if (r.reason === 'mixed_shipping_slots') return '異なる発送日の商品がカートに入っています。同じ発送日に揃えてください';
             if (r.reason === 'mixed_pickup_slots') return '異なる受取日の商品がカートに入っています。同じ受取日に揃えてください';
             if (r.reason === 'slot_closed') return '選択した発送分は受付を終了しました。商品ページで別のお届け日を選び直してください';
             if (r.reason === 'slot_not_found' || r.reason === 'delivery_date_out_of_range') return '選択したお届け日を確認できません。商品ページで選び直してください';
