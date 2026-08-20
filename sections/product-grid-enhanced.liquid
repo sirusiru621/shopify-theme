@@ -38,7 +38,11 @@ h3.card__title a {
         {% endif %}
 
         {% if block.settings.show_image %}
-          <a class="card__media" href="{{ p.url | default: '#' }}" aria-label="{{ p.title | escape }}">
+          {% if block.settings.link_to_product %}
+            <a class="card__media" href="{{ p.url | default: '#' }}" aria-label="{{ p.title | escape }}">
+          {% else %}
+            <div class="card__media" role="img" aria-label="{{ p.title | escape }}">
+          {% endif %}
             {%- if p != blank and p.featured_image != blank -%}
               <img
                 src="{{ p.featured_image | image_url: width: 800 }}"
@@ -50,7 +54,7 @@ h3.card__title a {
             {%- else -%}
               {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
             {%- endif -%}
-          </a>
+          {% if block.settings.link_to_product %}</a>{% else %}</div>{% endif %}
         {% endif %}
 
         <div class="card__body">
@@ -60,7 +64,11 @@ h3.card__title a {
 
           {% if block.settings.show_title %}
             <h3 class="card__title">
-              <a href="{{ p.url | default: '#' }}">{{ block.settings.title_override | default: p.title | escape }}</a>
+              {% if block.settings.link_to_product %}
+                <a href="{{ p.url | default: '#' }}">{{ block.settings.title_override | default: p.title | escape }}</a>
+              {% else %}
+                {{ block.settings.title_override | default: p.title | escape }}
+              {% endif %}
             </h3>
           {% endif %}
 
@@ -81,6 +89,9 @@ h3.card__title a {
             {% if block.settings.show_add_button and p != blank and p.available %}
               <form method="post" action="/cart/add">
                 <input type="hidden" name="id" value="{{ p.selected_or_first_available_variant.id }}">
+                {% if p.handle contains 'paper-bag-' %}
+                  <input type="hidden" name="properties[_sisiri_shipping_accessory]" value="paper_bag">
+                {% endif %}
                 <button type="submit" class="button">{{ block.settings.add_label }}</button>
               </form>
             {% endif %}
@@ -124,6 +135,7 @@ h3.card__title a {
 { "type": "checkbox", "id": "show_image", "label": "商品画像を表示", "default": true },
 { "type": "checkbox", "id": "show_vendor", "label": "ベンダーを表示", "default": false },
 { "type": "checkbox", "id": "show_title", "label": "商品名を表示", "default": true },
+{ "type": "checkbox", "id": "link_to_product", "label": "画像・商品名を商品ページへリンク", "default": true },
 { "type": "text", "id": "title_override", "label": "商品名（上書き・任意）" },
 { "type": "checkbox", "id": "show_price", "label": "価格を表示", "default": true },
 { "type": "textarea", "id": "custom_description", "label": "価格下テキスト（商品説明・自由入力）", "default": "商品説明" },

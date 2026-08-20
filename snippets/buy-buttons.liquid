@@ -77,6 +77,12 @@
           class="product-variant-id"
         >
 
+        {%- if product.template_suffix == 'kamibukuro' or product.handle contains 'paper-bag-' -%}
+          <input type="hidden" name="properties[_sisiri_shipping_accessory]" value="paper_bag">
+        {%- elsif product.handle == 'noshi-fee' -%}
+          <input type="hidden" name="properties[_sisiri_shipping_accessory]" value="noshi_fee">
+        {%- endif -%}
+
         {%- if gift_card_recipient_feature_active -%}
           {%- render 'gift-card-recipient-form', product: product, form: form, section: section -%}
         {%- endif -%}

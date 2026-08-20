@@ -153,8 +153,19 @@
                 grid product-grid grid--{{ section.settings.columns_mobile }}-col-tablet-down
                 grid--{{ section.settings.columns_desktop }}-col-desktop
               "
-            >
+              >
               {%- for product in collection.products -%}
+                {%- liquid
+                  assign hide_internal_product = false
+                  if collection.handle == 'all'
+                    if product.handle == 'noshi-fee' or product.handle contains 'paper-bag-'
+                      assign hide_internal_product = true
+                    elsif product.handle contains '-stock' or product.tags contains '熨斗' or product.type == '紙袋'
+                      assign hide_internal_product = true
+                    endif
+                  endif
+                -%}
+                {%- unless hide_internal_product -%}
                 {% assign lazy_load = false %}
                 {%- if forloop.index > 2 -%}
                   {%- assign lazy_load = true -%}
@@ -186,6 +197,7 @@
                     tag_font_size: section.settings.tag_font_size
                   %}
                 </li>
+                {%- endunless -%}
               {%- endfor -%}
             </ul>
 

@@ -90,8 +90,10 @@
           
           # 商品ページの場合
           if request.page_type == 'product' and product
-            if product.collections.size > 0
-              assign main_collection = product.collections.first
+            # 商品が属する最初のコレクションは順序が保証されず誤リンクになるため、
+            # コレクション経由で開いた場合だけそのコレクションを表示する。
+            if collection and collection.handle != 'all'
+              assign main_collection = collection
               echo ','
               echo '{'
               echo '"@type": "ListItem",'
@@ -191,8 +193,8 @@
         
         # 商品ページの処理
         if request.page_type == 'product' and product
-          if product.collections.size > 0
-            assign main_collection = product.collections.first
+          if collection and collection.handle != 'all'
+            assign main_collection = collection
             echo '<span class="breadcrumb-separator-wrapper" aria-hidden="true">'
             if separator_style == 'arrow'
               echo '<svg class="breadcrumb-separator" width="8" height="12" viewBox="0 0 8 12" fill="none">'
