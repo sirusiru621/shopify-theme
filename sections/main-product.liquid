@@ -1495,9 +1495,31 @@
   </h3>
   {%- endif -%}
 
-  <p class="delivery-schedule-description" data-shipping-schedule-description>
-    最短のお届け日を初期選択しています。ご希望に応じて別の日付をお選びください。
-  </p>
+  <div class="delivery-schedule-description" data-shipping-schedule-description>
+    <span class="delivery-schedule-description__icon" aria-hidden="true">i</span>
+    <span class="delivery-schedule-description__content">
+      <strong>配送日のご案内</strong>
+      <span data-shipping-weekday-description>発送日は設定された曜日です。</span>
+      <span>日付を指定しない場合は「最短でお届けする」をお選びください。</span>
+    </span>
+  </div>
+
+  <button
+    type="button"
+    class="earliest-delivery-option"
+    data-earliest-delivery-option
+    role="radio"
+    aria-checked="false"
+    hidden
+  >
+    <span class="earliest-delivery-option__check" aria-hidden="true">✓</span>
+    <span class="earliest-delivery-option__content">
+      <strong>最短でお届けする</strong>
+      <span data-earliest-delivery-date></span>
+    </span>
+  </button>
+
+  <p class="delivery-date-options-label">お届け日を指定する</p>
 
   <!-- 日付選択エリア（カード型） -->
   <div class="date-selection-area" id="dateOptions-{{ block.id }}">
@@ -1763,13 +1785,113 @@
 }
 
 .delivery-schedule-description {
-  margin: -4px 0 16px;
-  padding: 12px 14px;
-  border-left: 4px solid {{ block.settings.primary_color | default: '#007bff' }};
-  background: #f3f7fb;
-  color: #4d5965;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: -4px 0 18px;
+  padding: 14px 16px;
+  border: 1px solid #cbd9e6;
+  border-left: 4px solid #2f6f9f;
+  border-radius: 6px;
+  background: #f6f9fc;
+  color: #263746;
   font-size: 0.9rem;
-  line-height: 1.65;
+  line-height: 1.55;
+}
+
+.delivery-schedule-description__icon {
+  display: inline-grid;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: #2f6f9f;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.delivery-schedule-description__content {
+  display: grid;
+  gap: 2px;
+}
+
+.delivery-schedule-description__content strong {
+  color: #1e5278;
+  font-size: 0.95rem;
+}
+
+.earliest-delivery-option[hidden] {
+  display: none;
+}
+
+.earliest-delivery-option {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 15px 16px;
+  border: 2px solid #bdcbd8;
+  border-radius: 6px;
+  background: #fff;
+  color: #263746;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.earliest-delivery-option:hover {
+  border-color: #2f6f9f;
+}
+
+.earliest-delivery-option[aria-checked="true"] {
+  border-color: #2f6f9f;
+  background: #edf5fb;
+  box-shadow: 0 0 0 2px rgba(47, 111, 159, 0.12);
+}
+
+.earliest-delivery-option__check {
+  display: inline-grid;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 2px solid #9aabba;
+  border-radius: 50%;
+  color: transparent;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.earliest-delivery-option[aria-checked="true"] .earliest-delivery-option__check {
+  border-color: #2f6f9f;
+  background: #2f6f9f;
+  color: #fff;
+}
+
+.earliest-delivery-option__content {
+  display: grid;
+  gap: 2px;
+}
+
+.earliest-delivery-option__content strong {
+  color: #1e5278;
+  font-size: 1rem;
+}
+
+.earliest-delivery-option__content span {
+  color: #526573;
+  font-size: 0.85rem;
+}
+
+.delivery-date-options-label {
+  margin: 0 0 10px;
+  color: #344957;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .next-day-delivery-notice[hidden] {
@@ -2015,7 +2137,9 @@
   const hiddenShippingDateField = container.querySelector(`#shippingDateHidden-${blockId}`);
   const hiddenGrainDeliveryDateField = container.querySelector(`#grainDeliveryDateHidden-${blockId}`);
   const hiddenShippingDateDisplayField = container.querySelector(`#shippingDateDisplayHidden-${blockId}`);
-  const scheduleDescription = container.querySelector('[data-shipping-schedule-description]');
+  const shippingWeekdayDescription = container.querySelector('[data-shipping-weekday-description]');
+  const earliestDeliveryOption = container.querySelector('[data-earliest-delivery-option]');
+  const earliestDeliveryDate = container.querySelector('[data-earliest-delivery-date]');
   const nextDayNotice = container.querySelector(`#NextDayDeliveryNotice-${blockId}`);
   const nextDayNoticePanel = nextDayNotice?.querySelector('.next-day-delivery-notice__panel');
   let nextDayNoticeTrigger = null;
@@ -2082,6 +2206,10 @@
     if (hiddenShippingDateField) hiddenShippingDateField.value = '';
     if (hiddenGrainDeliveryDateField) hiddenGrainDeliveryDateField.value = '';
     if (hiddenShippingDateDisplayField) hiddenShippingDateDisplayField.value = '';
+    if (earliestDeliveryOption) {
+      earliestDeliveryOption.hidden = true;
+      earliestDeliveryOption.setAttribute('aria-checked', 'false');
+    }
     dateOptionsContainer.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:24px;">お届け可能日を確認しています…</div>';
     let options = [];
     try {
@@ -2117,14 +2245,24 @@
 
     const firstOption = options[0];
     const firstCard = dateOptionsContainer.querySelector('.date-card');
-    if (scheduleDescription && firstOption?.shipDate) {
-      scheduleDescription.textContent = `発送日は毎週${weekdayNameForDateKey(firstOption.shipDate)}です。最短のお届け日を初期選択しています。ご希望に応じて別の日付をお選びください。`;
+    if (shippingWeekdayDescription && firstOption?.shipDate) {
+      shippingWeekdayDescription.textContent = `発送日は毎週${weekdayNameForDateKey(firstOption.shipDate)}です。`;
     }
-    if (firstOption && firstCard) selectDate(firstOption, firstCard, false);
+    if (earliestDeliveryOption && firstOption) {
+      earliestDeliveryOption.hidden = false;
+      if (earliestDeliveryDate) earliestDeliveryDate.textContent = `${firstOption.display}のお届け予定`;
+      earliestDeliveryOption.onclick = () => selectDate(firstOption, earliestDeliveryOption, true, true);
+    }
+    dateManager.selectedTime = timeSelect?.value || '指定なし';
+    if (firstOption && firstCard && earliestDeliveryOption) {
+      selectDate(firstOption, earliestDeliveryOption, false, true);
+    } else if (firstOption && firstCard) {
+      selectDate(firstOption, firstCard, false);
+    }
   }
 
   // 📦 日付選択
-  function selectDate(opt, card, showNextDayNotice = true) {
+  function selectDate(opt, card, showNextDayNotice = true, isEarliestSelection = false) {
     if (dateOptionsContainer) {
       dateOptionsContainer.querySelectorAll('.date-card').forEach(c => {
         c.classList.remove('selected');
@@ -2132,9 +2270,14 @@
         if (s) s.textContent = '選択可能';
       });
     }
-    card.classList.add('selected');
-    const s = card.querySelector('.date-card-status');
-    if (s) s.textContent = '✓ 選択済み';
+    if (earliestDeliveryOption) {
+      earliestDeliveryOption.setAttribute('aria-checked', isEarliestSelection ? 'true' : 'false');
+    }
+    if (!isEarliestSelection) {
+      card.classList.add('selected');
+      const s = card.querySelector('.date-card-status');
+      if (s) s.textContent = '✓ 選択済み';
+    }
     dateManager.selectedDate = opt;
     updateSelection();
     if (showNextDayNotice && isDayAfterShipping(opt)) openNextDayDeliveryNotice(opt, card);
