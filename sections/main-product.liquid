@@ -2138,7 +2138,6 @@
   const hiddenShippingDateDisplayField = container.querySelector(`#shippingDateDisplayHidden-${blockId}`);
   const shippingWeekdayDescription = container.querySelector('[data-shipping-weekday-description]');
   const earliestDeliveryOption = container.querySelector('[data-earliest-delivery-option]');
-  const earliestDeliveryDate = container.querySelector('[data-earliest-delivery-date]');
   const nextDayNotice = container.querySelector(`#NextDayDeliveryNotice-${blockId}`);
   const nextDayNoticePanel = nextDayNotice?.querySelector('.next-day-delivery-notice__panel');
   let nextDayNoticeTrigger = null;
@@ -2249,7 +2248,6 @@
     }
     if (earliestDeliveryOption && firstOption) {
       earliestDeliveryOption.hidden = false;
-      if (earliestDeliveryDate) earliestDeliveryDate.textContent = `${firstOption.display}のお届け予定`;
       earliestDeliveryOption.onclick = () => selectDate(firstOption, earliestDeliveryOption, true, true);
     }
     dateManager.selectedTime = timeSelect?.value || '指定なし';
